@@ -1,0 +1,1083 @@
+ [
+{ "id": "adel_ahchee", "name": "Callum Ah Chee", "club": "Adelaide", "pos": ["MID"], "points": 62.5 },
+
+{ "id": "adel_berry", "name": "Sam Berry", "club": "Adelaide", "pos": ["MID"], "points": 62.4 },
+{ "id": "adel_bond", "name": "Hugh Bond", "club": "Adelaide", "pos": ["MID"], "points": 30.0 },
+{ "id": "adel_borlase", "name": "James Borlase", "club": "Adelaide", "pos": ["DEF"], "points": 27.0 },
+{ "id": "adel_butts", "name": "Jordon Butts", "club": "Adelaide", "pos": ["DEF"], "points": 26.3 },
+{ "id": "adel_cook", "name": "Brayden Cook", "club": "Adelaide", "pos": ["MID"], "points": 30.0 },
+
+{ "id": "adel_cumming", "name": "Isaac Cumming", "club": "Adelaide", "pos": ["DEF"], "points": 61.4 },
+{ "id": "adel_curtin", "name": "Daniel Curtin", "club": "Adelaide", "pos": ["DEF"], "points": 65.2 },
+{ "id": "adel_dawson", "name": "Jordan Dawson", "club": "Adelaide", "pos": ["MID"], "points": 110.2 },
+
+{ "id": "adel_dowling", "name": "Billy Dowling", "club": "Adelaide", "pos": ["MID"], "points": 53.0 },
+{ "id": "adel_draper", "name": "Sid Draper", "club": "Adelaide", "pos": ["MID"], "points": 29.3 },
+
+{ "id": "adel_edwards", "name": "Charlie Edwards", "club": "Adelaide", "pos": ["MID"], "points": 0 },
+{ "id": "adel_fogarty", "name": "Darcy Fogarty", "club": "Adelaide", "pos": ["FWD"], "points": 59.3 },
+
+{ "id": "adel_hinge", "name": "Mitchell Hinge", "club": "Adelaide", "pos": ["DEF"], "points": 67.1 },
+{ "id": "adel_jones", "name": "Chayce Jones", "club": "Adelaide", "pos": ["DEF"], "points": 23.8 },
+
+{ "id": "adel_keane", "name": "Mark Keane", "club": "Adelaide", "pos": ["DEF"], "points": 54.8 },
+{ "id": "adel_keays", "name": "Ben Keays", "club": "Adelaide", "pos": ["MID"], "points": 79.3 },
+
+{ "id": "adel_laird", "name": "Rory Laird", "club": "Adelaide", "pos": ["MID"], "points": 92.5 },
+{ "id": "adel_ludowyke", "name": "Archie Ludowyke", "club": "Adelaide", "pos": ["MID"], "points": 0 },
+
+{ "id": "adel_maley", "name": "Finnbar Maley", "club": "Adelaide", "pos": ["RUCK"], "points": 35.7 },
+{ "id": "adel_marsh", "name": "Mitchell Marsh", "club": "Adelaide", "pos": ["MID"], "points": 0 },
+{ "id": "adel_mcandrew", "name": "Lachlan McAndrew", "club": "Adelaide", "pos": ["RUCK"], "points": 0 },
+
+{ "id": "adel_michalanney", "name": "Max Michalanney", "club": "Adelaide", "pos": ["DEF"], "points": 54.8 },
+{ "id": "adel_milera", "name": "Wayne Milera", "club": "Adelaide", "pos": ["FWD"], "points": 72.0 },
+
+{ "id": "adel_murray_toby", "name": "Toby Murray", "club": "Adelaide", "pos": ["FWD"], "points": 0 },
+{ "id": "adel_murray_nick", "name": "Nicholas Murray", "club": "Adelaide", "pos": ["DEF"], "points": 37.7 },
+
+{ "id": "adel_nankervis", "name": "Luke Nankervis", "club": "Adelaide", "pos": ["MID","FWD"], "points": 45.1 },
+{ "id": "adel_nealbullen", "name": "Alex Neal-Bullen", "club": "Adelaide", "pos": ["FWD"], "points": 69.4 },
+
+{ "id": "adel_obrien", "name": "Reilly O'Brien", "club": "Adelaide", "pos": ["RUCK"], "points": 90.9 },
+
+{ "id": "adel_peatling", "name": "James Peatling", "club": "Adelaide", "pos": ["FWD"], "points": 77.5 },
+{ "id": "adel_pedlar", "name": "Luke Pedlar", "club": "Adelaide", "pos": ["FWD"], "points": 45.6 },
+
+{ "id": "adel_rachele", "name": "Josh Rachele", "club": "Adelaide", "pos": ["FWD"], "points": 62.8 },
+{ "id": "adel_rankine", "name": "Izak Rankine", "club": "Adelaide", "pos": ["FWD"], "points": 87.2 },
+
+{ "id": "adel_ryan", "name": "Oscar Ryan", "club": "Adelaide", "pos": ["DEF"], "points": 0 },
+{ "id": "adel_sholl", "name": "Lachlan Sholl", "club": "Adelaide", "pos": ["MID"], "points": 53 },
+
+{ "id": "adel_soligo", "name": "Jake Soligo", "club": "Adelaide", "pos": ["MID"], "points": 82.8 },
+{ "id": "adel_taylor", "name": "Zac Taylor", "club": "Adelaide", "pos": ["MID"], "points": 40.9 },
+
+{ "id": "adel_thilthorpe", "name": "Riley Thilthorpe", "club": "Adelaide", "pos": ["FWD"], "points": 82.9 },
+{ "id": "adel_walker", "name": "Taylor Walker", "club": "Adelaide", "pos": ["FWD"], "points": 61.5 },
+
+{ "id": "adel_welsh", "name": "Tyler Welsh", "club": "Adelaide", "pos": ["FWD"], "points": 0 },
+{ "id": "adel_worrell", "name": "Josh Worrell", "club": "Adelaide", "pos": ["DEF"], "points": 75.2 },
+
+
+
+  { "id": "bris_allen", "name": "Oscar Allen", "club": "Brisbane", "pos": ["FWD"], "points": 49.8 },
+  { "id": "bris_andrews", "name": "Harris Andrews", "club": "Brisbane", "pos": ["DEF"], "points": 62.2 },
+  { "id": "bris_annable", "name": "Daniel Annable", "club": "Brisbane", "pos": ["MID"], "points": 0 },
+  { "id": "bris_answerth", "name": "Noah Answerth", "club": "Brisbane", "pos": ["DEF"], "points": 57.9 },
+  { "id": "bris_ashcroft_levi", "name": "Levi Ashcroft", "club": "Brisbane", "pos": ["MID"], "points": 74.6 },
+  { "id": "bris_ashcroft_will", "name": "Will Ashcroft", "club": "Brisbane", "pos": ["MID"], "points": 95.3 },
+  { "id": "bris_bailey", "name": "Zac Bailey", "club": "Brisbane", "pos": ["MID", "FWD"], "points": 83.5 },
+  { "id": "bris_beecken", "name": "Luke Beecken", "club": "Brisbane", "pos": ["DEF"], "points": 10 },
+  { "id": "bris_berry", "name": "Jarrod Berry", "club": "Brisbane", "pos": ["MID"], "points": 85 },
+  { "id": "bris_brain", "name": "Shadeau Brain", "club": "Brisbane", "pos": ["FWD"], "points": 0 },
+  { "id": "bris_cameron", "name": "Charlie Cameron", "club": "Brisbane", "pos": ["FWD"], "points": 53.3 },
+  { "id": "bris_coleman", "name": "Keidean Coleman", "club": "Brisbane", "pos": ["DEF"], "points": 73 },
+  { "id": "bris_curtin", "name": "Cody Curtin", "club": "Brisbane", "pos": ["MID"], "points": 0 },
+  { "id": "bris_doedee", "name": "Tom Doedee", "club": "Brisbane", "pos": ["DEF"], "points": 47 },
+  { "id": "bris_draper", "name": "Sam Draper", "club": "Brisbane", "pos": ["RUCK"], "points": 82 },
+  { "id": "bris_dunkley", "name": "Josh Dunkley", "club": "Brisbane", "pos": ["MID"], "points": 107.5 },
+  { "id": "bris_evans", "name": "Koby Evans", "club": "Brisbane", "pos": ["MID"], "points": 0 },
+  { "id": "bris_fletcher", "name": "Jaspa Fletcher", "club": "Brisbane", "pos": ["MID"], "points": 83 },
+  { "id": "bris_fort", "name": "Darcy Fort", "club": "Brisbane", "pos": ["RUCK", "FWD"], "points": 69.2 },
+  { "id": "bris_gallop", "name": "Ty Gallop", "club": "Brisbane", "pos": ["FWD"], "points": 33 },
+  { "id": "bris_gardiner", "name": "Darcy Gardiner", "club": "Brisbane", "pos": ["DEF"], "points": 41.6 },
+  { "id": "bris_hayes", "name": "Tai Hayes", "club": "Brisbane", "pos": ["MID"], "points": 0 },
+  { "id": "bris_hipwood", "name": "Eric Hipwood", "club": "Brisbane", "pos": ["FWD"], "points": 54.9 },
+  { "id": "bris_joyce", "name": "Darragh Joyce", "club": "Brisbane", "pos": ["DEF"], "points": 0 },
+  { "id": "bris_lester", "name": "Ryan Lester", "club": "Brisbane", "pos": ["DEF"], "points": 57.3 },
+  { "id": "bris_lloyd", "name": "Luke Lloyd", "club": "Brisbane", "pos": ["FWD"], "points": 0 },
+  { "id": "bris_lohmann", "name": "Kai Lohmann", "club": "Brisbane", "pos": ["FWD"], "points": 46.3 },
+  { "id": "bris_marshall", "name": "Sam Marshall", "club": "Brisbane", "pos": ["MID"], "points": 46 },
+  { "id": "bris_mccarthy", "name": "Lincoln McCarthy", "club": "Brisbane", "pos": ["FWD"], "points": 0 },
+  { "id": "bris_mccluggage", "name": "Hugh McCluggage", "club": "Brisbane", "pos": ["MID"], "points": 102.2 },
+  { "id": "bris_mckenna", "name": "Conor McKenna", "club": "Brisbane", "pos": ["DEF"], "points": 0 },
+  { "id": "bris_mclachlan", "name": "Will McLachlan", "club": "Brisbane", "pos": ["FWD"], "points": 23.3 },
+  { "id": "bris_morris", "name": "Logan Morris", "club": "Brisbane", "pos": ["FWD"], "points": 57.7 },
+  { "id": "bris_neale", "name": "Lachie Neale", "club": "Brisbane", "pos": ["MID"], "points": 94.6 },
+  { "id": "bris_payne", "name": "Jack Payne", "club": "Brisbane", "pos": ["DEF"], "points": 54.2 },
+  { "id": "bris_rayner", "name": "Cam Rayner", "club": "Brisbane", "pos": ["MID", "FWD"], "points": 70.1 },
+  { "id": "bris_reville", "name": "Bruce Reville", "club": "Brisbane", "pos": ["MID", "FWD"], "points": 43.9 },
+  { "id": "bris_smith_henry", "name": "Henry Smith", "club": "Brisbane", "pos": ["RUCK", "FWD"], "points": 42 },
+  { "id": "bris_torrent", "name": "Reece Torrent", "club": "Brisbane", "pos": ["MID"], "points": 0 },
+  { "id": "bris_tunstill", "name": "James Tunstill", "club": "Brisbane", "pos": ["MID"], "points": 30.7 },
+  { "id": "bris_wilmot", "name": "Darcy Wilmot", "club": "Brisbane", "pos": ["DEF"], "points": 79.6 },
+  { "id": "bris_zakostelsky", "name": "Zane Zakostelsky", "club": "Brisbane", "pos": ["DEF"], "points": 0 },
+  { "id": "bris_zorko", "name": "Dayne Zorko", "club": "Brisbane", "pos": ["DEF"], "points": 101.5 } ,
+
+  { "id": "carl_acres", "name": "Blake Acres", "club": "Carlton", "pos": ["MID"], "points": 73.7 },
+
+{ "id": "carl_ainsworth", "name": "Ben Ainsworth", "club": "Carlton", "pos": ["FWD"], "points": 58.6 },
+
+{ "id": "carl_boyd", "name": "Jordan Boyd", "club": "Carlton", "pos": ["DEF"], "points": 32.7 },
+
+{ "id": "carl_byrne", "name": "Talor Byrne", "club": "Carlton", "pos": ["MID"], "points": 0 },
+
+{ "id": "carl_camporeale_lucas", "name": "Lucas Camporeale", "club": "Carlton", "pos": ["DEF","MID"], "points": 44.0 },
+
+{ "id": "carl_camporeale_ben", "name": "Ben Camporeale", "club": "Carlton", "pos": ["MID"], "points": 0 },
+
+{ "id": "carl_carroll", "name": "Matthew Carroll", "club": "Carlton", "pos": ["DEF"], "points": 49.5 },
+
+{ "id": "carl_cerra", "name": "Adam Cerra", "club": "Carlton", "pos": ["MID"], "points": 95.1 },
+
+{ "id": "carl_charleson", "name": "Harry Charleson", "club": "Carlton", "pos": ["DEF"], "points": 0 },
+
+{ "id": "carl_chesser", "name": "Campbell Chesser", "club": "Carlton", "pos": ["DEF","MID"], "points": 64.5 },
+
+{ "id": "carl_cottrell", "name": "Matthew Cottrell", "club": "Carlton", "pos": ["MID","FWD"], "points": 66.2 },
+
+{ "id": "carl_cowan", "name": "Lachlan Cowan", "club": "Carlton", "pos": ["DEF"], "points": 63.4 },
+
+{ "id": "carl_cripps", "name": "Patrick Cripps", "club": "Carlton", "pos": ["MID"], "points": 88.8 },
+
+{ "id": "carl_dean", "name": "Harry Dean", "club": "Carlton", "pos": ["MID"], "points": 0 },
+
+{ "id": "carl_duffy", "name": "Matt Duffy", "club": "Carlton", "pos": ["DEF"], "points": 0 },
+
+{ "id": "carl_evans_francis", "name": "Francis Evans", "club": "Carlton", "pos": ["FWD"], "points": 58.7 },
+
+{ "id": "carl_fiorini", "name": "Brayden Fiorini", "club": "Carlton", "pos": ["MID"], "points": 85.8 },
+
+{ "id": "carl_florent", "name": "Oliver Florent", "club": "Carlton", "pos": ["DEF"], "points": 60 },
+
+{ "id": "carl_fogarty_lachie", "name": "Lachie Fogarty", "club": "Carlton", "pos": ["FWD"], "points": 55.7 },
+
+{ "id": "carl_haynes", "name": "Nick Haynes", "club": "Carlton", "pos": ["DEF"], "points": 75.7 },
+
+{ "id": "carl_hayward", "name": "Will Hayward", "club": "Carlton", "pos": ["FWD"], "points": 55.8 },
+
+{ "id": "carl_hewett_george", "name": "George Hewett", "club": "Carlton", "pos": ["MID"], "points": 98.9 },
+
+{ "id": "carl_hollands", "name": "Oliver Hollands", "club": "Carlton", "pos": ["MID"], "points": 76.2 },
+
+{ "id": "carl_honey", "name": "Josh Honey", "club": "Carlton", "pos": ["FWD"], "points": 0 },
+
+{ "id": "carl_ison", "name": "Jack Ison", "club": "Carlton", "pos": ["MID"], "points": 0 },
+
+{ "id": "carl_kemp", "name": "Brodie Kemp", "club": "Carlton", "pos": ["DEF","FWD"], "points": 47.6 },
+
+{ "id": "carl_lord", "name": "Cooper Lord", "club": "Carlton", "pos": ["MID"], "points": 60.0 },
+
+{ "id": "carl_marchbank", "name": "Caleb Marchbank", "club": "Carlton", "pos": ["DEF"], "points": 0 },
+
+{ "id": "carl_mcgovern", "name": "Mitch McGovern", "club": "Carlton", "pos": ["DEF"], "points": 62.6 },
+
+{ "id": "carl_mckay", "name": "Harry McKay", "club": "Carlton", "pos": ["FWD"], "points": 78.2 },
+
+{ "id": "carl_moir", "name": "Ashton Moir", "club": "Carlton", "pos": ["FWD"], "points": 41.9 },
+
+{ "id": "carl_monahan", "name": "Rob Monahan", "club": "Carlton", "pos": ["FWD"], "points": 0 },
+
+{ "id": "carl_motlop", "name": "Jesse Motlop", "club": "Carlton", "pos": ["FWD"], "points": 50.8 },
+{ "id": "pittonet", "name": "Marc Pittonet", "club": "Carlton", "pos": ["RUCK"], "points": 70.3 },
+
+
+{ "id": "carl_young_lewis", "name": "Lewis Young", "club": "Carlton", "pos": ["DEF"], "points": 47 },
+{ "id": "carl_young_flynn", "name": "Flynn Young", "club": "Carlton", "pos": ["FWD"], "points": 45.6 },
+{ "id": "coll_allan", "name": "Edward Allan", "club": "Collingwood", "pos": ["MID"], "points": 48.4 },
+{ "id": "coll_buller", "name": "Jack Buller", "club": "Collingwood", "pos": ["FWD"], "points": 0 },
+{ "id": "coll_cameron", "name": "Darcy Cameron", "club": "Collingwood", "pos": ["RUCK","FWD"], "points": 102.0 },
+{ "id": "coll_cochran", "name": "Joel Cochran", "club": "Collingwood", "pos": ["DEF"], "points": 0 },
+{ "id": "coll_crisp", "name": "Jack Crisp", "club": "Collingwood", "pos": ["MID"], "points": 84.2 },
+
+{ "id": "coll_daicos_josh", "name": "Josh Daicos", "club": "Collingwood", "pos": ["MID"], "points": 94.2 },
+{ "id": "coll_daicos_nick", "name": "Nick Daicos", "club": "Collingwood", "pos": ["MID"], "points": 108.1 },
+{ "id": "coll_degoey", "name": "Jordan De Goey", "club": "Collingwood", "pos": ["MID"], "points": 52.7 },
+{ "id": "coll_demattia", "name": "Harry DeMattia", "club": "Collingwood", "pos": ["MID"], "points": 0 },
+
+{ "id": "coll_elliott", "name": "Jamie Elliott", "club": "Collingwood", "pos": ["FWD"], "points": 67.8 },
+{ "id": "coll_frampton", "name": "Billy Frampton", "club": "Collingwood", "pos": ["DEF"], "points": 42.4 },
+{ "id": "coll_harrison", "name": "Harvey Harrison", "club": "Collingwood", "pos": ["FWD"], "points": 0 },
+
+{ "id": "coll_hayes", "name": "William Hayes", "club": "Collingwood", "pos": ["MID","FWD"], "points": 45.0 },
+{ "id": "coll_hill", "name": "Bobby Hill", "club": "Collingwood", "pos": ["FWD"], "points": 46.1 },
+{ "id": "coll_houston", "name": "Dan Houston", "club": "Collingwood", "pos": ["DEF"], "points": 66.8 },
+{ "id": "coll_howe", "name": "Jeremy Howe", "club": "Collingwood", "pos": ["DEF"], "points": 51.9 },
+
+{ "id": "coll_howes", "name": "Noah Howes", "club": "Collingwood", "pos": ["FWD"], "points": 0 },
+{ "id": "coll_jiath", "name": "Tew Jiath", "club": "Collingwood", "pos": ["DEF"], "points": 0 },
+
+{ "id": "coll_lipinski", "name": "Patrick Lipinski", "club": "Collingwood", "pos": ["MID","FWD"], "points": 66.9 },
+{ "id": "coll_long", "name": "Ned Long", "club": "Collingwood", "pos": ["MID"], "points": 77.0 },
+
+{ "id": "coll_maynard", "name": "Brayden Maynard", "club": "Collingwood", "pos": ["DEF"], "points": 66.4 },
+{ "id": "coll_mccarthy", "name": "Zac McCarthy", "club": "Collingwood", "pos": ["MID"], "points": 0 },
+{ "id": "coll_mccreery", "name": "Beau McCreery", "club": "Collingwood", "pos": ["FWD"], "points": 54.2 },
+{ "id": "coll_mcinnes", "name": "Reef McInnes", "club": "Collingwood", "pos": ["FWD"], "points": 34.3 },
+{ "id": "coll_mcstay", "name": "Daniel McStay", "club": "Collingwood", "pos": ["FWD"], "points": 56.6 },
+
+{ "id": "coll_membrey", "name": "Tim Membrey", "club": "Collingwood", "pos": ["FWD"], "points": 51.8 },
+{ "id": "coll_moore", "name": "Darcy Moore", "club": "Collingwood", "pos": ["DEF"], "points": 44.2 },
+{ "id": "coll_parker", "name": "Wil Parker", "club": "Collingwood", "pos": ["DEF"], "points": 31.7 },
+
+{ "id": "coll_pendlebury", "name": "Scott Pendlebury", "club": "Collingwood", "pos": ["MID"], "points": 86.5 },
+{ "id": "coll_perryman", "name": "Harry Perryman", "club": "Collingwood", "pos": ["MID"], "points": 63.0 },
+{ "id": "coll_prindable", "name": "Tyan Prindable", "club": "Collingwood", "pos": ["MID"], "points": 0 },
+
+{ "id": "coll_quaynor", "name": "Isaac Quaynor", "club": "Collingwood", "pos": ["DEF"], "points": 60.0 },
+{ "id": "coll_ryan", "name": "Jakob Ryan", "club": "Collingwood", "pos": ["DEF"], "points": 0 },
+
+{ "id": "coll_schultz", "name": "Lachie Schultz", "club": "Collingwood", "pos": ["FWD"], "points": 76.6 },
+{ "id": "coll_sidebottom", "name": "Steele Sidebottom", "club": "Collingwood", "pos": ["MID"], "points": 86.0 },
+
+{ "id": "coll_smit", "name": "Iliro Smit", "club": "Collingwood", "pos": ["RUCK"], "points": 0 },
+{ "id": "coll_steele", "name": "Roan Steele", "club": "Collingwood", "pos": ["FWD"], "points": 46.0 },
+{ "id": "coll_steene", "name": "Oscar Steene", "club": "Collingwood", "pos": ["RUCK"], "points": 0 },
+
+{ "id": "coll_sullivan", "name": "Lachie Sullivan", "club": "Collingwood", "pos": ["MID"], "points": 43.9 },
+{ "id": "coll_swadling", "name": "Samuel Swadling", "club": "Collingwood", "pos": ["MID"], "points": 0 },
+
+{ "id": "coll_west", "name": "Charlie West", "club": "Collingwood", "pos": ["FWD"], "points": 19.0 },
+
+{ "id": "ess_blakiston", "name": "Lachie Blakiston", "club": "Essendon", "pos": ["DEF"], "points": 38 },
+
+{ "id": "ess_bryan", "name": "Nick Bryan", "club": "Essendon", "pos": ["RUCK","FWD"], "points": 57.8 },
+{ "id": "ess_caddy", "name": "Nate Caddy", "club": "Essendon", "pos": ["FWD"], "points": 53.5 },
+{ "id": "ess_caldwell", "name": "Jye Caldwell", "club": "Essendon", "pos": ["MID"], "points": 103.6 },
+
+{ "id": "ess_clarke", "name": "Angus Clarke", "club": "Essendon", "pos": ["DEF","MID"], "points": 62.2 },
+{ "id": "ess_cox", "name": "Nik Cox", "club": "Essendon", "pos": ["MID"], "points": 0 },
+{ "id": "ess_daywicks", "name": "Archer Day-Wicks", "club": "Essendon", "pos": ["MID","FWD"], "points": 33 },
+{ "id": "ess_demicoli", "name": "James Demicoli", "club": "Essendon", "pos": ["MID"], "points": 6.7 },
+
+{ "id": "ess_durham", "name": "Sam Durham", "club": "Essendon", "pos": ["MID"], "points": 78.4 },
+{ "id": "ess_duursma", "name": "Xavier Duursma", "club": "Essendon", "pos": ["MID"], "points": 78.8 },
+{ "id": "ess_edwards", "name": "Thomas Edwards", "club": "Essendon", "pos": ["FWD"], "points": 0 },
+{ "id": "ess_elachkar", "name": "Hussien El Achkar", "club": "Essendon", "pos": ["MID"], "points": 0 },
+
+{ "id": "ess_elhawli", "name": "Saad El-Hawli", "club": "Essendon", "pos": ["DEF","MID"], "points": 44.2 },
+{ "id": "ess_farrow", "name": "Jacob Farrow", "club": "Essendon", "pos": ["MID"], "points": 0 },
+{ "id": "ess_gerreyn", "name": "Kayle Gerreyn", "club": "Essendon", "pos": ["RUCK"], "points": 0 },
+
+{ "id": "ess_gresham", "name": "Jade Gresham", "club": "Essendon", "pos": ["MID","FWD"], "points": 53.6 },
+{ "id": "ess_guelfi", "name": "Matt Guelfi", "club": "Essendon", "pos": ["FWD"], "points": 42.4 },
+{ "id": "ess_hayes", "name": "Lewis Hayes", "club": "Essendon", "pos": ["DEF"], "points": 52.0 },
+
+{ "id": "ess_johnson", "name": "Zak Johnson", "club": "Essendon", "pos": ["MID"], "points": 50.4 },
+{ "id": "ess_jones", "name": "Harrison Jones", "club": "Essendon", "pos": ["FWD"], "points": 50.0 },
+{ "id": "ess_kako", "name": "Isaac Kako", "club": "Essendon", "pos": ["FWD"], "points": 47.0 },
+{ "id": "ess_kondogiannis", "name": "Max Kondogiannis", "club": "Essendon", "pos": ["MID"], "points": 0 },
+
+{ "id": "ess_langford", "name": "Kyle Langford", "club": "Essendon", "pos": ["MID","FWD"], "points": 49.9 },
+{ "id": "ess_lual", "name": "Luamon Lual", "club": "Essendon", "pos": ["DEF"], "points": 37.8 },
+{ "id": "ess_martin", "name": "Nic Martin", "club": "Essendon", "pos": ["FWD"], "points": 97.4 },
+
+{ "id": "ess_may", "name": "Archer May", "club": "Essendon", "pos": ["DEF"], "points": 51.3 },
+{ "id": "ess_mcgrath", "name": "Andrew McGrath", "club": "Essendon", "pos": ["DEF","MID"], "points": 74.9 },
+{ "id": "ess_mckay", "name": "Ben McKay", "club": "Essendon", "pos": ["DEF"], "points": 39.0 },
+
+{ "id": "ess_merrett", "name": "Zach Merrett", "club": "Essendon", "pos": ["MID"], "points": 102.8 },
+{ "id": "ess_nguyen", "name": "Jayden Nguyen", "club": "Essendon", "pos": ["DEF"], "points": 35.2 },
+
+{ "id": "ess_parish", "name": "Darcy Parish", "club": "Essendon", "pos": ["MID"], "points": 85.3 },
+{ "id": "ess_perkins", "name": "Archie Perkins", "club": "Essendon", "pos": ["FWD"], "points": 57.0 },
+{ "id": "ess_prior", "name": "Jaxon Prior", "club": "Essendon", "pos": ["MID"], "points": 62.5 },
+
+{ "id": "ess_redman", "name": "Mason Redman", "club": "Essendon", "pos": ["DEF"], "points": 85.8 },
+{ "id": "ess_reid", "name": "Zach Reid", "club": "Essendon", "pos": ["DEF"], "points": 75.4 },
+{ "id": "ess_ridley", "name": "Jordan Ridley", "club": "Essendon", "pos": ["DEF"], "points": 63.2 },
+
+{ "id": "ess_roberts", "name": "Archie Roberts", "club": "Essendon", "pos": ["DEF"], "points": 85.9 },
+{ "id": "ess_robey", "name": "Sullivan Robey", "club": "Essendon", "pos": ["MID"], "points": 0 },
+
+{ "id": "ess_setterfield", "name": "Will Setterfield", "club": "Essendon", "pos": ["MID"], "points": 95.9 },
+{ "id": "ess_sharp", "name": "Dyson Sharp", "club": "Essendon", "pos": ["MID"], "points": 0 },
+
+{ "id": "ess_tsatas", "name": "Elijah Tsatas", "club": "Essendon", "pos": ["MID"], "points": 49.8 },
+{ "id": "ess_unwin", "name": "Rhys Unwin", "club": "Essendon", "pos": ["MID"], "points": 28.7 },
+
+{ "id": "ess_visentini", "name": "Vigo Visentini", "club": "Essendon", "pos": ["RUCK"], "points": 49.5 },
+{ "id": "ess_wright", "name": "Peter Wright", "club": "Essendon", "pos": ["FWD"], "points": 73.9 },
+
+{ "id": "frem_amiss", "name": "Jye Amiss", "club": "Fremantle", "pos": ["FWD"], "points": 41.0 },
+{ "id": "frem_banfield", "name": "Bailey Banfield", "club": "Fremantle", "pos": ["FWD"], "points": 53.0 },
+{ "id": "frem_bolton", "name": "Shai Bolton", "club": "Fremantle", "pos": ["MID","FWD"], "points": 70.0 },
+{ "id": "frem_brayshaw", "name": "Andrew Brayshaw", "club": "Fremantle", "pos": ["MID"], "points": 101.0 },
+
+{ "id": "frem_carr", "name": "Jaren Carr", "club": "Fremantle", "pos": ["FWD"], "points": 0 },
+{ "id": "frem_chapman", "name": "Heath Chapman", "club": "Fremantle", "pos": ["DEF"], "points": 53.6 },
+{ "id": "frem_clark", "name": "Jordan Clark", "club": "Fremantle", "pos": ["DEF"], "points": 90.2 },
+{ "id": "frem_cox_brennan", "name": "Brennan Cox", "club": "Fremantle", "pos": ["DEF"], "points": 44.4 },
+
+{ "id": "frem_cox_mason", "name": "Mason Cox", "club": "Fremantle", "pos": ["RUCK","FWD"], "points": 42.8 },
+{ "id": "frem_darcy", "name": "Sean Darcy", "club": "Fremantle", "pos": ["RUCK"], "points": 64.2 },
+
+{ "id": "frem_davies", "name": "Hugh Davies", "club": "Fremantle", "pos": ["DEF"], "points": 0 },
+{ "id": "frem_draper", "name": "Joshua Draper", "club": "Fremantle", "pos": ["FWD"], "points": 31.5 },
+{ "id": "frem_dudley", "name": "Isaiah Dudley", "club": "Fremantle", "pos": ["FWD"], "points": 36.7 },
+
+{ "id": "frem_erasmus", "name": "Neil Erasmus", "club": "Fremantle", "pos": ["MID"], "points": 56.8 },
+{ "id": "frem_frederick", "name": "Michael Frederick", "club": "Fremantle", "pos": ["FWD"], "points": 58.8 },
+
+{ "id": "frem_jackson", "name": "Luke Jackson", "club": "Fremantle", "pos": ["RUCK","FWD"], "points": 94.8 },
+{ "id": "frem_johnson", "name": "Matthew Johnson", "club": "Fremantle", "pos": ["MID"], "points": 70.5 },
+
+{ "id": "frem_mcdonald", "name": "Oscar McDonald", "club": "Fremantle", "pos": ["DEF"], "points": 49.4 },
+{ "id": "frem_mcvee", "name": "Judd McVee", "club": "Fremantle", "pos": ["DEF","MID"], "points": 54.5 },
+
+{ "id": "frem_murphy", "name": "Ollie Murphy", "club": "Fremantle", "pos": ["DEF"], "points": 0 },
+{ "id": "frem_nicholls", "name": "Charlie Nicholls", "club": "Fremantle", "pos": ["FWD"], "points": 0 },
+
+{ "id": "frem_odriscoll", "name": "Nathan O'Driscoll", "club": "Fremantle", "pos": ["MID"], "points": 64.4 },
+{ "id": "frem_omeara", "name": "Jaeger O'Meara", "club": "Fremantle", "pos": ["MID"], "points": 63.2 },
+
+{ "id": "frem_pearce", "name": "Alex Pearce", "club": "Fremantle", "pos": ["DEF"], "points": 45.9 },
+{ "id": "frem_reid", "name": "Murphy Reid", "club": "Fremantle", "pos": ["MID"], "points": 55.4 },
+
+{ "id": "frem_riddle", "name": "Aiden Riddle", "club": "Fremantle", "pos": ["RUCK"], "points": 0 },
+{ "id": "frem_ryan", "name": "Luke Ryan", "club": "Fremantle", "pos": ["DEF"], "points": 81.9 },
+
+{ "id": "frem_serong", "name": "Caleb Serong", "club": "Fremantle", "pos": ["MID"], "points": 92.4 },
+{ "id": "frem_sharp", "name": "Jeremy Sharp", "club": "Fremantle", "pos": ["MID"], "points": 48.1 },
+{ "id": "frem_simpson", "name": "Cooper Simpson", "club": "Fremantle", "pos": ["MID"], "points": 41.0 },
+
+{ "id": "frem_sturt", "name": "Sam Sturt", "club": "Fremantle", "pos": ["FWD"], "points": 0 },
+{ "id": "frem_sweid", "name": "Adam Sweid", "club": "Fremantle", "pos": ["MID"], "points": 0 },
+{ "id": "frem_switkowski", "name": "Sam Switkowski", "club": "Fremantle", "pos": ["FWD"], "points": 55.1 },
+
+{ "id": "frem_treacy", "name": "Josh Treacy", "club": "Fremantle", "pos": ["FWD"], "points": 62.7 },
+{ "id": "frem_voss", "name": "Patrick Voss", "club": "Fremantle", "pos": ["FWD"], "points": 54.8 },
+
+{ "id": "frem_wagner", "name": "Corey Wagner", "club": "Fremantle", "pos": ["DEF","MID"], "points": 64.2 },
+{ "id": "frem_walker", "name": "Brandon Walker", "club": "Fremantle", "pos": ["DEF"], "points": 34.0 },
+
+{ "id": "frem_worner", "name": "Karl Worner", "club": "Fremantle", "pos": ["DEF","MID"], "points": 55.2 },
+{ "id": "frem_young", "name": "Hayden Young", "club": "Fremantle", "pos": ["DEF"], "points": 62.5 },
+{ "id": "geel_atkins", "name": "Tom Atkins", "club": "Geelong", "pos": ["DEF","MID"], "points": 87.8 },
+{ "id": "geel_barker", "name": "Harley Barker", "club": "Geelong", "pos": ["MID"], "points": 0 },
+{ "id": "geel_bews", "name": "Jed Bews", "club": "Geelong", "pos": ["DEF"], "points": 60.8 },
+
+{ "id": "geel_blicavs", "name": "Mark Blicavs", "club": "Geelong", "pos": ["MID","RUCK"], "points": 70.9 },
+{ "id": "geel_bowes", "name": "Jack Bowes", "club": "Geelong", "pos": ["DEF"], "points": 58.8 },
+{ "id": "geel_bruhn", "name": "Tanner Bruhn", "club": "Geelong", "pos": ["MID","FWD"], "points": 0 },
+
+{ "id": "geel_burke", "name": "Cillian Burke", "club": "Geelong", "pos": ["DEF"], "points": 0 },
+{ "id": "geel_cameron", "name": "Jeremy Cameron", "club": "Geelong", "pos": ["FWD"], "points": 83.7 },
+
+{ "id": "geel_clark", "name": "Jhye Clark", "club": "Geelong", "pos": ["MID"], "points": 38.3 },
+{ "id": "geel_close", "name": "Brad Close", "club": "Geelong", "pos": ["FWD"], "points": 54.0 },
+
+{ "id": "geel_conway", "name": "Toby Conway", "club": "Geelong", "pos": ["RUCK"], "points": 0 },
+{ "id": "geel_dangerfield", "name": "Patrick Dangerfield", "club": "Geelong", "pos": ["MID"], "points": 63.5 },
+
+{ "id": "geel_dekoning", "name": "Sam De Koning", "club": "Geelong", "pos": ["DEF"], "points": 55.9 },
+{ "id": "geel_dempsey", "name": "Oliver Dempsey", "club": "Geelong", "pos": ["FWD"], "points": 72.7 },
+
+{ "id": "geel_edwards", "name": "Mitchell Edwards", "club": "Geelong", "pos": ["RUCK"], "points": 0 },
+{ "id": "geel_guthrie", "name": "Zach Guthrie", "club": "Geelong", "pos": ["DEF"], "points": 76.7 },
+
+{ "id": "geel_henry_oliver", "name": "Oliver Henry", "club": "Geelong", "pos": ["FWD"], "points": 41.0 },
+{ "id": "geel_henry_jack", "name": "Jack Henry", "club": "Geelong", "pos": ["DEF"], "points": 60.2 },
+
+{ "id": "geel_hoffman", "name": "Lennox Hoffman", "club": "Geelong", "pos": ["DEF"], "points": 0 },
+{ "id": "geel_holmes_hunter", "name": "Hunter Holmes", "club": "Geelong", "pos": ["MID"], "points": 0 },
+
+{ "id": "geel_holmes_max", "name": "Max Holmes", "club": "Geelong", "pos": ["MID"], "points": 100.9 },
+{ "id": "geel_humphries", "name": "Lawson Humphries", "club": "Geelong", "pos": ["MID"], "points": 70.4 },
+
+{ "id": "geel_knevitt", "name": "Mitchell Knevitt", "club": "Geelong", "pos": ["MID"], "points": 51.9 },
+{ "id": "geel_kolodjashnij", "name": "Jake Kolodjashnij", "club": "Geelong", "pos": ["DEF"], "points": 0 },
+
+{ "id": "geel_mannagh", "name": "Shaun Mannagh", "club": "Geelong", "pos": ["MID"], "points": 88.0 },
+{ "id": "geel_martin", "name": "Jack Martin", "club": "Geelong", "pos": ["FWD"], "points": 73.0 },
+
+{ "id": "geel_matofai", "name": "Keighton Matofai-Forbes", "club": "Geelong", "pos": ["FWD"], "points": 0 },
+{ "id": "geel_miers", "name": "Gryan Miers", "club": "Geelong", "pos": ["FWD"], "points": 93.8 },
+
+{ "id": "geel_molier", "name": "Jacob Molier", "club": "Geelong", "pos": ["RUCK"], "points": 0 },
+{ "id": "geel_mullin", "name": "Oisin Mullin", "club": "Geelong", "pos": ["DEF"], "points": 46.6 },
+
+{ "id": "geel_neale", "name": "Shannon Neale", "club": "Geelong", "pos": ["FWD"], "points": 61.3 },
+{ "id": "geel_oconnor", "name": "Mark O'Connor", "club": "Geelong", "pos": ["DEF"], "points": 64.5 },
+
+{ "id": "geel_osullivan", "name": "Connor O'Sullivan", "club": "Geelong", "pos": ["DEF"], "points": 57.5 },
+{ "id": "geel_pike", "name": "Joe Pike", "club": "Geelong", "pos": ["RUCK"], "points": 0 },
+
+{ "id": "geel_polkinghorne", "name": "Jay Polkinghorne", "club": "Geelong", "pos": ["FWD"], "points": 0 },
+{ "id": "geel_smith", "name": "Bailey Smith", "club": "Geelong", "pos": ["MID"], "points": 116.3 },
+
+{ "id": "geel_stanley", "name": "Rhys Stanley", "club": "Geelong", "pos": ["RUCK"], "points": 64.4 },
+{ "id": "geel_stengle", "name": "Tyson Stengle", "club": "Geelong", "pos": ["FWD"], "points": 61.7 },
+
+{ "id": "geel_stevens", "name": "George Stevens", "club": "Geelong", "pos": ["MID"], "points": 52.5 },
+{ "id": "geel_stewart", "name": "Tom Stewart", "club": "Geelong", "pos": ["DEF"], "points": 80.3 },
+
+{ "id": "geel_wiltshire", "name": "Oliver Wiltshire", "club": "Geelong", "pos": ["MID","FWD"], "points": 34.5 },
+{ "id": "geel_worpel", "name": "James Worpel", "club": "Geelong", "pos": ["MID"], "points": 73.8 },
+
+{ "id": "gc_adams", "name": "Oscar Adams", "club": "Gold Coast", "pos": ["DEF"], "points": 26.4 },
+{ "id": "gc_addinsall", "name": "Beau Addinsall", "club": "Gold Coast", "pos": ["MID"], "points": 0 },
+{ "id": "gc_anderson", "name": "Noah Anderson", "club": "Gold Coast", "pos": ["MID"], "points": 99.5 },
+{ "id": "gc_andrew", "name": "Mac Andrew", "club": "Gold Coast", "pos": ["DEF"], "points": 56.0 },
+
+{ "id": "gc_ballard", "name": "Charlie Ballard", "club": "Gold Coast", "pos": ["DEF"], "points": 30.0 },
+{ "id": "gc_bell", "name": "Cooper Bell", "club": "Gold Coast", "pos": ["DEF"], "points": 0 },
+{ "id": "gc_clohesy", "name": "Sam Clohesy", "club": "Gold Coast", "pos": ["DEF"], "points": 62.1 },
+{ "id": "gc_collins", "name": "Samuel Collins", "club": "Gold Coast", "pos": ["DEF"], "points": 51.9 },
+
+{ "id": "gc_coulson", "name": "Koby Coulson", "club": "Gold Coast", "pos": ["MID"], "points": 0 },
+{ "id": "gc_davies", "name": "Alex Davies", "club": "Gold Coast", "pos": ["MID","FWD"], "points": 62.0 },
+
+{ "id": "gc_eastham", "name": "Asher Eastham", "club": "Gold Coast", "pos": ["FWD"], "points": 0 },
+{ "id": "gc_evans", "name": "Zak Evans", "club": "Gold Coast", "pos": ["DEF"], "points": 0 },
+
+{ "id": "gc_farrar", "name": "Jy Farrar", "club": "Gold Coast", "pos": ["DEF"], "points": 61.2 },
+{ "id": "gc_graham_will", "name": "Will Graham", "club": "Gold Coast", "pos": ["MID"], "points": 55.2 },
+{ "id": "gc_graham_caleb", "name": "Caleb Graham", "club": "Gold Coast", "pos": ["DEF"], "points": 0 },
+
+{ "id": "gc_gulbin", "name": "Lachlan Gulbin", "club": "Gold Coast", "pos": ["FWD"], "points": 50.0 },
+{ "id": "gc_himmelberg", "name": "Elliott Himmelberg", "club": "Gold Coast", "pos": ["FWD"], "points": 0 },
+{ "id": "gc_holman", "name": "Nick Holman", "club": "Gold Coast", "pos": ["FWD"], "points": 36.7 },
+
+{ "id": "gc_humphrey", "name": "Bailey Humphrey", "club": "Gold Coast", "pos": ["MID","FWD"], "points": 68.3 },
+{ "id": "gc_jeffrey", "name": "Joel Jeffrey", "club": "Gold Coast", "pos": ["FWD"], "points": 75.7 },
+{ "id": "gc_jepson", "name": "Ben Jepson", "club": "Gold Coast", "pos": ["DEF"], "points": 38.0 },
+
+{ "id": "gc_king", "name": "Ben King", "club": "Gold Coast", "pos": ["FWD"], "points": 50.3 },
+{ "id": "gc_knobel", "name": "Max Knobel", "club": "Gold Coast", "pos": ["RUCK"], "points": 0 },
+
+{ "id": "gc_lewis", "name": "Caleb Lewis", "club": "Gold Coast", "pos": ["FWD"], "points": 0 },
+{ "id": "gc_lombard", "name": "Leonardo Lombard", "club": "Gold Coast", "pos": ["FWD"], "points": 23.0 },
+
+{ "id": "gc_long", "name": "Ben Long", "club": "Gold Coast", "pos": ["DEF","FWD"], "points": 62.2 },
+{ "id": "gc_miller", "name": "Touk Miller", "club": "Gold Coast", "pos": ["MID"], "points": 91.0 },
+
+{ "id": "gc_moyle", "name": "Ned Moyle", "club": "Gold Coast", "pos": ["RUCK"], "points": 51.7 },
+{ "id": "gc_murray", "name": "Jai Murray", "club": "Gold Coast", "pos": ["MID"], "points": 0 },
+
+{ "id": "gc_noble", "name": "John Noble", "club": "Gold Coast", "pos": ["DEF"], "points": 90.9 },
+{ "id": "gc_patterson", "name": "Dylan Patterson", "club": "Gold Coast", "pos": ["MID"], "points": 0 },
+
+{ "id": "gc_petracca", "name": "Christian Petracca", "club": "Gold Coast", "pos": ["MID","FWD"], "points": 90.3 },
+{ "id": "gc_powell", "name": "Wil Powell", "club": "Gold Coast", "pos": ["DEF"], "points": 66.9 },
+
+{ "id": "gc_read", "name": "Ethan Read", "club": "Gold Coast", "pos": ["FWD"], "points": 43.2 },
+{ "id": "gc_rioli", "name": "Daniel Rioli", "club": "Gold Coast", "pos": ["DEF"], "points": 71.2 },
+
+{ "id": "gc_rogers", "name": "Jake Rogers", "club": "Gold Coast", "pos": ["FWD"], "points": 27.3 },
+{ "id": "gc_rowell", "name": "Matt Rowell", "club": "Gold Coast", "pos": ["MID"], "points": 101.2 },
+
+{ "id": "gc_thomas", "name": "Avery Thomas", "club": "Gold Coast", "pos": ["MID"], "points": 0 },
+{ "id": "gc_uglehagan", "name": "Jamarra Ugle-Hagan", "club": "Gold Coast", "pos": ["FWD"], "points": 0 },
+
+{ "id": "gc_uwland_z", "name": "Zeke Uwland", "club": "Gold Coast", "pos": ["MID"], "points": 0 },
+{ "id": "gc_uwland_b", "name": "Bodhi Uwland", "club": "Gold Coast", "pos": ["DEF","MID"], "points": 63.1 },
+
+{ "id": "gc_walter", "name": "Jed Walter", "club": "Gold Coast", "pos": ["FWD"], "points": 37.9 },
+{ "id": "gc_weller", "name": "Lachlan Weller", "club": "Gold Coast", "pos": ["DEF"], "points": 54.4 },
+
+{ "id": "gc_witts", "name": "Jarrod Witts", "club": "Gold Coast", "pos": ["RUCK"], "points": 92.4 },
+
+{ "id": "gws_aleer", "name": "Leek Aleer", "club": "GWS", "pos": ["DEF"], "points": 36.3 },
+{ "id": "gws_angove", "name": "Cody Angove", "club": "GWS", "pos": ["FWD"], "points": 42.0 },
+{ "id": "gws_angwin", "name": "Ryan Angwin", "club": "GWS", "pos": ["MID","FWD"], "points": 68.3 },
+{ "id": "gws_ash", "name": "Lachie Ash", "club": "GWS", "pos": ["DEF"], "points": 100.1 },
+{ "id": "gws_bedford", "name": "Toby Bedford", "club": "GWS", "pos": ["FWD"], "points": 56.2 },
+
+{ "id": "gws_briggs", "name": "Kieren Briggs", "club": "GWS", "pos": ["RUCK"], "points": 70.4 },
+{ "id": "gws_brown", "name": "Callum M. Brown", "club": "GWS", "pos": ["DEF"], "points": 57.9 },
+{ "id": "gws_buckley", "name": "Jack Buckley", "club": "GWS", "pos": ["DEF"], "points": 55.2 },
+{ "id": "gws_cadman", "name": "Aaron Cadman", "club": "GWS", "pos": ["FWD"], "points": 59.4 },
+
+{ "id": "gws_callaghan", "name": "Finn Callaghan", "club": "GWS", "pos": ["MID"], "points": 99.0 },
+{ "id": "gws_coniglio", "name": "Stephen Coniglio", "club": "GWS", "pos": ["MID","FWD"], "points": 59.4 },
+{ "id": "gws_daniels", "name": "Brent Daniels", "club": "GWS", "pos": ["FWD"], "points": 47.7 },
+
+{ "id": "gws_davis", "name": "Finnegan Davis", "club": "GWS", "pos": ["MID"], "points": 0 },
+{ "id": "gws_delana", "name": "Josaia Delana", "club": "GWS", "pos": ["DEF"], "points": 28.0 },
+{ "id": "gws_fonti", "name": "Joe Fonti", "club": "GWS", "pos": ["DEF"], "points": 49.7 },
+
+{ "id": "gws_gothard", "name": "Phoenix Gothard", "club": "GWS", "pos": ["FWD"], "points": 0 },
+{ "id": "gws_green", "name": "Tom Green", "club": "GWS", "pos": ["MID"], "points": 97.5 },
+{ "id": "gws_greene", "name": "Toby Greene", "club": "GWS", "pos": ["FWD"], "points": 81.0 },
+
+{ "id": "gws_gruzewski", "name": "Max Gruzewski", "club": "GWS", "pos": ["DEF"], "points": 37.9 },
+{ "id": "gws_hannaford", "name": "Oliver Hannaford", "club": "GWS", "pos": ["FWD"], "points": 0 },
+{ "id": "gws_himmelberg", "name": "Harry Himmelberg", "club": "GWS", "pos": ["DEF"], "points": 78.2 },
+
+{ "id": "gws_hogan", "name": "Jesse Hogan", "club": "GWS", "pos": ["FWD"], "points": 65.3 },
+{ "id": "gws_idun", "name": "Connor Idun", "club": "GWS", "pos": ["DEF"], "points": 72.7 },
+{ "id": "gws_jones", "name": "Darcy Jones", "club": "GWS", "pos": ["FWD"], "points": 62.1 },
+
+{ "id": "gws_kelly", "name": "Josh Kelly", "club": "GWS", "pos": ["MID"], "points": 80.9 },
+{ "id": "gws_laverde", "name": "Jayden Laverde", "club": "GWS", "pos": ["DEF"], "points": 65.6 },
+{ "id": "gws_leake", "name": "James Leake", "club": "GWS", "pos": ["DEF"], "points": 31.7 },
+
+{ "id": "gws_madden", "name": "Nicholas Madden", "club": "GWS", "pos": ["RUCK","FWD"], "points": 63.3 },
+{ "id": "gws_mcmullin", "name": "Toby McMullin", "club": "GWS", "pos": ["FWD"], "points": 42.0 },
+{ "id": "gws_ohalloran", "name": "Xavier O'Halloran", "club": "GWS", "pos": ["MID"], "points": 57.5 },
+
+{ "id": "gws_oliver_h", "name": "Harrison Oliver", "club": "GWS", "pos": ["DEF"], "points": 0 },
+{ "id": "gws_oliver_c", "name": "Clayton Oliver", "club": "GWS", "pos": ["MID"], "points": 89.7 },
+{ "id": "gws_ough", "name": "Jack Ough", "club": "GWS", "pos": ["MID"], "points": 0 },
+
+{ "id": "gws_riccardi", "name": "Jake Riccardi", "club": "GWS", "pos": ["FWD"], "points": 68.2 },
+{ "id": "gws_rowston", "name": "Harry Rowston", "club": "GWS", "pos": ["MID"], "points": 51.9 },
+
+{ "id": "gws_smith", "name": "Logan Smith", "club": "GWS", "pos": ["RUCK"], "points": 0 },
+{ "id": "gws_stone", "name": "Conor Stone", "club": "GWS", "pos": ["FWD"], "points": 50.9 },
+{ "id": "gws_stringer", "name": "Jake Stringer", "club": "GWS", "pos": ["FWD"], "points": 53.5 },
+
+{ "id": "gws_s_taylor", "name": "Sam Taylor", "club": "GWS", "pos": ["DEF"], "points": 61.9 },
+{ "id": "gws_o_taylor", "name": "Oskar Taylor", "club": "GWS", "pos": ["MID"], "points": 0 },
+
+{ "id": "gws_thomas", "name": "Harvey Thomas", "club": "GWS", "pos": ["MID"], "points": 51.2 },
+{ "id": "gws_wardius", "name": "Nathan Wardius", "club": "GWS", "pos": ["FWD"], "points": 0 },
+
+{ "id": "gws_whitfield", "name": "Lachie Whitfield", "club": "GWS", "pos": ["MID"], "points": 105.2 },
+
+{ "id": "haw_amon", "name": "Karl Amon", "club": "Hawthorn", "pos": ["MID"], "points": 88.6 },
+{ "id": "haw_anderson", "name": "Cody Anderson", "club": "Hawthorn", "pos": ["MID"], "points": 0 },
+{ "id": "haw_barrass", "name": "Tom Barrass", "club": "Hawthorn", "pos": ["DEF"], "points": 41.1 },
+{ "id": "haw_battle", "name": "Josh Battle", "club": "Hawthorn", "pos": ["DEF"], "points": 70.3 },
+{ "id": "haw_blanck", "name": "James Blanck", "club": "Hawthorn", "pos": ["DEF"], "points": 0 },
+
+{ "id": "haw_butler", "name": "Sam Butler", "club": "Hawthorn", "pos": ["FWD"], "points": 58.0 },
+{ "id": "haw_chol", "name": "Mabior Chol", "club": "Hawthorn", "pos": ["FWD"], "points": 59.8 },
+{ "id": "haw_dambrosio", "name": "Massimo D'Ambrosio", "club": "Hawthorn", "pos": ["DEF"], "points": 70.4 },
+
+{ "id": "haw_dalton", "name": "Jack Dalton", "club": "Hawthorn", "pos": ["MID"], "points": 0 },
+{ "id": "haw_day", "name": "Will Day", "club": "Hawthorn", "pos": ["DEF"], "points": 86.8 },
+{ "id": "haw_dear", "name": "Calsher Dear", "club": "Hawthorn", "pos": ["FWD"], "points": 42.9 },
+
+{ "id": "haw_ginnivan", "name": "Jack Ginnivan", "club": "Hawthorn", "pos": ["FWD"], "points": 75.3 },
+{ "id": "haw_gunston", "name": "Jack Gunston", "club": "Hawthorn", "pos": ["FWD"], "points": 74.1 },
+{ "id": "haw_hardwick", "name": "Blake Hardwick", "club": "Hawthorn", "pos": ["DEF"], "points": 62.7 },
+
+{ "id": "haw_hill", "name": "Matt Hill", "club": "Hawthorn", "pos": ["DEF"], "points": 0 },
+{ "id": "haw_hustwaite", "name": "Henry Hustwaite", "club": "Hawthorn", "pos": ["MID"], "points": 51.5 },
+
+{ "id": "haw_impey", "name": "Jarman Impey", "club": "Hawthorn", "pos": ["DEF"], "points": 77.2 },
+{ "id": "haw_leray", "name": "Matthew LeRay", "club": "Hawthorn", "pos": ["MID"], "points": 0 },
+{ "id": "haw_lewis", "name": "Mitch Lewis", "club": "Hawthorn", "pos": ["FWD"], "points": 45.5 },
+
+{ "id": "haw_macdonald_b", "name": "Bailey Macdonald", "club": "Hawthorn", "pos": ["DEF"], "points": 18.8 },
+{ "id": "haw_macdonald_c", "name": "Connor Macdonald", "club": "Hawthorn", "pos": ["FWD"], "points": 68.0 },
+
+{ "id": "haw_mackenzie", "name": "Cam Mackenzie", "club": "Hawthorn", "pos": ["MID"], "points": 62.5 },
+{ "id": "haw_maginness", "name": "Finn Maginness", "club": "Hawthorn", "pos": ["MID"], "points": 48.9 },
+
+{ "id": "haw_mccabe", "name": "William McCabe", "club": "Hawthorn", "pos": ["DEF"], "points": 0 },
+{ "id": "haw_meek", "name": "Lloyd Meek", "club": "Hawthorn", "pos": ["RUCK"], "points": 93.3 },
+
+{ "id": "haw_moore", "name": "Dylan Moore", "club": "Hawthorn", "pos": ["FWD"], "points": 81.8 },
+{ "id": "haw_morrison", "name": "Harry Morrison", "club": "Hawthorn", "pos": ["MID"], "points": 70.9 },
+
+{ "id": "haw_mraz", "name": "Noah Mraz", "club": "Hawthorn", "pos": ["DEF"], "points": 0 },
+{ "id": "haw_nairn", "name": "Cameron Nairn", "club": "Hawthorn", "pos": ["MID"], "points": 0 },
+
+{ "id": "haw_nash", "name": "Conor Nash", "club": "Hawthorn", "pos": ["MID"], "points": 74.1 },
+{ "id": "haw_newcombe", "name": "Jai Newcombe", "club": "Hawthorn", "pos": ["MID"], "points": 86.4 },
+
+{ "id": "haw_ramsden", "name": "Max Ramsden", "club": "Hawthorn", "pos": ["RUCK","FWD"], "points": 53.2 },
+{ "id": "haw_reeves", "name": "Ned Reeves", "club": "Hawthorn", "pos": ["RUCK"], "points": 63.0 },
+
+{ "id": "haw_ryan", "name": "Bodie Ryan", "club": "Hawthorn", "pos": ["DEF"], "points": 0 },
+{ "id": "haw_schubert", "name": "Aidan Schubert", "club": "Hawthorn", "pos": ["MID"], "points": 0 },
+
+{ "id": "haw_scrimshaw", "name": "Jack Scrimshaw", "club": "Hawthorn", "pos": ["DEF"], "points": 53.8 },
+{ "id": "haw_sicily", "name": "James Sicily", "club": "Hawthorn", "pos": ["DEF"], "points": 79.1 },
+
+{ "id": "haw_uhrhenry", "name": "Jaime Uhr-Henry", "club": "Hawthorn", "pos": ["RUCK"], "points": 0 },
+
+{ "id": "haw_ward", "name": "Josh Ward", "club": "Hawthorn", "pos": ["MID"], "points": 75.9 },
+{ "id": "haw_watson", "name": "Nick Watson", "club": "Hawthorn", "pos": ["MID","FWD"], "points": 49.9 },
+
+{ "id": "haw_weddle", "name": "Josh Weddle", "club": "Hawthorn", "pos": ["DEF"], "points": 69.7 },
+
+{ "id": "mel_adams", "name": "Jed Adams", "club": "Melbourne", "pos": ["DEF"], "points": 27.0 },
+{ "id": "mel_bowey", "name": "Jake Bowey", "club": "Melbourne", "pos": ["DEF"], "points": 86.4 },
+{ "id": "mel_campbell", "name": "Tom Campbell", "club": "Melbourne", "pos": ["RUCK","FWD"], "points": 0 },
+{ "id": "mel_chandler", "name": "Kade Chandler", "club": "Melbourne", "pos": ["FWD"], "points": 68.7 },
+{ "id": "mel_culley", "name": "Jai Culley", "club": "Melbourne", "pos": ["FWD"], "points": 59.8 },
+
+{ "id": "mel_fritsch", "name": "Bayley Fritsch", "club": "Melbourne", "pos": ["FWD"], "points": 63.4 },
+{ "id": "mel_gawn", "name": "Max Gawn", "club": "Melbourne", "pos": ["RUCK"], "points": 113.3 },
+{ "id": "mel_henderson", "name": "Jack Henderson", "club": "Melbourne", "pos": ["MID"], "points": 41.4 },
+{ "id": "mel_howes", "name": "Blake Howes", "club": "Melbourne", "pos": ["DEF"], "points": 43.8 },
+
+{ "id": "mel_jefferson", "name": "Matthew Jefferson", "club": "Melbourne", "pos": ["FWD"], "points": 28.7 },
+{ "id": "mel_jiath", "name": "Changkuoth Jiath", "club": "Melbourne", "pos": ["DEF"], "points": 53.6 },
+{ "id": "mel_johnson", "name": "Aidan Johnson", "club": "Melbourne", "pos": ["FWD"], "points": 30.8 },
+
+{ "id": "mel_kentfield", "name": "Luker Kentfield", "club": "Melbourne", "pos": ["FWD"], "points": 0 },
+{ "id": "mel_langdon", "name": "Ed Langdon", "club": "Melbourne", "pos": ["MID"], "points": 74.2 },
+{ "id": "mel_langford", "name": "Harvey Langford", "club": "Melbourne", "pos": ["MID"], "points": 62.7 },
+
+{ "id": "mel_laurie", "name": "Bailey Laurie", "club": "Melbourne", "pos": ["MID","FWD"], "points": 12.0 },
+{ "id": "mel_lever", "name": "Jake Lever", "club": "Melbourne", "pos": ["DEF"], "points": 52.2 },
+{ "id": "mel_lindsay", "name": "Xavier Lindsay", "club": "Melbourne", "pos": ["MID"], "points": 52.4 },
+
+{ "id": "mel_matthews", "name": "Thomas Matthews", "club": "Melbourne", "pos": ["MID"], "points": 0 },
+{ "id": "mel_may", "name": "Steven May", "club": "Melbourne", "pos": ["DEF"], "points": 72.1 },
+
+{ "id": "mel_mcadam", "name": "Shane McAdam", "club": "Melbourne", "pos": ["FWD"], "points": 0 },
+{ "id": "mel_mcdonald", "name": "Tom McDonald", "club": "Melbourne", "pos": ["FWD"], "points": 59.5 },
+{ "id": "mel_melksham", "name": "Jake Melksham", "club": "Melbourne", "pos": ["FWD"], "points": 54.5 },
+
+{ "id": "mel_mentha", "name": "Ricky Mentha", "club": "Melbourne", "pos": ["DEF","FWD"], "points": 0 },
+{ "id": "mel_mihocek", "name": "Brody Mihocek", "club": "Melbourne", "pos": ["FWD"], "points": 58.7 },
+{ "id": "mel_moniz", "name": "Andy Moniz-Wakefield", "club": "Melbourne", "pos": ["FWD"], "points": 0 },
+
+{ "id": "mel_petty", "name": "Harrison Petty", "club": "Melbourne", "pos": ["DEF"], "points": 48.1 },
+{ "id": "mel_pickett_k", "name": "Kysaiah Pickett", "club": "Melbourne", "pos": ["FWD"], "points": 87.2 },
+{ "id": "mel_pickett_l", "name": "Latrelle Pickett", "club": "Melbourne", "pos": ["MID"], "points": 0 },
+
+{ "id": "mel_rivers", "name": "Trent Rivers", "club": "Melbourne", "pos": ["DEF"], "points": 82.3 },
+{ "id": "mel_salem", "name": "Christian Salem", "club": "Melbourne", "pos": ["DEF"], "points": 93.0 },
+
+{ "id": "mel_sharp", "name": "Harry Sharp", "club": "Melbourne", "pos": ["MID"], "points": 30.6 },
+{ "id": "mel_sparrow", "name": "Tom Sparrow", "club": "Melbourne", "pos": ["MID","FWD"], "points": 61.1 },
+
+{ "id": "mel_steele", "name": "Jack Steele", "club": "Melbourne", "pos": ["MID"], "points": 95.9 },
+{ "id": "mel_taylor", "name": "Xavier Taylor", "club": "Melbourne", "pos": ["MID"], "points": 0 },
+
+{ "id": "mel_tholstrup", "name": "Koltyn Tholstrup", "club": "Melbourne", "pos": ["FWD"], "points": 33.8 },
+{ "id": "mel_turner", "name": "Daniel Turner", "club": "Melbourne", "pos": ["DEF"], "points": 58.2 },
+
+{ "id": "mel_vanrooyen", "name": "Jacob Van Rooyen", "club": "Melbourne", "pos": ["FWD"], "points": 53.7 },
+{ "id": "mel_viney", "name": "Jack Viney", "club": "Melbourne", "pos": ["MID"], "points": 88.4 },
+{ "id": "mel_windsor", "name": "Caleb Windsor", "club": "Melbourne", "pos": ["MID"], "points": 53.9 },
+
+{ "id": "nm_archer_jackson", "name": "Jackson Archer", "club": "North Melbourne", "pos": ["DEF"], "points": 27.0 },
+{ "id": "nm_banch", "name": "Zac Banch", "club": "North Melbourne", "pos": ["FWD"], "points": 31.5 },
+{ "id": "nm_colemanjones", "name": "Callum Coleman-Jones", "club": "North Melbourne", "pos": ["RUCK","FWD"], "points": 3.0 },
+{ "id": "nm_comben", "name": "Charlie Comben", "club": "North Melbourne", "pos": ["FWD"], "points": 47.6 },
+{ "id": "nm_corr", "name": "Aidan Corr", "club": "North Melbourne", "pos": ["DEF"], "points": 54.9 },
+
+{ "id": "nm_curtis", "name": "Paul Curtis", "club": "North Melbourne", "pos": ["FWD"], "points": 71.0 },
+{ "id": "nm_daniel", "name": "Caleb Daniel", "club": "North Melbourne", "pos": ["DEF"], "points": 85.0 },
+{ "id": "nm_darling", "name": "Jack Darling", "club": "North Melbourne", "pos": ["FWD"], "points": 51.1 },
+{ "id": "nm_daviesuniacke", "name": "Luke Davies-Uniacke", "club": "North Melbourne", "pos": ["MID"], "points": 87.7 },
+{ "id": "nm_dawson_wil", "name": "Wil Dawson", "club": "North Melbourne", "pos": ["DEF"], "points": 42.6 },
+
+{ "id": "nm_dovaston", "name": "Lachy Dovaston", "club": "North Melbourne", "pos": ["MID"], "points": 0 },
+{ "id": "nm_duursma_zane", "name": "Zane Duursma", "club": "North Melbourne", "pos": ["FWD"], "points": 31.0 },
+{ "id": "nm_fisher", "name": "Zac Fisher", "club": "North Melbourne", "pos": ["FWD"], "points": 42.3 },
+
+{ "id": "nm_george", "name": "Brayden George", "club": "North Melbourne", "pos": ["DEF"], "points": 0 },
+{ "id": "nm_goad", "name": "Taylor Goad", "club": "North Melbourne", "pos": ["RUCK"], "points": 0 },
+
+{ "id": "nm_goater", "name": "Josh Goater", "club": "North Melbourne", "pos": ["DEF","MID"], "points": 0 },
+{ "id": "nm_hansen", "name": "Robert Hansen", "club": "North Melbourne", "pos": ["FWD"], "points": 33.2 },
+{ "id": "nm_hardeman", "name": "Riley Hardeman", "club": "North Melbourne", "pos": ["DEF"], "points": 48.1 },
+
+{ "id": "nm_harvey", "name": "Cooper Harvey", "club": "North Melbourne", "pos": ["MID","FWD"], "points": 46.3 },
+{ "id": "nm_konstanty", "name": "Jacob Konstanty", "club": "North Melbourne", "pos": ["FWD"], "points": 43.4 },
+{ "id": "nm_larkey", "name": "Nick Larkey", "club": "North Melbourne", "pos": ["FWD"], "points": 58.6 },
+
+{ "id": "nm_logue", "name": "Griffin Logue", "club": "North Melbourne", "pos": ["DEF","FWD"], "points": 47.1 },
+{ "id": "nm_mcdonald_luke", "name": "Luke McDonald", "club": "North Melbourne", "pos": ["DEF"], "points": 60.7 },
+{ "id": "nm_mckercher", "name": "Colby McKercher", "club": "North Melbourne", "pos": ["MID","DEF"], "points": 78.5 },
+
+{ "id": "nm_mikunda", "name": "Hugo Mikunda", "club": "North Melbourne", "pos": ["MID"], "points": 0 },
+{ "id": "nm_osullivan", "name": "Finn O'Sullivan", "club": "North Melbourne", "pos": ["DEF"], "points": 53.7 },
+{ "id": "nm_parker", "name": "Luke Parker", "club": "North Melbourne", "pos": ["MID"], "points": 86.7 },
+
+{ "id": "nm_pink", "name": "Toby Pink", "club": "North Melbourne", "pos": ["FWD"], "points": 47.1 },
+{ "id": "nm_powell", "name": "Tom Powell", "club": "North Melbourne", "pos": ["MID","FWD"], "points": 86.9 },
+{ "id": "nm_scott", "name": "Bailey Scott", "club": "North Melbourne", "pos": ["DEF","MID"], "points": 44.7 },
+
+{ "id": "nm_sheezel", "name": "Harry Sheezel", "club": "North Melbourne", "pos": ["MID"], "points": 109.2 },
+{ "id": "nm_simpkin", "name": "Jy Simpkin", "club": "North Melbourne", "pos": ["MID"], "points": 83.1 },
+{ "id": "nm_spargo", "name": "Charlie Spargo", "club": "North Melbourne", "pos": ["FWD"], "points": 40.2 },
+
+{ "id": "nm_stephens", "name": "Dylan Stephens", "club": "North Melbourne", "pos": ["MID"], "points": 63.9 },
+{ "id": "nm_stephenson", "name": "Jaidyn Stephenson", "club": "North Melbourne", "pos": ["FWD"], "points": 0 },
+{ "id": "nm_stevens_river", "name": "River Stevens", "club": "North Melbourne", "pos": ["MID","FWD"], "points": 0 },
+
+{ "id": "nm_thredgold", "name": "Blake Thredgold", "club": "North Melbourne", "pos": ["MID"], "points": 0 },
+{ "id": "nm_trembath", "name": "Cooper Trembath", "club": "North Melbourne", "pos": ["DEF"], "points": 60.3 },
+{ "id": "nm_urquhart", "name": "Luke Urquhart", "club": "North Melbourne", "pos": ["MID"], "points": 0 },
+
+{ "id": "nm_wardlaw", "name": "George Wardlaw", "club": "North Melbourne", "pos": ["MID"], "points": 68.0 },
+{ "id": "nm_whitlock", "name": "Matt Whitlock", "club": "North Melbourne", "pos": ["DEF","FWD"], "points": 23.5 },
+
+{ "id": "nm_xerri", "name": "Tristan Xerri", "club": "North Melbourne", "pos": ["RUCK"], "points": 105.0 },
+{ "id": "nm_zurhaar", "name": "Cameron Zurhaar", "club": "North Melbourne", "pos": ["FWD"], "points": 57.6 },
+
+{ "id": "port_aliir", "name": "Aliir Aliir", "club": "Port Adelaide", "pos": ["DEF"], "points": 62.4 },
+{ "id": "port_anastasopoulos", "name": "Tom Anastasopoulos", "club": "Port Adelaide", "pos": ["FWD"], "points": 0 },
+{ "id": "port_barrett", "name": "Benny Barrett", "club": "Port Adelaide", "pos": ["FWD"], "points": 0 },
+
+{ "id": "port_bergman", "name": "Miles Bergman", "club": "Port Adelaide", "pos": ["MID"], "points": 91.3 },
+{ "id": "port_berry_joe", "name": "Joe Berry", "club": "Port Adelaide", "pos": ["FWD"], "points": 0 },
+{ "id": "port_brodie", "name": "Will Brodie", "club": "Port Adelaide", "pos": ["MID"], "points": 0 },
+{ "id": "port_burgoyne", "name": "Jase Burgoyne", "club": "Port Adelaide", "pos": ["DEF"], "points": 63.2 },
+
+{ "id": "port_butters", "name": "Zak Butters", "club": "Port Adelaide", "pos": ["MID","FWD"], "points": 110.6 },
+{ "id": "port_byrnejones", "name": "Darcy Byrne-Jones", "club": "Port Adelaide", "pos": ["DEF"], "points": 79.4 },
+{ "id": "port_cochrane", "name": "Tom Cochrane", "club": "Port Adelaide", "pos": ["FWD"], "points": 32 },
+
+{ "id": "port_drew", "name": "Willem Drew", "club": "Port Adelaide", "pos": ["MID"], "points": 80.5 },
+{ "id": "port_durdin", "name": "Corey Durdin", "club": "Port Adelaide", "pos": ["FWD"], "points": 45.8 },
+{ "id": "port_evans_logan", "name": "Logan Evans", "club": "Port Adelaide", "pos": ["DEF"], "points": 48.7 },
+
+{ "id": "port_farrell", "name": "Kane Farrell", "club": "Port Adelaide", "pos": ["DEF"], "points": 84.1 },
+{ "id": "port_georgiades", "name": "Mitch Georgiades", "club": "Port Adelaide", "pos": ["FWD"], "points": 58.9 },
+
+{ "id": "port_hornefrancis", "name": "Jason Horne-Francis", "club": "Port Adelaide", "pos": ["MID","FWD"], "points": 102.7 },
+{ "id": "port_jones_lachie", "name": "Lachie Jones", "club": "Port Adelaide", "pos": ["DEF"], "points": 55.3 },
+{ "id": "port_lai", "name": "Josh Lai", "club": "Port Adelaide", "pos": ["MID"], "points": 0 },
+
+{ "id": "port_liddy", "name": "Mani Liddy", "club": "Port Adelaide", "pos": ["MID"], "points": 0 },
+{ "id": "port_lord_ollie", "name": "Ollie Lord", "club": "Port Adelaide", "pos": ["DEF","FWD"], "points": 42.6 },
+{ "id": "port_lorenz", "name": "Will Lorenz", "club": "Port Adelaide", "pos": ["MID"], "points": 38.2 },
+
+{ "id": "port_lukosius", "name": "Jack Lukosius", "club": "Port Adelaide", "pos": ["FWD"], "points": 69.8 },
+{ "id": "port_mackinlay", "name": "Ewan Mackinlay", "club": "Port Adelaide", "pos": ["FWD"], "points": 0 },
+{ "id": "port_marshall_todd", "name": "Todd Marshall", "club": "Port Adelaide", "pos": ["FWD"], "points": 55.6 },
+
+{ "id": "port_mead", "name": "Jackson Mead", "club": "Port Adelaide", "pos": ["MID","FWD"], "points": 55.9 },
+{ "id": "port_moraes", "name": "Christian Moraes", "club": "Port Adelaide", "pos": ["MID"], "points": 0 },
+{ "id": "port_moss", "name": "Jacob Moss", "club": "Port Adelaide", "pos": ["DEF"], "points": 0 },
+
+{ "id": "port_powellpepper", "name": "Sam Powell-Pepper", "club": "Port Adelaide", "pos": ["FWD"], "points": 64.2 },
+{ "id": "port_ramm", "name": "Harrison Ramm", "club": "Port Adelaide", "pos": ["DEF"], "points": 35 },
+
+{ "id": "port_ratugolea", "name": "Esava Ratugolea", "club": "Port Adelaide", "pos": ["RUCK","FWD"], "points": 59.1 },
+{ "id": "port_richards", "name": "Joe Richards", "club": "Port Adelaide", "pos": ["MID","FWD"], "points": 60.4 },
+
+{ "id": "port_rozee", "name": "Connor Rozee", "club": "Port Adelaide", "pos": ["MID","FWD"], "points": 107.9 },
+{ "id": "port_sinn", "name": "Josh Sinn", "club": "Port Adelaide", "pos": ["FWD"], "points": 32.0 },
+
+{ "id": "port_soldo", "name": "Ivan Soldo", "club": "Port Adelaide", "pos": ["RUCK","FWD"], "points": 48.3 },
+{ "id": "port_sweet", "name": "Jordon Sweet", "club": "Port Adelaide", "pos": ["RUCK"], "points": 69.0 },
+
+{ "id": "port_visentini", "name": "Dante Visentini", "club": "Port Adelaide", "pos": ["RUCK","FWD"], "points": 0 },
+{ "id": "port_walsh_xavier", "name": "Xavier Walsh", "club": "Port Adelaide", "pos": ["FWD"], "points": 0 },
+
+{ "id": "port_wehr", "name": "Jacob Wehr", "club": "Port Adelaide", "pos": ["MID"], "points": 72.6 },
+{ "id": "port_whitlock_jack", "name": "Jack Whitlock", "club": "Port Adelaide", "pos": ["FWD"], "points": 0 },
+
+{ "id": "port_wines", "name": "Ollie Wines", "club": "Port Adelaide", "pos": ["MID"], "points": 90.8 },
+{ "id": "port_zerkthatcher", "name": "Brandon Zerk-Thatcher", "club": "Port Adelaide", "pos": ["DEF"], "points": 57.0 },
+
+{ "id": "rich_alger", "name": "Jasper Alger", "club": "Richmond", "pos": ["FWD"], "points": 22.5 },
+{ "id": "rich_armstrong", "name": "Harry Armstrong", "club": "Richmond", "pos": ["FWD"], "points": 0 },
+{ "id": "rich_balta", "name": "Noah Balta", "club": "Richmond", "pos": ["DEF","FWD"], "points": 69.5 },
+
+{ "id": "rich_banks", "name": "Sam Banks", "club": "Richmond", "pos": ["DEF","MID"], "points": 74.3 },
+{ "id": "rich_broad", "name": "Nathan Broad", "club": "Richmond", "pos": ["DEF"], "points": 61.2 },
+{ "id": "rich_brown", "name": "Tom Brown", "club": "Richmond", "pos": ["DEF"], "points": 56.8 },
+
+{ "id": "rich_campbell", "name": "Seth Campbell", "club": "Richmond", "pos": ["FWD"], "points": 52.6 },
+{ "id": "rich_clarke", "name": "Judson Clarke", "club": "Richmond", "pos": ["FWD"], "points": 39.4 },
+{ "id": "rich_cumming", "name": "Sam Cumming", "club": "Richmond", "pos": ["MID"], "points": 78.9 },
+
+{ "id": "rich_faull", "name": "Jonty Faull", "club": "Richmond", "pos": ["FWD"], "points": 0 },
+{ "id": "rich_fawcett", "name": "Liam Fawcett", "club": "Richmond", "pos": ["FWD"], "points": 0 },
+
+{ "id": "rich_gibcus", "name": "Josh Gibcus", "club": "Richmond", "pos": ["DEF"], "points": 25 },
+{ "id": "rich_gray", "name": "Campbell Gray", "club": "Richmond", "pos": ["FWD"], "points": 0 },
+
+{ "id": "rich_green", "name": "Steely Green", "club": "Richmond", "pos": ["MID"], "points": 42.7 },
+{ "id": "rich_grlj", "name": "Samuel Grlj", "club": "Richmond", "pos": ["MID"], "points": 0 },
+{ "id": "rich_hayesbrown", "name": "Oliver Hayes-Brown", "club": "Richmond", "pos": ["RUCK"], "points": 0 },
+
+{ "id": "rich_hopper", "name": "Jacob Hopper", "club": "Richmond", "pos": ["MID"], "points": 89.1 },
+{ "id": "rich_hotton", "name": "Taj Hotton", "club": "Richmond", "pos": ["MID","FWD"], "points": 0 },
+{ "id": "rich_lalor", "name": "Sam Lalor", "club": "Richmond", "pos": ["MID"], "points": 0 },
+
+{ "id": "rich_lefau", "name": "Mykelti Lefau", "club": "Richmond", "pos": ["FWD"], "points": 55.4 },
+{ "id": "rich_lynch", "name": "Tom Lynch", "club": "Richmond", "pos": ["FWD"], "points": 60.3 },
+
+{ "id": "rich_mansell", "name": "Rhyan Mansell", "club": "Richmond", "pos": ["DEF"], "points": 59.8 },
+{ "id": "rich_mcauliffe", "name": "Kane McAuliffe", "club": "Richmond", "pos": ["MID"], "points": 48.9 },
+
+{ "id": "rich_miller", "name": "Ben Miller", "club": "Richmond", "pos": ["DEF"], "points": 44.2 },
+{ "id": "rich_nankervis", "name": "Toby Nankervis", "club": "Richmond", "pos": ["RUCK"], "points": 94.6 },
+
+{ "id": "rich_peucker", "name": "Zane Peucker", "club": "Richmond", "pos": ["MID"], "points": 0 },
+{ "id": "rich_prestia", "name": "Dion Prestia", "club": "Richmond", "pos": ["MID"], "points": 82.7 },
+
+{ "id": "rich_ralphsmith", "name": "Hugo Ralphsmith", "club": "Richmond", "pos": ["DEF"], "points": 71.5 },
+{ "id": "rich_rioli", "name": "Maurice Rioli Jr", "club": "Richmond", "pos": ["FWD"], "points": 63.0 },
+
+{ "id": "rich_robertsthomson", "name": "Noah Roberts-Thomson", "club": "Richmond", "pos": ["MID"], "points": 0 },
+{ "id": "rich_ross", "name": "Jack Ross", "club": "Richmond", "pos": ["MID"], "points": 67.4 },
+
+{ "id": "rich_ryan", "name": "Samson Ryan", "club": "Richmond", "pos": ["RUCK","FWD"], "points": 54.8 },
+{ "id": "rich_short", "name": "Jayden Short", "club": "Richmond", "pos": ["MID"], "points": 92.1 },
+
+{ "id": "rich_sims", "name": "Thomas Sims", "club": "Richmond", "pos": ["RUCK","FWD"], "points": 37.5 },
+{ "id": "rich_smillie", "name": "Josh Smillie", "club": "Richmond", "pos": ["MID"], "points": 0 },
+
+{ "id": "rich_kalebsmith", "name": "Kaleb Smith", "club": "Richmond", "pos": ["DEF"], "points": 0 },
+{ "id": "rich_sonsie", "name": "Tyler Sonsie", "club": "Richmond", "pos": ["MID","FWD"], "points": 45.2 },
+
+{ "id": "rich_taranto", "name": "Tim Taranto", "club": "Richmond", "pos": ["MID","FWD"], "points": 106.8 },
+{ "id": "rich_trainor", "name": "Luke Trainor", "club": "Richmond", "pos": ["DEF"], "points": 0 },
+
+{ "id": "rich_trezise", "name": "James Trezise", "club": "Richmond", "pos": ["DEF"], "points": 50.6 },
+{ "id": "rich_vlastuin", "name": "Nick Vlastuin", "club": "Richmond", "pos": ["DEF"], "points": 76.9 },
+
+{ "id": "stk_armstrong", "name": "Eamonn Armstrong", "club": "St Kilda", "pos": ["DEF"], "points": 0 },
+{ "id": "stk_banfield", "name": "Charlie Banfield", "club": "St Kilda", "pos": ["MID"], "points": 0 },
+{ "id": "stk_barrat", "name": "James Barrat", "club": "St Kilda", "pos": ["DEF","FWD"], "points": 0 },
+
+{ "id": "stk_boxshall", "name": "Hugh Boxshall", "club": "St Kilda", "pos": ["MID"], "points": 54.9 },
+{ "id": "stk_butler", "name": "Daniel Butler", "club": "St Kilda", "pos": ["FWD"], "points": 38.8 },
+{ "id": "stk_byrnes", "name": "Ryan Byrnes", "club": "St Kilda", "pos": ["MID","FWD"], "points": 67.1 },
+
+{ "id": "stk_caminiti", "name": "Anthony Caminiti", "club": "St Kilda", "pos": ["FWD"], "points": 53.8 },
+{ "id": "stk_carroll", "name": "Jack Carroll", "club": "St Kilda", "pos": ["MID","FWD"], "points": 21.0 },
+
+{ "id": "stk_clark", "name": "Hunter Clark", "club": "St Kilda", "pos": ["DEF"], "points": 61.4 },
+{ "id": "stk_collard", "name": "Lance Collard", "club": "St Kilda", "pos": ["FWD"], "points": 27.2 },
+
+{ "id": "stk_crouch", "name": "Brad Crouch", "club": "St Kilda", "pos": ["MID"], "points": 0 },
+
+{ "id": "stk_dekoning", "name": "Tom De Koning", "club": "St Kilda", "pos": ["RUCK"], "points": 84.7 },
+{ "id": "stk_dodson", "name": "Alex Dodson", "club": "St Kilda", "pos": ["RUCK"], "points": 22.0 },
+
+{ "id": "stk_dow", "name": "Paddy Dow", "club": "St Kilda", "pos": ["MID"], "points": 0 },
+{ "id": "stk_fincher", "name": "Kye Fincher", "club": "St Kilda", "pos": ["MID"], "points": 0 },
+
+{ "id": "stk_flanders", "name": "Sam Flanders", "club": "St Kilda", "pos": ["MID","FWD"], "points": 68.3 },
+{ "id": "stk_garcia", "name": "Hugo Garcia", "club": "St Kilda", "pos": ["MID","FWD"], "points": 65.5 },
+
+{ "id": "stk_hall", "name": "Max Hall", "club": "St Kilda", "pos": ["MID"], "points": 66.1 },
+{ "id": "stk_hastie", "name": "Angus Hastie", "club": "St Kilda", "pos": ["DEF"], "points": 37.2 },
+
+{ "id": "stk_henry", "name": "Liam Henry", "club": "St Kilda", "pos": ["MID","FWD"], "points": 30.3 },
+{ "id": "stk_higgins", "name": "Jack Higgins", "club": "St Kilda", "pos": ["FWD"], "points": 52.0 },
+
+{ "id": "stk_hill", "name": "Bradley Hill", "club": "St Kilda", "pos": ["DEF","FWD"], "points": 74.5 },
+{ "id": "stk_howard", "name": "Dougal Howard", "club": "St Kilda", "pos": ["DEF"], "points": 57.3 },
+
+{ "id": "stk_keeler", "name": "Isaac Keeler", "club": "St Kilda", "pos": ["RUCK","FWD"], "points": 36.7 },
+
+{ "id": "stk_king", "name": "Max King", "club": "St Kilda", "pos": ["FWD"], "points": 0 },
+
+{ "id": "stk_macrae", "name": "Jack Macrae", "club": "St Kilda", "pos": ["MID"], "points": 90.9 },
+{ "id": "stk_marshall", "name": "Rowan Marshall", "club": "St Kilda", "pos": ["RUCK"], "points": 105.8 },
+
+{ "id": "stk_oconnell", "name": "Liam O'Connell", "club": "St Kilda", "pos": ["DEF"], "points": 34.9 },
+{ "id": "stk_owens", "name": "Mitch Owens", "club": "St Kilda", "pos": ["FWD"], "points": 60.4 },
+
+{ "id": "stk_phillipou", "name": "Mattaes Phillipou", "club": "St Kilda", "pos": ["MID","FWD"], "points": 35.9 },
+
+{ "id": "stk_ryan", "name": "Liam Ryan", "club": "St Kilda", "pos": ["FWD"], "points": 57.1 },
+
+{ "id": "stk_said", "name": "Patrick Said", "club": "St Kilda", "pos": ["MID","FWD"], "points": 0 },
+
+{ "id": "stk_sharman", "name": "Cooper Sharman", "club": "St Kilda", "pos": ["DEF","FWD"], "points": 63.6 },
+
+{ "id": "stk_silvagni", "name": "Jack Silvagni", "club": "St Kilda", "pos": ["FWD"], "points": 64.8 },
+
+{ "id": "stk_sinclair", "name": "Jack Sinclair", "club": "St Kilda", "pos": ["DEF"], "points": 100.8 },
+{ "id": "stk_stocker", "name": "Liam Stocker", "club": "St Kilda", "pos": ["DEF"], "points": 46.8 },
+
+{ "id": "stk_tauru", "name": "Alixzander Tauru", "club": "St Kilda", "pos": ["DEF"], "points": 42.1 },
+{ "id": "stk_travaglia", "name": "Tobie Travaglia", "club": "St Kilda", "pos": ["DEF","MID"], "points": 41.8 },
+
+{ "id": "stk_wanganeen", "name": "Nasiah Wanganeen-Milera", "club": "St Kilda", "pos": ["DEF","MID"], "points": 110.8 },
+
+{ "id": "stk_wilkie", "name": "Callum Wilkie", "club": "St Kilda", "pos": ["DEF"], "points": 80.7 },
+{ "id": "stk_wilson", "name": "Darcy Wilson", "club": "St Kilda", "pos": ["FWD"], "points": 63.7 },
+
+{ "id": "stk_windhager", "name": "Marcus Windhager", "club": "St Kilda", "pos": ["MID","FWD"], "points": 82.0 },
+
+{ "id": "stk_wood", "name": "Mason Wood", "club": "St Kilda", "pos": ["MID"], "points": 68.7 },
+
+{ "id": "syd_adams", "name": "Taylor Adams", "club": "Sydney", "pos": ["MID"], "points": 35.8 },
+{ "id": "syd_amartey", "name": "Joel Amartey", "club": "Sydney", "pos": ["FWD"], "points": 59.1 },
+{ "id": "syd_andrew", "name": "Riak Andrew", "club": "Sydney", "pos": ["DEF"], "points": 0 },
+
+{ "id": "syd_bice", "name": "Riley Bice", "club": "Sydney", "pos": ["DEF"], "points": 43.8 },
+{ "id": "syd_blakey", "name": "Nick Blakey", "club": "Sydney", "pos": ["DEF"], "points": 89.4 },
+{ "id": "syd_bowman", "name": "Ned Bowman", "club": "Sydney", "pos": ["FWD"], "points": 0 },
+
+{ "id": "syd_campbell", "name": "Braeden Campbell", "club": "Sydney", "pos": ["DEF"], "points": 72.3 },
+{ "id": "syd_cleary", "name": "Caiden Cleary", "club": "Sydney", "pos": ["FWD"], "points": 47.2 },
+
+{ "id": "syd_cunningham", "name": "Harry Cunningham", "club": "Sydney", "pos": ["DEF"], "points": 63.5 },
+{ "id": "syd_curnow", "name": "Charlie Curnow", "club": "Sydney", "pos": ["FWD"], "points": 65.8 },
+
+{ "id": "syd_dattoli", "name": "Jesse Dattoli", "club": "Sydney", "pos": ["MID","FWD"], "points": 0 },
+
+{ "id": "syd_edwards", "name": "William Edwards", "club": "Sydney", "pos": ["DEF"], "points": 41.7 },
+{ "id": "syd_green", "name": "William Green", "club": "Sydney", "pos": ["RUCK"], "points": 0 },
+
+{ "id": "syd_grundy", "name": "Brodie Grundy", "club": "Sydney", "pos": ["RUCK"], "points": 99.6 },
+
+{ "id": "syd_gulden", "name": "Errol Gulden", "club": "Sydney", "pos": ["MID","FWD"], "points": 110.3 },
+
+{ "id": "syd_hamling", "name": "Joel Hamling", "club": "Sydney", "pos": ["DEF"], "points": 50.4 },
+{ "id": "syd_hanily", "name": "Tom Hanily", "club": "Sydney", "pos": ["MID"], "points": 0 },
+
+{ "id": "syd_heeney", "name": "Isaac Heeney", "club": "Sydney", "pos": ["FWD"], "points": 104.2 },
+
+{ "id": "syd_jordon", "name": "James Jordon", "club": "Sydney", "pos": ["MID"], "points": 71.6 },
+
+{ "id": "syd_king", "name": "Max King", "club": "Sydney", "pos": ["MID"], "points": 0 },
+{ "id": "syd_kyle", "name": "Harry Kyle", "club": "Sydney", "pos": ["MID"], "points": 0 },
+
+{ "id": "syd_ladhams", "name": "Peter Ladhams", "club": "Sydney", "pos": ["RUCK"], "points": 65.1 },
+
+{ "id": "syd_lloyd", "name": "Jake Lloyd", "club": "Sydney", "pos": ["DEF"], "points": 92.8 },
+
+{ "id": "syd_mccartin", "name": "Tom McCartin", "club": "Sydney", "pos": ["DEF"], "points": 58.9 },
+{ "id": "syd_mcdonald", "name": "Logan McDonald", "club": "Sydney", "pos": ["FWD"], "points": 62.5 },
+
+{ "id": "syd_mcinerney", "name": "Justin McInerney", "club": "Sydney", "pos": ["MID"], "points": 78.4 },
+{ "id": "syd_mclean", "name": "Hayden McLean", "club": "Sydney", "pos": ["FWD"], "points": 66.2 },
+
+{ "id": "syd_melican", "name": "Lewis Melican", "club": "Sydney", "pos": ["DEF"], "points": 54.0 },
+
+{ "id": "syd_mills", "name": "Callum Mills", "club": "Sydney", "pos": ["MID"], "points": 0 },
+
+{ "id": "syd_papley", "name": "Tom Papley", "club": "Sydney", "pos": ["FWD"], "points": 82.6 },
+
+{ "id": "syd_rampee", "name": "Dane Rampe", "club": "Sydney", "pos": ["DEF"], "points": 63.1 },
+
+{ "id": "syd_rosas", "name": "Malcolm Rosas", "club": "Sydney", "pos": ["FWD"], "points": 26.8 },
+
+{ "id": "syd_rowbottom", "name": "James Rowbottom", "club": "Sydney", "pos": ["MID"], "points": 91.3 },
+
+{ "id": "syd_sheldrick", "name": "Angus Sheldrick", "club": "Sydney", "pos": ["MID"], "points": 49.7 },
+
+{ "id": "syd_warnerc", "name": "Corey Warner", "club": "Sydney", "pos": ["FWD"], "points": 44.6 },
+{ "id": "syd_warner", "name": "Chad Warner", "club": "Sydney", "pos": ["MID"], "points": 105.9 },
+
+{ "id": "syd_wicks", "name": "Sam Wicks", "club": "Sydney", "pos": ["FWD"], "points": 47.2 },
+
+{ "id": "wce_allan", "name": "Bo Allan", "club": "West Coast", "pos": ["DEF"], "points": 0 },
+{ "id": "wce_allen", "name": "Sam Allen", "club": "West Coast", "pos": ["MID"], "points": 0 },
+
+{ "id": "wce_baker", "name": "Liam Baker", "club": "West Coast", "pos": ["DEF","FWD"], "points": 79.4 },
+
+{ "id": "wce_barnett", "name": "Harry Barnett", "club": "West Coast", "pos": ["RUCK"], "points": 0 },
+{ "id": "wce_bazzo", "name": "Rhett Bazzo", "club": "West Coast", "pos": ["DEF"], "points": 46.9 },
+
+{ "id": "wce_brockman", "name": "Tyler Brockman", "club": "West Coast", "pos": ["FWD"], "points": 49.4 },
+{ "id": "wce_champion", "name": "Malakai Champion", "club": "West Coast", "pos": ["FWD"], "points": 0 },
+
+{ "id": "wce_cole", "name": "Tom Cole", "club": "West Coast", "pos": ["DEF"], "points": 66.4 },
+{ "id": "wce_cripps", "name": "Jamie Cripps", "club": "West Coast", "pos": ["FWD"], "points": 58.4 },
+
+{ "id": "wce_davis", "name": "Hamish Davis", "club": "West Coast", "pos": ["MID","FWD"], "points": 43.0 },
+
+{ "id": "wce_dewar", "name": "Tyrell Dewar", "club": "West Coast", "pos": ["DEF","FWD"], "points": 48.0 },
+
+{ "id": "wce_duggan", "name": "Liam Duggan", "club": "West Coast", "pos": ["DEF"], "points": 79.0 },
+
+{ "id": "wce_edwards", "name": "Harry Edwards", "club": "West Coast", "pos": ["DEF"], "points": 41.2 },
+
+{ "id": "wce_flynn", "name": "Matthew Flynn", "club": "West Coast", "pos": ["RUCK"], "points": 78.7 },
+
+{ "id": "wce_ginbey", "name": "Reuben Ginbey", "club": "West Coast", "pos": ["DEF","MID"], "points": 55.2 },
+
+{ "id": "wce_graham", "name": "Jack Graham", "club": "West Coast", "pos": ["MID","FWD"], "points": 82.7 },
+
+{ "id": "wce_grego", "name": "Lucca Grego", "club": "West Coast", "pos": ["MID"], "points": 56.0 },
+
+{ "id": "wce_gross", "name": "Tom Gross", "club": "West Coast", "pos": ["FWD"], "points": 34.9 },
+
+{ "id": "wce_hall", "name": "Clay Hall", "club": "West Coast", "pos": ["MID"], "points": 55.0 },
+
+{ "id": "wce_hewett", "name": "Elijah Hewett", "club": "West Coast", "pos": ["MID"], "points": 61.0 },
+
+{ "id": "wce_hough", "name": "Brady Hough", "club": "West Coast", "pos": ["DEF","MID"], "points": 64.1 },
+
+{ "id": "wce_hutchinson", "name": "Jack Hutchinson", "club": "West Coast", "pos": ["FWD"], "points": 58.5 },
+
+{ "id": "wce_kelly", "name": "Tim Kelly", "club": "West Coast", "pos": ["MID"], "points": 63.3 },
+
+{ "id": "wce_long", "name": "Noah Long", "club": "West Coast", "pos": ["MID","FWD"], "points": 34.2 },
+
+{ "id": "wce_maric", "name": "Ryan Maric", "club": "West Coast", "pos": ["DEF"], "points": 75.2 },
+
+{ "id": "wce_mccarthy", "name": "Tom McCarthy", "club": "West Coast", "pos": ["DEF"], "points": 83.5 },
+
+{ "id": "wce_newton", "name": "Jacob Newton", "club": "West Coast", "pos": ["FWD"], "points": 24.0 },
+
+{ "id": "wce_owies", "name": "Matthew Owies", "club": "West Coast", "pos": ["FWD"], "points": 43.9 },
+
+{ "id": "wce_areid", "name": "Archer Reid", "club": "West Coast", "pos": ["FWD"], "points": 35.7 },
+
+{ "id": "wce_hreid", "name": "Harley Reid", "club": "West Coast", "pos": ["MID"], "points": 66.8 },
+
+{ "id": "wce_robertson", "name": "Deven Robertson", "club": "West Coast", "pos": ["MID"], "points": 15.5 },
+
+{ "id": "wce_schoenberg", "name": "Harry Schoenberg", "club": "West Coast", "pos": ["MID"], "points": 23.0 },
+
+{ "id": "wce_shanahan", "name": "Jobe Shanahan", "club": "West Coast", "pos": ["FWD"], "points": 47.9 },
+
+{ "id": "wce_starcevich", "name": "Brandon Starcevich", "club": "West Coast", "pos": ["DEF"], "points": 45.7 },
+
+{ "id": "wce_waterman", "name": "Jake Waterman", "club": "West Coast", "pos": ["FWD"], "points": 60.9 },
+
+{ "id": "wce_williams", "name": "Bailey Williams", "club": "West Coast", "pos": ["RUCK"], "points": 52.6 },
+
+{ "id": "wce_jwilliams", "name": "Jack Williams", "club": "West Coast", "pos": ["RUCK","FWD"], "points": 46.2 },
+
+{ "id": "wce_yeo", "name": "Elliot Yeo", "club": "West Coast", "pos": ["DEF"], "points": 0 },
+
+{ "id": "wce_young", "name": "Tylar Young", "club": "West Coast", "pos": ["DEF"], "points": 58.4 },
+
+{ "id": "wb_baker", "name": "Oskar Baker", "club": "Western Bulldogs", "pos": ["MID"], "points": 44.7 },
+{ "id": "wb_bontempelli", "name": "Marcus Bontempelli", "club": "Western Bulldogs", "pos": ["MID"], "points": 112.4 },
+
+{ "id": "wb_bramble", "name": "Lachlan Bramble", "club": "Western Bulldogs", "pos": ["DEF"], "points": 62.3 },
+{ "id": "wb_budarick", "name": "Connor Budarick", "club": "Western Bulldogs", "pos": ["DEF"], "points": 48.2 },
+{ "id": "wb_busslinger", "name": "Jedd Busslinger", "club": "Western Bulldogs", "pos": ["DEF"], "points": 0 },
+
+{ "id": "wb_cleary", "name": "Luke Cleary", "club": "Western Bulldogs", "pos": ["DEF"], "points": 0 },
+{ "id": "wb_coffield", "name": "Nick Coffield", "club": "Western Bulldogs", "pos": ["DEF"], "points": 57.6 },
+
+{ "id": "wb_croft", "name": "Jordan Croft", "club": "Western Bulldogs", "pos": ["FWD"], "points": 0 },
+
+{ "id": "wb_dale", "name": "Bailey Dale", "club": "Western Bulldogs", "pos": ["DEF"], "points": 89.7 },
+
+{ "id": "wb_sdarcy", "name": "Sam Darcy", "club": "Western Bulldogs", "pos": ["DEF","FWD"], "points": 66.4 },
+
+{ "id": "wb_davidson", "name": "Sam Davidson", "club": "Western Bulldogs", "pos": ["MID"], "points": 66.1 },
+{ "id": "wb_dolan", "name": "Josh Dolan", "club": "Western Bulldogs", "pos": ["FWD"], "points": 0 },
+
+{ "id": "wb_english", "name": "Tim English", "club": "Western Bulldogs", "pos": ["RUCK"], "points": 102.1 },
+
+{ "id": "wb_freijah", "name": "Joel Freijah", "club": "Western Bulldogs", "pos": ["MID"], "points": 42.0 },
+
+{ "id": "wb_gallagher", "name": "Harvey Gallagher", "club": "Western Bulldogs", "pos": ["DEF","FWD"], "points": 51.3 },
+
+{ "id": "wb_garcia", "name": "Riley Garcia", "club": "Western Bulldogs", "pos": ["FWD"], "points": 0 },
+
+{ "id": "wb_gardner", "name": "Ryan Gardner", "club": "Western Bulldogs", "pos": ["DEF"], "points": 49.5 },
+
+{ "id": "wb_hynes", "name": "Cooper Hynes", "club": "Western Bulldogs", "pos": ["MID"], "points": 27.1 },
+
+{ "id": "wb_jones", "name": "Arthur Jones", "club": "Western Bulldogs", "pos": ["FWD"], "points": 20 },
+
+{ "id": "wb_mkennedy", "name": "Matthew Kennedy", "club": "Western Bulldogs", "pos": ["MID"], "points": 71.9 },
+
+{ "id": "wb_khamis", "name": "Buku Khamis", "club": "Western Bulldogs", "pos": ["DEF","FWD"], "points": 47.7 },
+
+{ "id": "wb_liberatore", "name": "Tom Liberatore", "club": "Western Bulldogs", "pos": ["MID"], "points": 103.4 },
+
+{ "id": "wb_lobb", "name": "Rory Lobb", "club": "Western Bulldogs", "pos": ["FWD"], "points": 55.2 },
+
+{ "id": "wb_mcneil", "name": "Lachlan McNeil", "club": "Western Bulldogs", "pos": ["MID","FWD"], "points": 52.6 },
+
+{ "id": "wb_naughton", "name": "Aaron Naughton", "club": "Western Bulldogs", "pos": ["FWD"], "points": 63.7 },
+
+{ "id": "wb_odonnell", "name": "James O'Donnell", "club": "Western Bulldogs", "pos": ["DEF"], "points": 45.8 },
+
+{ "id": "wb_richards", "name": "Ed Richards", "club": "Western Bulldogs", "pos": ["MID"], "points": 96.7 },
+
+{ "id": "wb_sanders", "name": "Ryley Sanders", "club": "Western Bulldogs", "pos": ["MID"], "points": 48.5 },
+
+{ "id": "wb_treloar", "name": "Adam Treloar", "club": "Western Bulldogs", "pos": ["MID"], "points": 96.2 },
+
+{ "id": "wb_vandermeer", "name": "Laitham Vandermeer", "club": "Western Bulldogs", "pos": ["FWD"], "points": 41.4 },
+
+{ "id": "wb_west", "name": "Rhylee West", "club": "Western Bulldogs", "pos": ["FWD"], "points": 47.8 },
+
+{ "id": "wb_bwilliams", "name": "Bailey Williams", "club": "Western Bulldogs", "pos": ["DEF","MID"], "points": 55.1 }
+ ]
+
+
+
+
