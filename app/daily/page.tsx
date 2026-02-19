@@ -395,9 +395,9 @@ export default function DailyPage() {
 {/* Overlay (controls darkness) */}
 <div className="absolute inset-0 bg-black/35" />
 
-      <div className="relative mx-auto max-w-6xl px-6 py-10">
+<div className="relative mx-auto max-w-6xl px-4 sm:px-6 py-8 sm:py-10">
         {/* Header */}
-        <div className="flex items-start justify-between gap-6">
+<div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
           <div>
             <h1 className="text-4xl font-extrabold tracking-wide text-white">DAILY GAME</h1>
             <div className="mt-2 text-white/60 font-semibold">Build one lineup per day from today’s 4 random clubs.</div>
@@ -580,12 +580,12 @@ onChange={(e) => {
 
             return (
               <div key={slot.id} className="flex gap-3 items-center">
-                <div className="w-20 shrink-0 rounded-md font-extrabold text-center py-2 bg-blue-600 text-white">
+                <div className="w-16 sm:w-20 shrink-0 rounded-md font-extrabold text-center py-2 bg-blue-600 text-white">
                   {slot.label}
                 </div>
 
                 <button
-                  className={`flex-1 border border-white/70 rounded-md px-4 text-left transition flex items-center justify-between h-14 ${
+                  className={`flex-1 border border-white/70 rounded-md px-4 text-left transition flex items-center justify-between py-3 sm:h-14 ${
                     clickable ? "hover:brightness-110" : "cursor-not-allowed"
                   }`}
                   style={
@@ -627,7 +627,7 @@ onChange={(e) => {
 
                   {/* Points only after selection */}
 {p?.points != null && (
-  <span className="shrink-0 font-extrabold px-3 py-1 rounded-md bg-black/55 text-white">
+<span className="hidden sm:inline-flex shrink-0 font-extrabold px-3 py-1 rounded-md bg-black/55 text-white">
     {p.points.toFixed(1)} PTS
   </span>
 )}
@@ -640,7 +640,7 @@ onChange={(e) => {
 
       {/* Picker Modal */}
       {active && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+<div className="mt-8 flex flex-wrap items-center justify-center gap-3">
           <div className="absolute inset-0 bg-black/70" onClick={() => setActive(null)} />
 
           <div className="relative w-full max-w-xl rounded-2xl border border-white/15 bg-zinc-950 p-4">

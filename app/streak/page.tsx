@@ -226,7 +226,7 @@ export default function StreakPage() {
 
       <div className="max-w-6xl mx-auto px-6 py-10">
         {/* Top bar */}
-        <div className="flex items-center justify-between">
+<div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <a
             href="/"
             className="rounded-full border border-white/10 bg-black/30 px-4 py-2 text-sm font-semibold text-white/80 hover:bg-white/10 transition"
@@ -234,7 +234,7 @@ export default function StreakPage() {
             ← Back
           </a>
 
-          <div className="flex items-center gap-3">
+<div className="flex flex-wrap items-center gap-2 justify-center sm:justify-end">
             <button
               onClick={useHint}
               disabled={!current || locked || gameOver || hintsLeft <= 0 || hiddenOptions.size > 0}

@@ -321,13 +321,14 @@ useEffect(() => {
   {/* Background image */}
 <div
   className="absolute inset-0"
-  style={{
-    backgroundImage: "url('/versus-bg.jpg')",
-    backgroundSize: "cover",
-    backgroundPosition: "center",
-    backgroundRepeat: "no-repeat",
-    backgroundAttachment: "fixed",
-  }}
+style={{
+  backgroundImage: "url('/versus-bg.jpg')",
+  backgroundSize: "cover",
+  backgroundPosition: "center",
+  backgroundRepeat: "no-repeat",
+  backgroundAttachment: "scroll", // ✅ default for mobile
+}}
+
 />
 
 {/* Dark overlay for readability */}
@@ -339,7 +340,7 @@ useEffect(() => {
 
       <div className="relative mx-auto max-w-6xl px-6 py-10">
         {/* Header */}
-        <div className="flex items-start justify-between">
+<div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
           <div>
             <h1 className="text-4xl font-extrabold tracking-wide text-white">VERSUS MODE</h1>
           </div>
@@ -353,7 +354,7 @@ useEffect(() => {
         </div>
 
         {/* Totals */}
-        <div className="mt-10 grid grid-cols-2 gap-10">
+<div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-10">
           <div className="text-center text-white/70 font-bold tracking-wide">
             TEAM A: <span className="text-white">{teamATotal.toFixed(1)} PTS</span>
           </div>
@@ -395,7 +396,7 @@ useEffect(() => {
 
 
         {/* Two columns */}
-        <div className="mt-6 grid grid-cols-2 gap-10">
+<div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
           
           <TeamColumn
   side="A"
