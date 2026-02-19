@@ -607,8 +607,11 @@ export default function FinalsPredictorPage() {
 
         {/* BRACKET */}
         {submitted && (
-          <div className="w-full flex flex-col items-center">
-            <div className="relative w-full max-w-[980px] h-[720px]">
+  <div className="w-full flex flex-col items-center">
+
+    {/* Mobile Bracket */}
+    <div className="block md:hidden w-full space-y-6 px-2">
+
               {/* WC row */}
               <div className="absolute left-1/2 -translate-x-1/2 top-2 flex gap-10 justify-center">
                 <BracketCard
@@ -707,21 +710,35 @@ export default function FinalsPredictorPage() {
 
               {/* GF row */}
               <div className="absolute left-1/2 -translate-x-1/2 top-[585px] flex flex-col items-center">
-                <BracketCard
-                  id="GF"
-                  aName={nameOfSeed(gfA)}
-                  bName={nameOfSeed(gfB)}
-                  winner={winners.GF}
-                  onPick={pickWinner}
-                />
+<BracketCard
+  id="GF"
+  aName={nameOfSeed(gfA)}
+  bName={nameOfSeed(gfB)}
+  winner={winners.GF}
+  onPick={pickWinner}
+  widthClass="w-[240px]"
+/>
 
-                {premiers && (
-                  <div className="mt-4 text-2xl font-black tracking-wide flex items-center gap-2">
-                    🏆 <span className="italic">PREMIERS: {premiers}</span>
-                  </div>
-                )}
-              </div>
-            </div>
+{premiers && (
+  <div className="mt-4 text-2xl font-black tracking-wide flex items-center gap-2">
+    🏆 <span className="italic">PREMIERS: {premiers}</span>
+  </div>
+)}
+</div> {/* closes the GF row container */}
+
+/* ✅ IMPORTANT: close the DESKTOP bracket wrapper */
+</div> {/* closes: <div className="hidden md:block relative ..."> */}
+
+<button
+  onClick={backToLadder}
+  className="mt-6 inline-flex items-center gap-2 rounded-xl border border-black/10 bg-black text-white px-8 py-4 font-extrabold tracking-wide hover:bg-black/90 transition"
+>
+  <ArrowLeft className="h-4 w-4" />
+  BACK TO LADDER
+</button>
+
+
+
 
             <button
               onClick={backToLadder}
