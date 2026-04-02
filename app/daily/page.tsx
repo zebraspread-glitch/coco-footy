@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import players2025 from "../data/public/afl_players.json";
 import players2026 from "../data/public/afl_players26.json";
@@ -210,8 +210,7 @@ function buildPerfectTeam(
   return bestSum === -Infinity ? empty : bestTeam;
 }
 
-/** ================= Page ================= */
-export default function DailyPage() {
+function DailyPageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -271,7 +270,6 @@ export default function DailyPage() {
   const todayKey = useMemo(() => getTodayKeyLocal(), []);
   const MIN_DATE = season === "2026" ? "2026-01-01" : "2026-02-18";
 
-  /** ================= LocalStorage keys ================= */
   const LS_DAILY_LOCK_PREFIX = `coco_daily_lock_${season}:`;
   const LS_PERSONAL_BEST = `coco_daily_personal_best_${season}`;
   const LS_GAMES_PLAYED = `coco_daily_games_played_${season}`;
@@ -579,8 +577,8 @@ export default function DailyPage() {
                   ? "Locked (already played today)"
                   : "Not played yet"
                 : isLockedToday
-                ? "Locked (played on that date)"
-                : "Unplayed archive day"}
+                  ? "Locked (played on that date)"
+                  : "Unplayed archive day"}
             </div>
           </div>
 
@@ -661,8 +659,8 @@ export default function DailyPage() {
               showPerfect
                 ? "Switch back to your team"
                 : gameOver
-                ? "Switch to perfect team"
-                : "Finish your team first"
+                  ? "Switch to perfect team"
+                  : "Finish your team first"
             }
           >
             {showPerfect ? "Show My Team" : "Show Perfect Team"}
@@ -729,10 +727,10 @@ export default function DailyPage() {
                     showPerfect
                       ? "Viewing perfect team (switch back to edit)"
                       : isLockedToday
-                      ? "Locked for this date"
-                      : isFilled
-                      ? "Locked (cannot be replaced)"
-                      : undefined
+                        ? "Locked for this date"
+                        : isFilled
+                          ? "Locked (cannot be replaced)"
+                          : undefined
                   }
                 >
                   <div className="min-w-0 flex items-center gap-2">
@@ -814,5 +812,13 @@ export default function DailyPage() {
         </div>
       )}
     </main>
+  );
+}
+
+export default function DailyPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-black text-white p-6">Loading...</div>}>
+      <DailyPageInner />
+    </Suspense>
   );
 }

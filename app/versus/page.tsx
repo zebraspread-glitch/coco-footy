@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import players2025 from "../data/public/afl_players.json";
 import players2026 from "../data/public/afl_players26.json";
@@ -99,8 +99,7 @@ function patternUrlForClub(clubName: string) {
   return `/patterns/${clubSlug(clubName)}.svg`;
 }
 
-/** ================= Page ================= */
-export default function VersusDraftPage() {
+function VersusDraftPageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -472,7 +471,7 @@ export default function VersusDraftPage() {
             getPlayer={getPlayerById}
             onOpen={onOpen}
             enabled={!gameOver && !spinning && turn === "A"}
-            badgeClass="bg-blue-600 text-white"
+            badgeClass={season === "2026" ? "bg-blue-400 text-white" : "bg-blue-600 text-white"}
             gameOver={gameOver}
             winner={winner}
           />
@@ -485,7 +484,7 @@ export default function VersusDraftPage() {
             getPlayer={getPlayerById}
             onOpen={onOpen}
             enabled={!gameOver && !spinning && turn === "B"}
-            badgeClass="bg-red-700 text-white"
+            badgeClass={season === "2026" ? "bg-red-500 text-white" : "bg-red-700 text-white"}
             gameOver={gameOver}
             winner={winner}
           />
@@ -674,5 +673,13 @@ function TeamColumn({
         );
       })}
     </div>
+  );
+}
+
+export default function VersusDraftPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-black text-white p-6">Loading...</div>}>
+      <VersusDraftPageInner />
+    </Suspense>
   );
 }

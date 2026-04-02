@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import players2025 from "../data/public/afl_players.json";
 import players2026 from "../data/public/afl_players26.json";
@@ -95,8 +95,7 @@ function patternUrlForClub(clubName: string) {
   return `/patterns/${clubSlug(clubName)}.svg`;
 }
 
-/** ================= Page ================= */
-export default function UnlimitedDraftPage() {
+function UnlimitedDraftPageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -152,8 +151,6 @@ export default function UnlimitedDraftPage() {
   const [displayClub, setDisplayClub] = useState<ClubMeta>(AFL_CLUBS[0]);
   const [spinning, setSpinning] = useState(false);
 
-  const [picksSinceSpin, setPicksSinceSpin] = useState(0);
-
   const [active, setActive] = useState<{
     slotId: string;
     allowed: PlayerPos[];
@@ -176,7 +173,6 @@ export default function UnlimitedDraftPage() {
     setActive(null);
     setSearch("");
     setSpinning(false);
-    setPicksSinceSpin(0);
   }, [season, SPIN_CLUBS, seasonReady]);
 
   const getPlayerById = (pid: string | null) => {
@@ -257,7 +253,6 @@ export default function UnlimitedDraftPage() {
     setSpinning(true);
     setActive(null);
     setSearch("");
-    setPicksSinceSpin(0);
 
     let i = 0;
     cleanupSpinTimers();
@@ -353,7 +348,6 @@ export default function UnlimitedDraftPage() {
     setSpinning(false);
     setActive(null);
     setSearch("");
-    setPicksSinceSpin(0);
     setTeam(Object.fromEntries(SLOTS.map((s) => [s.id, null])));
 
     const firstClub = SPIN_CLUBS[0] ?? AFL_CLUBS[0];
@@ -609,5 +603,13 @@ function SingleTeamColumn({
         );
       })}
     </div>
+  );
+}
+
+export default function UnlimitedDraftPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-black text-white p-6">Loading...</div>}>
+      <UnlimitedDraftPageInner />
+    </Suspense>
   );
 }
