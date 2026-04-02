@@ -173,9 +173,8 @@ function ModeButton({
 }
 
 export default function Home() {
-  const [mode, setMode] = useState<"season" | "game">("season");
   const [season, setSeason] = useState<"2025" | "2026">("2025");
-  const [isReady, setIsReady] = useState(false);
+  const [showVersion, setShowVersion] = useState(false);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -191,7 +190,11 @@ export default function Home() {
       setSeason(savedSeason);
     }
 
-    setIsReady(true);
+    const timer = setTimeout(() => {
+      setShowVersion(true);
+    }, 250);
+
+    return () => clearTimeout(timer);
   }, []);
 
   const changeSeason = (nextSeason: "2025" | "2026") => {
@@ -208,7 +211,6 @@ export default function Home() {
   };
 
   const is2026 = season === "2026";
-
   const seasonHref = (path: string) => `${path}?season=${season}`;
 
   return (
@@ -218,6 +220,43 @@ export default function Home() {
         backgroundImage: "url('/coco-footy-bg.png')",
       }}
     >
+      <style jsx>{`
+        @keyframes slamIn {
+          0% {
+            opacity: 0;
+            transform: translateY(-90px) scale(2.2) rotate(-10deg);
+            filter: blur(8px);
+          }
+          55% {
+            opacity: 1;
+            transform: translateY(12px) scale(0.88) rotate(3deg);
+            filter: blur(0px);
+          }
+          72% {
+            transform: translateY(-4px) scale(1.08) rotate(-1deg);
+          }
+          100% {
+            opacity: 1;
+            transform: translateY(0) scale(1) rotate(0deg);
+            filter: blur(0px);
+          }
+        }
+
+        @keyframes slamShockwave {
+          0% {
+            opacity: 0;
+            transform: scale(0.4);
+          }
+          40% {
+            opacity: 0.55;
+          }
+          100% {
+            opacity: 0;
+            transform: scale(1.8);
+          }
+        }
+      `}</style>
+
       <div className="fixed inset-0 -z-10">
         <div className="absolute inset-0 bg-[radial-gradient(1200px_600px_at_50%_-10%,rgba(245,158,11,0.16),transparent_60%)]" />
         <div className="absolute inset-0 bg-[radial-gradient(900px_500px_at_50%_110%,rgba(255,255,255,0.06),transparent_60%)]" />
@@ -227,11 +266,35 @@ export default function Home() {
 
       <main className="max-w-6xl mx-auto px-6 py-14">
         <div className="text-center">
-          <h1 className="text-5xl md:text-7xl font-black tracking-tight text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]">
-            <span className="[text-shadow:_-1px_-1px_0_#000,_1px_-1px_0_#000,_-1px_1px_0_#000,_1px_1px_0_#000]">
-              COCO FOOTY
-            </span>
-          </h1>
+          <div className="relative inline-flex items-center justify-center">
+            <h1 className="text-5xl md:text-7xl font-black tracking-tight text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]">
+              <span className="[text-shadow:_-1px_-1px_0_#000,_1px_-1px_0_#000,_-1px_1px_0_#000,_1px_1px_0_#000]">
+                COCO FOOTY
+              </span>
+
+              <span className="relative inline-block ml-3 md:ml-4 align-top">
+                {showVersion && (
+                  <>
+                    <span
+                      className="absolute left-1/2 top-1/2 h-12 w-12 md:h-16 md:w-16 -translate-x-1/2 -translate-y-1/2 rounded-full border border-cyan-300/60"
+                      style={{
+                        animation: "slamShockwave 0.6s ease-out forwards",
+                      }}
+                    />
+                    <span
+                      className="inline-block text-[1.6rem] md:text-[2.5rem] font-extrabold italic text-cyan-300 [text-shadow:_0_0_10px_rgba(103,232,249,0.6),_-1px_-1px_0_#000,_1px_-1px_0_#000,_-1px_1px_0_#000,_1px_1px_0_#000]"
+                      style={{
+                        animation: "slamIn 0.72s cubic-bezier(.2,.9,.22,1.15) forwards",
+                        transformOrigin: "center center",
+                      }}
+                    >
+                      2.0
+                    </span>
+                  </>
+                )}
+              </span>
+            </h1>
+          </div>
 
           <p className="mt-4 text-white/60 text-sm tracking-wide">
             In memory of Cody Welch
