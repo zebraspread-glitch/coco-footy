@@ -2,7 +2,8 @@
 
 import React, { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import playersData from "../data/public/afl_players.json";
+import players2025 from "../data/public/afl_players.json";
+import players2026 from "../data/public/afl_players26.json";
 
 /** ================= Types ================= */
 type PlayerPos = "FWD" | "MID" | "DEF" | "RUCK";
@@ -11,7 +12,7 @@ type Position = "FWD" | "MID" | "DEF" | "RUCK" | "FLEX";
 type Slot = {
   id: string;
   label: Position;
-  allowed: PlayerPos[]; // positions that can fill this slot (no FLEX)
+  allowed: PlayerPos[];
 };
 
 type Player = {
@@ -72,6 +73,7 @@ function clubForPlayer(clubs: ClubMeta[], player: Player | null): ClubMeta | nul
   if (!player) return null;
   return clubs.find((c) => c.name === player.club) ?? null;
 }
+
 function clubSlug(name: string) {
   return name
     .toLowerCase()
@@ -83,8 +85,10 @@ function patternUrlForClub(clubName: string) {
   return `/patterns/${clubSlug(clubName)}.svg`;
 }
 
-
-function sumPoints(team: Record<string, string | null>, getById: (id: string | null) => Player | null) {
+function sumPoints(
+  team: Record<string, string | null>,
+  getById: (id: string | null) => Player | null
+) {
   let total = 0;
   for (const slotId of Object.keys(team)) {
     const p = getById(team[slotId]);
@@ -113,16 +117,16 @@ function mulberry32(seed: number) {
 }
 
 function formatDateKeyLocal(d: Date) {
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(
+    d.getDate()
+  ).padStart(2, "0")}`;
 }
 
-const MIN_DATE = "2026-02-18";
 function getTodayKeyLocal() {
   return formatDateKeyLocal(new Date());
 }
 
 function shiftDateKey(dateKey: string, deltaDays: number) {
-  // dateKey: YYYY-MM-DD interpreted in local time
   const [y, m, d] = dateKey.split("-").map(Number);
   const dt = new Date(y, (m ?? 1) - 1, d ?? 1);
   dt.setDate(dt.getDate() + deltaDays);
@@ -132,16 +136,24 @@ function shiftDateKey(dateKey: string, deltaDays: number) {
 function pickDailyClubsForDate(clubs: ClubMeta[], count: number, dateKey: string) {
   const rng = mulberry32(hashStringToSeed(dateKey));
   const pool = clubs.slice();
+
   for (let i = pool.length - 1; i > 0; i--) {
     const j = Math.floor(rng() * (i + 1));
     [pool[i], pool[j]] = [pool[j], pool[i]];
   }
+
   return pool.slice(0, Math.min(count, pool.length));
 }
 
-/** Perfect team solver (search on top candidates per slot) */
-function buildPerfectTeam(slots: Slot[], players: Player[], topKPerSlot = 35): Record<string, string | null> {
-  const empty: Record<string, string | null> = Object.fromEntries(slots.map((s) => [s.id, null]));
+/** Perfect team solver */
+function buildPerfectTeam(
+  slots: Slot[],
+  players: Player[],
+  topKPerSlot = 35
+): Record<string, string | null> {
+  const empty: Record<string, string | null> = Object.fromEntries(
+    slots.map((s) => [s.id, null])
+  );
 
   const cand: Record<string, Player[]> = {};
   for (const slot of slots) {
@@ -151,7 +163,9 @@ function buildPerfectTeam(slots: Slot[], players: Player[], topKPerSlot = 35): R
       .slice(0, topKPerSlot);
   }
 
-  const ordered = slots.slice().sort((a, b) => (cand[a.id]?.length ?? 0) - (cand[b.id]?.length ?? 0));
+  const ordered = slots
+    .slice()
+    .sort((a, b) => (cand[a.id]?.length ?? 0) - (cand[b.id]?.length ?? 0));
 
   let bestSum = -Infinity;
   let bestTeam: Record<string, string | null> = { ...empty };
@@ -174,6 +188,7 @@ function buildPerfectTeam(slots: Slot[], players: Player[], topKPerSlot = 35): R
       }
       return;
     }
+
     if (curSum + upperBound(idx) <= bestSum) return;
 
     const slot = ordered[idx];
@@ -195,81 +210,108 @@ function buildPerfectTeam(slots: Slot[], players: Player[], topKPerSlot = 35): R
   return bestSum === -Infinity ? empty : bestTeam;
 }
 
-/** ================= LocalStorage keys ================= */
-const LS_DAILY_LOCK_PREFIX = "coco_daily_lock:"; // + YYYY-MM-DD
-const LS_PERSONAL_BEST = "coco_daily_personal_best"; // { score, date }  (LIVE TODAY ONLY)
-const LS_GAMES_PLAYED = "coco_daily_games_played"; // (LIVE TODAY ONLY)
-
-function loadJSON<T>(key: string, fallback: T): T {
-  if (typeof window === "undefined") return fallback;
-  try {
-    const raw = window.localStorage.getItem(key);
-    if (!raw) return fallback;
-    return JSON.parse(raw) as T;
-  } catch {
-    return fallback;
-  }
-}
-
-function saveJSON(key: string, value: any) {
-  if (typeof window === "undefined") return;
-  try {
-    window.localStorage.setItem(key, JSON.stringify(value));
-  } catch {}
-}
-
 /** ================= Page ================= */
 export default function DailyPage() {
   const router = useRouter();
 
-  const ALL_PLAYERS: Player[] = playersData as Player[];
-  const AVAILABLE_CLUBS = useMemo(() => clampClubsToPlayers(AFL_CLUBS, ALL_PLAYERS), [ALL_PLAYERS]);
+  const [season, setSeason] = useState<"2025" | "2026">("2025");
+
+  const ALL_PLAYERS: Player[] = useMemo(() => {
+    return season === "2026"
+      ? (players2026 as Player[])
+      : (players2025 as Player[]);
+  }, [season]);
+
+  const AVAILABLE_CLUBS = useMemo(
+    () => clampClubsToPlayers(AFL_CLUBS, ALL_PLAYERS),
+    [ALL_PLAYERS]
+  );
 
   const emptyTeam: Record<string, string | null> = useMemo(
     () => Object.fromEntries(SLOTS.map((s) => [s.id, null])),
     []
   );
 
-  // Live today key
+  const MIN_DATE = season === "2026" ? "2026-01-01" : "2026-02-18";
+
+  /** ================= LocalStorage keys ================= */
+  const LS_DAILY_LOCK_PREFIX = `coco_daily_lock_${season}:`;
+  const LS_PERSONAL_BEST = `coco_daily_personal_best_${season}`;
+  const LS_GAMES_PLAYED = `coco_daily_games_played_${season}`;
+
   const todayKey = useMemo(() => getTodayKeyLocal(), []);
-  // Selected date (lets you play past days)
-  const [selectedDate, setSelectedDate] = useState<string>(todayKey);
+  const initialSelectedDate =
+    todayKey < MIN_DATE ? MIN_DATE : todayKey;
+
+  const [selectedDate, setSelectedDate] = useState<string>(initialSelectedDate);
+
+  useEffect(() => {
+    setSelectedDate((prev) => {
+      if (prev < MIN_DATE) return MIN_DATE;
+      if (prev > todayKey) return todayKey;
+      return prev;
+    });
+  }, [MIN_DATE, todayKey]);
+
   const isLiveToday = selectedDate === todayKey;
 
-  // 4 clubs (seeded by selectedDate)
-  const dailyClubs = useMemo(() => pickDailyClubsForDate(AVAILABLE_CLUBS, 4, selectedDate), [AVAILABLE_CLUBS, selectedDate]);
+  const dailyClubs = useMemo(
+    () => pickDailyClubsForDate(AVAILABLE_CLUBS, 4, selectedDate),
+    [AVAILABLE_CLUBS, selectedDate]
+  );
 
   const dailyPlayers = useMemo(() => {
     const set = new Set(dailyClubs.map((c) => c.name));
     return ALL_PLAYERS.filter((p) => set.has(p.club));
   }, [ALL_PLAYERS, dailyClubs]);
 
-  // lock key for selected date
-  const lockKey = useMemo(() => `${LS_DAILY_LOCK_PREFIX}${selectedDate}`, [selectedDate]);
+  const lockKey = useMemo(
+    () => `${LS_DAILY_LOCK_PREFIX}${selectedDate}`,
+    [LS_DAILY_LOCK_PREFIX, selectedDate]
+  );
 
-  // load lock + saved team (so “one team per day” sticks per date)
   const [isLockedToday, setIsLockedToday] = useState(false);
   const [team, setTeam] = useState<Record<string, string | null>>(emptyTeam);
 
-  // perfect toggle state
   const [perfectTeam, setPerfectTeam] = useState<Record<string, string | null> | null>(null);
   const [showPerfect, setShowPerfect] = useState(false);
 
-  // stats (LIVE TODAY ONLY)
   const [personalBest, setPersonalBest] = useState<{ score: number; date: string } | null>(null);
   const [gamesPlayed, setGamesPlayed] = useState<number>(0);
 
-  // picker
-  const [active, setActive] = useState<{ slotId: string; allowed: PlayerPos[]; slotLabel: Position } | null>(null);
+  const [active, setActive] = useState<{
+    slotId: string;
+    allowed: PlayerPos[];
+    slotLabel: Position;
+  } | null>(null);
   const [search, setSearch] = useState("");
 
-  // Load state whenever selected date changes
-  useEffect(() => {
-    const locked = loadJSON<{ locked: boolean; team?: Record<string, string | null> }>(lockKey, { locked: false });
-    setIsLockedToday(Boolean(locked.locked));
+  function loadJSON<T>(key: string, fallback: T): T {
+    if (typeof window === "undefined") return fallback;
+    try {
+      const raw = window.localStorage.getItem(key);
+      if (!raw) return fallback;
+      return JSON.parse(raw) as T;
+    } catch {
+      return fallback;
+    }
+  }
 
+  function saveJSON(key: string, value: any) {
+    if (typeof window === "undefined") return;
+    try {
+      window.localStorage.setItem(key, JSON.stringify(value));
+    } catch {}
+  }
+
+  useEffect(() => {
+    const locked = loadJSON<{ locked: boolean; team?: Record<string, string | null> }>(lockKey, {
+      locked: false,
+    });
+
+    setIsLockedToday(Boolean(locked.locked));
     if (locked.team) setTeam(locked.team);
-    else setTeam(emptyTeam); // show empty if this date has no saved team
+    else setTeam(emptyTeam);
 
     const pb = loadJSON<{ score: number; date: string } | null>(LS_PERSONAL_BEST, null);
     setPersonalBest(pb);
@@ -277,12 +319,11 @@ export default function DailyPage() {
     const gp = loadJSON<number>(LS_GAMES_PLAYED, 0);
     setGamesPlayed(gp);
 
-    // reset UI state when changing dates
     setShowPerfect(false);
     setPerfectTeam(null);
     setActive(null);
     setSearch("");
-  }, [lockKey, emptyTeam]);
+  }, [lockKey, emptyTeam, LS_PERSONAL_BEST, LS_GAMES_PLAYED]);
 
   const getPlayerById = (pid: string | null) => {
     if (!pid) return null;
@@ -291,15 +332,15 @@ export default function DailyPage() {
 
   const gameOver = useMemo(() => SLOTS.every((s) => Boolean(team[s.id])), [team]);
 
-  // active team display (toggle)
   const activeTeam = showPerfect && perfectTeam ? perfectTeam : team;
 
-  // totals
   const yourTotal = useMemo(() => sumPoints(team, getPlayerById), [team]);
   const totalShown = useMemo(() => sumPoints(activeTeam, getPlayerById), [activeTeam]);
 
-  // picked IDs based on YOUR team (not perfect) so selections stay consistent
-  const pickedIds = useMemo(() => new Set(Object.values(team).filter(Boolean) as string[]), [team]);
+  const pickedIds = useMemo(
+    () => new Set(Object.values(team).filter(Boolean) as string[]),
+    [team]
+  );
 
   const isInYourTeam = (playerId: string | null) => {
     if (!playerId) return false;
@@ -319,8 +360,9 @@ export default function DailyPage() {
 
   function onOpen(slot: Slot) {
     if (isLockedToday) return;
-    if (showPerfect) return; // don’t edit while viewing perfect
-    if (team[slot.id]) return; // locked once filled
+    if (showPerfect) return;
+    if (team[slot.id]) return;
+
     setSearch("");
     setActive({ slotId: slot.id, allowed: slot.allowed, slotLabel: slot.label });
   }
@@ -336,17 +378,13 @@ export default function DailyPage() {
     setSearch("");
   }
 
-  // lock once complete + persist team for selected date
-  // BUT: ONLY increment games played + update PB when LIVE today
   useEffect(() => {
     if (!gameOver) return;
     if (isLockedToday) return;
 
-    // always lock + save team for THIS selected date
     saveJSON(lockKey, { locked: true, team });
     setIsLockedToday(true);
 
-    // LIVE TODAY ONLY stats
     if (isLiveToday) {
       setGamesPlayed((prev) => {
         const next = prev + 1;
@@ -365,7 +403,7 @@ export default function DailyPage() {
   }, [gameOver]);
 
   function onTogglePerfect() {
-    if (!gameOver) return; // only after your team is complete
+    if (!gameOver) return;
 
     if (!perfectTeam) {
       const best = buildPerfectTeam(SLOTS, dailyPlayers, 35);
@@ -379,67 +417,86 @@ export default function DailyPage() {
 
   return (
     <main className="min-h-screen text-white relative overflow-hidden">
+      <div
+        className="absolute inset-0"
+        style={{
+          backgroundImage: "url('/versus-bg.jpg')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          backgroundAttachment: "fixed",
+        }}
+      />
 
-{/* Background image */}
-<div
-  className="absolute inset-0"
-  style={{
-    backgroundImage: "url('/versus-bg.jpg')",
-    backgroundSize: "cover",
-    backgroundPosition: "center",
-    backgroundRepeat: "no-repeat",
-    backgroundAttachment: "fixed",
-  }}
-/>
+      <div className="absolute inset-0 bg-black/35" />
 
-{/* Overlay (controls darkness) */}
-<div className="absolute inset-0 bg-black/35" />
-
-<div className="relative mx-auto max-w-6xl px-4 sm:px-6 py-8 sm:py-10">
-        {/* Header */}
-<div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+      <div className="relative mx-auto max-w-6xl px-4 sm:px-6 py-8 sm:py-10">
+        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
           <div>
-            <h1 className="text-4xl font-extrabold tracking-wide text-white">DAILY GAME</h1>
-            <div className="mt-2 text-white/60 font-semibold">Build one lineup per day from today’s 4 random clubs.</div>
+            <h1 className="text-4xl font-extrabold tracking-wide text-white">
+              DAILY GAME
+            </h1>
+            <div className="mt-2 text-white/60 font-semibold">
+              Build one lineup per day from today’s 4 random clubs.
+            </div>
 
-            {/* Date picker (play past days) */}
+            <div className="mt-4 flex flex-wrap items-center gap-3">
+              <button
+                onClick={() => setSeason("2025")}
+                className={`rounded-xl border px-4 py-2 font-bold transition ${
+                  season === "2025"
+                    ? "bg-blue-600 border-blue-500 text-white"
+                    : "border-white/20 text-white/80 hover:text-white hover:border-white/40"
+                }`}
+              >
+                2025
+              </button>
+
+              <button
+                onClick={() => setSeason("2026")}
+                className={`rounded-xl border px-4 py-2 font-bold transition ${
+                  season === "2026"
+                    ? "bg-red-500 border-red-400 text-white"
+                    : "border-white/20 text-white/80 hover:text-white hover:border-white/40"
+                }`}
+              >
+                2026
+              </button>
+            </div>
+
             <div className="mt-4 flex flex-wrap items-center gap-3">
               <div className="text-white/60 text-sm font-semibold">Play date:</div>
 
-             <button
-  className="rounded-xl border border-white/20 px-3 py-2 text-white/80 hover:text-white hover:border-white/40 disabled:opacity-40 disabled:cursor-not-allowed"
-  onClick={() =>
-    setSelectedDate((d) => {
-      const prev = shiftDateKey(d, -1);
-      return prev < MIN_DATE ? MIN_DATE : prev;
-    })
-  }
-  disabled={selectedDate <= MIN_DATE}
-  title="Previous day"
->
-  ←
-</button>
-
+              <button
+                className="rounded-xl border border-white/20 px-3 py-2 text-white/80 hover:text-white hover:border-white/40 disabled:opacity-40 disabled:cursor-not-allowed"
+                onClick={() =>
+                  setSelectedDate((d) => {
+                    const prev = shiftDateKey(d, -1);
+                    return prev < MIN_DATE ? MIN_DATE : prev;
+                  })
+                }
+                disabled={selectedDate <= MIN_DATE}
+                title="Previous day"
+              >
+                ←
+              </button>
 
               <input
-  type="date"
-  value={selectedDate}
-  min={MIN_DATE}
-  max={todayKey}
-onChange={(e) => {
-  const val = e.target.value;
-  if (val < MIN_DATE) {
-    setSelectedDate(MIN_DATE);
-  } else {
-    setSelectedDate(val);
-  }
-}}
-
+                type="date"
+                value={selectedDate}
+                min={MIN_DATE}
+                max={todayKey}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  if (val < MIN_DATE) setSelectedDate(MIN_DATE);
+                  else if (val > todayKey) setSelectedDate(todayKey);
+                  else setSelectedDate(val);
+                }}
                 className="rounded-xl border border-white/15 bg-black/40 px-3 py-2 text-white outline-none focus:border-white/40"
               />
 
               <button
-                className="rounded-xl border border-white/20 px-3 py-2 text-white/80 hover:text-white hover:border-white/40"
+                className="rounded-xl border border-white/20 px-3 py-2 text-white/80 hover:text-white hover:border-white/40 disabled:opacity-40 disabled:cursor-not-allowed"
                 onClick={() => setSelectedDate((d) => shiftDateKey(d, +1))}
                 disabled={selectedDate >= todayKey}
                 title="Next day"
@@ -449,7 +506,7 @@ onChange={(e) => {
 
               <button
                 className="rounded-xl border border-white/20 px-3 py-2 text-white/80 hover:text-white hover:border-white/40"
-                onClick={() => setSelectedDate(todayKey)}
+                onClick={() => setSelectedDate(todayKey < MIN_DATE ? MIN_DATE : todayKey)}
                 title="Jump to today"
               >
                 Today
@@ -471,7 +528,6 @@ onChange={(e) => {
           </button>
         </div>
 
-        {/* Stats */}
         <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="rounded-2xl border border-white/15 bg-black/30 p-5">
             <div className="text-white/60 font-semibold tracking-widest text-xs">
@@ -490,27 +546,40 @@ onChange={(e) => {
           </div>
 
           <div className="rounded-2xl border border-white/15 bg-black/30 p-5">
-            <div className="text-white/60 font-semibold tracking-widest text-xs">PERSONAL HIGH SCORE</div>
+            <div className="text-white/60 font-semibold tracking-widest text-xs">
+              PERSONAL HIGH SCORE
+            </div>
             {personalBest ? (
               <div className="mt-2">
-                <div className="font-extrabold text-lg">{personalBest.score.toFixed(1)} PTS</div>
+                <div className="font-extrabold text-lg">
+                  {personalBest.score.toFixed(1)} PTS
+                </div>
                 <div className="text-white/60 text-sm">Set on {personalBest.date}</div>
               </div>
             ) : (
               <div className="mt-2 text-white/60 text-sm">No score yet.</div>
             )}
-            {!isLiveToday && <div className="mt-2 text-white/40 text-xs">High score updates only when played live today.</div>}
+            {!isLiveToday && (
+              <div className="mt-2 text-white/40 text-xs">
+                High score updates only when played live today.
+              </div>
+            )}
           </div>
 
           <div className="rounded-2xl border border-white/15 bg-black/30 p-5">
-            <div className="text-white/60 font-semibold tracking-widest text-xs">TOTAL GAMES PLAYED</div>
+            <div className="text-white/60 font-semibold tracking-widest text-xs">
+              TOTAL GAMES PLAYED
+            </div>
             <div className="mt-2 font-extrabold text-lg">{gamesPlayed}</div>
             <div className="text-white/60 text-sm">Total across all time</div>
-            {!isLiveToday && <div className="mt-2 text-white/40 text-xs">Only live plays count toward this total.</div>}
+            {!isLiveToday && (
+              <div className="mt-2 text-white/40 text-xs">
+                Only live plays count toward this total.
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Today’s clubs */}
         <div className="mt-8">
           <div className="text-white/60 font-semibold tracking-widest text-sm">
             {isLiveToday ? "TODAY’S CLUBS" : "CLUBS FOR THIS DAY"}
@@ -526,16 +595,19 @@ onChange={(e) => {
               </div>
             ))}
           </div>
-          <div className="mt-2 text-white/40 text-xs">Same clubs for this date — changes when you change the date.</div>
+          <div className="mt-2 text-white/40 text-xs">
+            Same clubs for this date — changes when you change the date.
+          </div>
         </div>
 
-        {/* Total + Perfect toggle */}
         <div className="mt-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div className="text-white/70 font-bold tracking-wide">
             {showPerfect ? "PERFECT TOTAL" : "YOUR TOTAL"}:{" "}
             <span className="text-white">{totalShown.toFixed(1)} PTS</span>
             {gameOver && <span className="ml-3 text-green-400 font-extrabold">• COMPLETE</span>}
-            {showPerfect && <span className="ml-2 text-blue-300 font-extrabold">• VIEWING PERFECT</span>}
+            {showPerfect && (
+              <span className="ml-2 text-blue-300 font-extrabold">• VIEWING PERFECT</span>
+            )}
           </div>
 
           <button
@@ -546,31 +618,39 @@ onChange={(e) => {
             }`}
             onClick={onTogglePerfect}
             disabled={!gameOver && !showPerfect}
-            title={showPerfect ? "Switch back to your team" : gameOver ? "Switch to perfect team" : "Finish your team first"}
+            title={
+              showPerfect
+                ? "Switch back to your team"
+                : gameOver
+                ? "Switch to perfect team"
+                : "Finish your team first"
+            }
           >
             {showPerfect ? "Show My Team" : "Show Perfect Team"}
           </button>
         </div>
 
-        {/* Finished message */}
         {gameOver && (
           <div className="mt-6 rounded-2xl border border-white/15 bg-black/30 p-6">
             <div className="text-2xl font-extrabold tracking-wide">
               {isLiveToday ? "Locked in for today." : "Locked in for this day."}
             </div>
-            <div className="mt-1 text-white/60 font-semibold">Your score: {yourTotal.toFixed(1)} points</div>
+            <div className="mt-1 text-white/60 font-semibold">
+              Your score: {yourTotal.toFixed(1)} points
+            </div>
             {perfectTeam && (
               <div className="mt-1 text-white/60 font-semibold">
                 Perfect score: {sumPoints(perfectTeam, getPlayerById).toFixed(1)} points
               </div>
             )}
             <div className="mt-2 text-white/40 text-xs">
-              {isLiveToday ? "Come back tomorrow for new clubs." : "Archive play — stats don’t count."}
+              {isLiveToday
+                ? "Come back tomorrow for new clubs."
+                : "Archive play — stats don’t count."}
             </div>
           </div>
         )}
 
-        {/* Lineup */}
         <div className="mt-8 space-y-3">
           {SLOTS.map((slot) => {
             const p = getPlayerById(activeTeam[slot.id]);
@@ -580,7 +660,11 @@ onChange={(e) => {
 
             return (
               <div key={slot.id} className="flex gap-3 items-center">
-                <div className="w-16 sm:w-20 shrink-0 rounded-md font-extrabold text-center py-2 bg-blue-600 text-white">
+                <div
+                  className={`w-16 sm:w-20 shrink-0 rounded-md font-extrabold text-center py-2 ${
+                    season === "2026" ? "bg-red-500 text-white" : "bg-blue-600 text-white"
+                  }`}
+                >
                   {slot.label}
                 </div>
 
@@ -589,20 +673,17 @@ onChange={(e) => {
                     clickable ? "hover:brightness-110" : "cursor-not-allowed"
                   }`}
                   style={
-  p && clubMeta
-    ? {
-        backgroundImage: `url(${patternUrlForClub(clubMeta.name)})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-
-        // keep your text + border
-        color: clubMeta.text,
-        borderColor: "rgba(255,255,255,0.35)",
-      }
-    : { backgroundColor: "rgba(0,0,0,0.30)" }
-}
-
+                    p && clubMeta
+                      ? {
+                          backgroundImage: `url(${patternUrlForClub(clubMeta.name)})`,
+                          backgroundSize: "cover",
+                          backgroundPosition: "center",
+                          backgroundRepeat: "no-repeat",
+                          color: clubMeta.text,
+                          borderColor: "rgba(255,255,255,0.35)",
+                        }
+                      : { backgroundColor: "rgba(0,0,0,0.30)" }
+                  }
                   onClick={() => onOpen(slot)}
                   disabled={!clickable}
                   title={
@@ -616,7 +697,11 @@ onChange={(e) => {
                   }
                 >
                   <div className="min-w-0 flex items-center gap-2">
-                    <span className={`truncate block ${p ? "font-extrabold" : "font-extrabold text-white/80"}`}>
+                    <span
+                      className={`truncate block ${
+                        p ? "font-extrabold" : "font-extrabold text-white/80"
+                      }`}
+                    >
                       {p ? p.name : `+ Select ${slot.label}`}
                     </span>
 
@@ -625,12 +710,11 @@ onChange={(e) => {
                     )}
                   </div>
 
-                  {/* Points only after selection */}
-{p?.points != null && (
-<span className="hidden sm:inline-flex shrink-0 font-extrabold px-3 py-1 rounded-md bg-black/55 text-white">
-    {p.points.toFixed(1)} PTS
-  </span>
-)}
+                  {p?.points != null && (
+                    <span className="hidden sm:inline-flex shrink-0 font-extrabold px-3 py-1 rounded-md bg-black/55 text-white">
+                      {p.points.toFixed(1)} PTS
+                    </span>
+                  )}
                 </button>
               </div>
             );
@@ -638,9 +722,8 @@ onChange={(e) => {
         </div>
       </div>
 
-      {/* Picker Modal */}
       {active && (
-<div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/70" onClick={() => setActive(null)} />
 
           <div className="relative w-full max-w-xl rounded-2xl border border-white/15 bg-zinc-950 p-4">
@@ -680,8 +763,9 @@ onChange={(e) => {
                     </div>
 
                     <div className="shrink-0 flex items-center gap-3">
-                      <div className="text-white/60 text-sm font-bold">{p.pos.join("/")}</div>
-                      {/* no points shown before selecting */}
+                      <div className="text-white/60 text-sm font-bold">
+                        {p.pos.join("/")}
+                      </div>
                     </div>
                   </button>
                 ))

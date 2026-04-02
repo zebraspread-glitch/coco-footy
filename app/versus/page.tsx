@@ -2,28 +2,26 @@
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import playersData from "../data/public/afl_players.json";
+import players2025 from "../data/public/afl_players.json";
+import players2026 from "../data/public/afl_players26.json";
 
 /** ================= Types ================= */
 type Side = "A" | "B";
 type PlayerPos = "FWD" | "MID" | "DEF" | "RUCK";
 type SlotPos = "FWD" | "MID" | "DEF" | "RUCK" | "FLEX";
-
 type Position = "FWD" | "MID" | "DEF" | "RUCK" | "FLEX";
-
-// players can only be real positions
 
 type Slot = {
   id: string;
-  label: Position;      // slots can be FLEX
-  allowed: PlayerPos[]; // allowed player positions (no FLEX)
+  label: Position;
+  allowed: PlayerPos[];
 };
 
 type Player = {
   id: string;
   name: string;
   club: string;
-  pos: PlayerPos[]; // ✅ array now
+  pos: PlayerPos[];
   points: number;
 };
 
@@ -67,13 +65,11 @@ const AFL_CLUBS: ClubMeta[] = [
   { name: "GWS", primary: "#ff7800", text: "#111111" },
 ];
 
-/** ================= Turn pattern =================
- * A first, then B twice, then A twice...
- * A, B, B, A, A (repeats)
- */
-
 /** ================= Helpers ================= */
-function sumPoints(team: Record<string, string | null>, getById: (id: string | null) => Player | null) {
+function sumPoints(
+  team: Record<string, string | null>,
+  getById: (id: string | null) => Player | null
+) {
   let total = 0;
   for (const slotId of Object.keys(team)) {
     const p = getById(team[slotId]);
@@ -91,6 +87,7 @@ function clubForPlayer(clubs: ClubMeta[], player: Player | null): ClubMeta | nul
   if (!player) return null;
   return clubs.find((c) => c.name === player.club) ?? null;
 }
+
 function getFakeBadge(club: ClubMeta) {
   return {
     letter: club.name[0],
@@ -98,6 +95,7 @@ function getFakeBadge(club: ClubMeta) {
     text: club.text,
   };
 }
+
 function clubSlug(name: string) {
   return name
     .toLowerCase()
@@ -109,50 +107,46 @@ function patternUrlForClub(clubName: string) {
   return `/patterns/${clubSlug(clubName)}.svg`;
 }
 
-
 /** ================= Page ================= */
 export default function VersusDraftPage() {
   const router = useRouter();
 
-const ALL_PLAYERS: Player[] = playersData as Player[];
+  const [season, setSeason] = useState<"2025" | "2026">("2025");
 
+  const ALL_PLAYERS: Player[] = useMemo(() => {
+    return season === "2026"
+      ? (players2026 as Player[])
+      : (players2025 as Player[]);
+  }, [season]);
 
-  const SPIN_CLUBS = useMemo(() => clampClubsToPlayers(AFL_CLUBS, ALL_PLAYERS), [ALL_PLAYERS]);
+  const SPIN_CLUBS = useMemo(
+    () => clampClubsToPlayers(AFL_CLUBS, ALL_PLAYERS),
+    [ALL_PLAYERS]
+  );
 
-  const [club, setClub] = useState<ClubMeta>(SPIN_CLUBS[0] ?? AFL_CLUBS[0]);
-  const [displayClub, setDisplayClub] = useState<ClubMeta>(club);
+  const [club, setClub] = useState<ClubMeta>(AFL_CLUBS[0]);
+  const [displayClub, setDisplayClub] = useState<ClubMeta>(AFL_CLUBS[0]);
   const [spinning, setSpinning] = useState(false);
 
-  // Turn index into sequence
-  // Turn index into sequence
-const [turnIndex, setTurnIndex] = useState(0);
+  const [turnIndex, setTurnIndex] = useState(0);
 
-const turn: Side = (() => {
-  if (turnIndex === 0) return "A";
+  const turn: Side = (() => {
+    if (turnIndex === 0) return "A";
+    const block = Math.floor((turnIndex - 1) / 2);
+    return block % 2 === 0 ? "B" : "A";
+  })();
 
-  // After pick 0, alternate in blocks of 2:
-  // picks 1-2 = B, 3-4 = A, 5-6 = B, 7-8 = A, ...
-  const block = Math.floor((turnIndex - 1) / 2);
-  return block % 2 === 0 ? "B" : "A";
-})();
-
-
-  // Spin after every 2 picks
   const [picksSinceSpin, setPicksSinceSpin] = useState(0);
 
-  // Picker modal state
   const [active, setActive] = useState<{
     side: Side;
     slotId: string;
     allowed: PlayerPos[];
-slotLabel: SlotPos;
-
+    slotLabel: SlotPos;
   } | null>(null);
 
-  // Search for list picker
   const [search, setSearch] = useState("");
 
-  // Teams
   const [teamA, setTeamA] = useState<Record<string, string | null>>(
     Object.fromEntries(SLOTS.map((s) => [s.id, null]))
   );
@@ -172,7 +166,10 @@ slotLabel: SlotPos;
     return new Set(ids);
   }, [teamA, teamB]);
 
-  const clubPlayers = useMemo(() => ALL_PLAYERS.filter((p) => p.club === club.name), [ALL_PLAYERS, club.name]);
+  const clubPlayers = useMemo(
+    () => ALL_PLAYERS.filter((p) => p.club === club.name),
+    [ALL_PLAYERS, club.name]
+  );
 
   const eligiblePlayers = useMemo(() => {
     if (!active) return [];
@@ -182,29 +179,23 @@ slotLabel: SlotPos;
       .filter((p) => !pickedIds.has(p.id))
       .filter((p) => p.pos.some((pos) => active.allowed.includes(pos)))
       .filter((p) => (q ? p.name.toLowerCase().includes(q) : true))
-      .slice()
+      .slice();
   }, [active, clubPlayers, pickedIds, search]);
 
   const teamATotal = useMemo(() => sumPoints(teamA, getPlayerById), [teamA]);
   const teamBTotal = useMemo(() => sumPoints(teamB, getPlayerById), [teamB]);
-const allFilledA = useMemo(
-  () => SLOTS.every((s) => Boolean(teamA[s.id])),
-  [teamA]
-);
 
-const allFilledB = useMemo(
-  () => SLOTS.every((s) => Boolean(teamB[s.id])),
-  [teamB]
-);
+  const allFilledA = useMemo(() => SLOTS.every((s) => Boolean(teamA[s.id])), [teamA]);
+  const allFilledB = useMemo(() => SLOTS.every((s) => Boolean(teamB[s.id])), [teamB]);
 
-const gameOver = allFilledA && allFilledB;
+  const gameOver = allFilledA && allFilledB;
 
-const winner = useMemo<"A" | "B" | "DRAW" | null>(() => {
-  if (!gameOver) return null;
-  if (teamATotal > teamBTotal) return "A";
-  if (teamBTotal > teamATotal) return "B";
-  return "DRAW";
-}, [gameOver, teamATotal, teamBTotal]);
+  const winner = useMemo<"A" | "B" | "DRAW" | null>(() => {
+    if (!gameOver) return null;
+    if (teamATotal > teamBTotal) return "A";
+    if (teamBTotal > teamATotal) return "B";
+    return "DRAW";
+  }, [gameOver, teamATotal, teamBTotal]);
 
   /** ===== Spinner effect ===== */
   const spinTimer = useRef<number | null>(null);
@@ -214,12 +205,14 @@ const winner = useMemo<"A" | "B" | "DRAW" | null>(() => {
   function cleanupSpinTimers() {
     if (spinTimer.current) window.clearInterval(spinTimer.current);
     if (spinTimeout.current) window.clearTimeout(spinTimeout.current);
+    if (delayedSpinTimeout.current) window.clearTimeout(delayedSpinTimeout.current);
     spinTimer.current = null;
     spinTimeout.current = null;
+    delayedSpinTimeout.current = null;
   }
 
   function spinToRandomClub() {
-   if (gameOver) return;
+    if (gameOver) return;
     if (spinning || SPIN_CLUBS.length === 0) return;
 
     setSpinning(true);
@@ -237,39 +230,58 @@ const winner = useMemo<"A" | "B" | "DRAW" | null>(() => {
 
     spinTimeout.current = window.setTimeout(() => {
       cleanupSpinTimers();
-      const final = SPIN_CLUBS[Math.floor(Math.random() * SPIN_CLUBS.length)];
+
+      let final = club;
+      if (SPIN_CLUBS.length > 1) {
+        do {
+          final = SPIN_CLUBS[Math.floor(Math.random() * SPIN_CLUBS.length)];
+        } while (final.name === club.name);
+      } else {
+        final = SPIN_CLUBS[0];
+      }
+
       setClub(final);
       setDisplayClub(final);
       setSpinning(false);
     }, 1200);
   }
 
-useEffect(() => {
-  spinToRandomClub();
-  return () => cleanupSpinTimers();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-}, []);
+  useEffect(() => {
+    const firstClub = SPIN_CLUBS[0] ?? AFL_CLUBS[0];
+    setClub(firstClub);
+    setDisplayClub(firstClub);
+    setTeamA(Object.fromEntries(SLOTS.map((s) => [s.id, null])));
+    setTeamB(Object.fromEntries(SLOTS.map((s) => [s.id, null])));
+    setTurnIndex(0);
+    setPicksSinceSpin(0);
+    setActive(null);
+    setSearch("");
+    cleanupSpinTimers();
 
-useEffect(() => {
-  if (!gameOver) return;
-  cleanupSpinTimers();
-  if (delayedSpinTimeout.current) window.clearTimeout(delayedSpinTimeout.current);
-  setSpinning(false);
-  setActive(null);
-  setSearch("");
-}, [gameOver]);
+    const timeout = window.setTimeout(() => {
+      spinToRandomClub();
+    }, 50);
 
+    return () => window.clearTimeout(timeout);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [season, SPIN_CLUBS]);
+
+  useEffect(() => {
+    if (!gameOver) return;
+    cleanupSpinTimers();
+    setSpinning(false);
+    setActive(null);
+    setSearch("");
+  }, [gameOver]);
 
   function slotIsFilled(side: Side, slotId: string) {
     return side === "A" ? Boolean(teamA[slotId]) : Boolean(teamB[slotId]);
   }
 
   function onOpen(side: Side, slot: Slot) {
-   if (gameOver) return;
+    if (gameOver) return;
     if (spinning) return;
     if (side !== turn) return;
-
-    // (1) LOCKED: can't replace once filled
     if (slotIsFilled(side, slot.id)) return;
 
     setSearch("");
@@ -277,72 +289,101 @@ useEffect(() => {
   }
 
   function onPick(playerId: string) {
-   if (gameOver) return;
+    if (gameOver) return;
     if (!active) return;
     if (spinning) return;
     if (active.side !== turn) return;
-
-    // Double-check lock (safety)
     if (slotIsFilled(active.side, active.slotId)) return;
 
-    if (active.side === "A") setTeamA((prev) => ({ ...prev, [active.slotId]: playerId }));
-    else setTeamB((prev) => ({ ...prev, [active.slotId]: playerId }));
+    if (active.side === "A") {
+      setTeamA((prev) => ({ ...prev, [active.slotId]: playerId }));
+    } else {
+      setTeamB((prev) => ({ ...prev, [active.slotId]: playerId }));
+    }
 
     setActive(null);
     setSearch("");
-
-    // advance turn
     setTurnIndex((prev) => prev + 1);
 
-    // spin after every 2 picks total
     setPicksSinceSpin((prev) => {
       const next = prev + 1;
+
       if (next >= 2) {
-        if (next >= 2) {
-  delayedSpinTimeout.current = window.setTimeout(() => {
-    if (!gameOver) spinToRandomClub();
-  }, 650);
-
-  return 0;
-}
-
+        delayedSpinTimeout.current = window.setTimeout(() => {
+          if (!gameOver) spinToRandomClub();
+        }, 650);
         return 0;
       }
+
       return next;
     });
   }
 
-  const isSideEnabled = (side: Side) =>
-  gameOver ? true : !spinning && side === turn;
+  function resetGame() {
+    cleanupSpinTimers();
 
+    setTeamA(Object.fromEntries(SLOTS.map((s) => [s.id, null])));
+    setTeamB(Object.fromEntries(SLOTS.map((s) => [s.id, null])));
+    setTurnIndex(0);
+    setPicksSinceSpin(0);
+    setActive(null);
+    setSearch("");
+    setSpinning(false);
+
+    const firstClub = SPIN_CLUBS[0] ?? AFL_CLUBS[0];
+    setClub(firstClub);
+    setDisplayClub(firstClub);
+
+    window.setTimeout(() => spinToRandomClub(), 50);
+  }
 
   return (
     <main className="min-h-screen text-white relative overflow-hidden">
-  {/* Background image */}
-<div
-  className="absolute inset-0"
-style={{
-  backgroundImage: "url('/versus-bg.jpg')",
-  backgroundSize: "cover",
-  backgroundPosition: "center",
-  backgroundRepeat: "no-repeat",
-  backgroundAttachment: "scroll", // ✅ default for mobile
-}}
+      <div
+        className="absolute inset-0"
+        style={{
+          backgroundImage: "url('/versus-bg.jpg')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          backgroundAttachment: "scroll",
+        }}
+      />
 
-/>
+      <div className="absolute inset-0 bg-black/65" />
 
-{/* Dark overlay for readability */}
-<div className="absolute inset-0 bg-black/65" />
-
-{/* Optional subtle highlight (keep if you like the shine) */}
-<div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_20%_20%,#ffffff22,transparent_40%),radial-gradient(circle_at_80%_30%,#ffffff15,transparent_35%),radial-gradient(circle_at_30%_80%,#ffffff10,transparent_40%)]" />
-
+      <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_20%_20%,#ffffff22,transparent_40%),radial-gradient(circle_at_80%_30%,#ffffff15,transparent_35%),radial-gradient(circle_at_30%_80%,#ffffff10,transparent_40%)]" />
 
       <div className="relative mx-auto max-w-6xl px-6 py-10">
-        {/* Header */}
-<div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
           <div>
-            <h1 className="text-4xl font-extrabold tracking-wide text-white">VERSUS MODE</h1>
+            <h1 className="text-4xl font-extrabold tracking-wide text-white">
+              VERSUS MODE
+            </h1>
+
+            <div className="mt-4 flex items-center gap-3">
+              <button
+                onClick={() => setSeason("2025")}
+                className={`rounded-xl border px-4 py-2 font-bold transition ${
+                  season === "2025"
+                    ? "bg-blue-600 border-blue-500 text-white"
+                    : "border-white/20 text-white/80 hover:text-white hover:border-white/40"
+                }`}
+              >
+                2025
+              </button>
+
+              <button
+                onClick={() => setSeason("2026")}
+                className={`rounded-xl border px-4 py-2 font-bold transition ${
+                  season === "2026"
+                    ? "bg-red-500 border-red-400 text-white"
+                    : "border-white/20 text-white/80 hover:text-white hover:border-white/40"
+                }`}
+              >
+                2026
+              </button>
+            </div>
           </div>
 
           <button
@@ -353,8 +394,7 @@ style={{
           </button>
         </div>
 
-        {/* Totals */}
-<div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-10">
+        <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-10">
           <div className="text-center text-white/70 font-bold tracking-wide">
             TEAM A: <span className="text-white">{teamATotal.toFixed(1)} PTS</span>
           </div>
@@ -363,68 +403,64 @@ style={{
           </div>
         </div>
 
-      {/* Turn indicator */}
-<div className="mt-4 text-center text-white/60">
-  {gameOver ? (
-    <span className="font-semibold tracking-wide">Draft complete.</span>
-  ) : spinning ? (
-    <span className="font-semibold tracking-wide">Spinning club…</span>
-  ) : (
-    <span className="font-semibold tracking-wide">
-      Turn: <span className="text-white">TEAM {turn}</span>
-    </span>
-  )}
-</div>
-
-{gameOver && (
-  <div className="mt-6 text-center">
-    <div className="text-3xl font-extrabold tracking-wide">
-      {winner === "DRAW" ? "IT'S A DRAW!" : `TEAM ${winner} WINS!`}
-    </div>
-    <div className="mt-2 text-white/70 font-bold">
-      Final: A {teamATotal.toFixed(1)} — B {teamBTotal.toFixed(1)}
-    </div>
-
-    <button
-      className="mt-5 rounded-xl border border-white/20 px-5 py-3 text-white/80 hover:text-white hover:border-white/40"
-      onClick={() => window.location.reload()}
-    >
-      Play Again
-    </button>
-  </div>
-)}
-
-
-        {/* Two columns */}
-<div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
-          
-          <TeamColumn
-  side="A"
-  clubs={AFL_CLUBS}
-  slots={SLOTS}
-  selection={teamA}
-  getPlayer={getPlayerById}
-  onOpen={onOpen}
-  enabled={!gameOver && !spinning && turn === "A"}
-  badgeClass="bg-blue-600 text-white"
-  gameOver={gameOver}
-  winner={winner}
-/>
-<TeamColumn
-  side="B"
-  clubs={AFL_CLUBS}
-  slots={SLOTS}
-  selection={teamB}
-  getPlayer={getPlayerById}
-  onOpen={onOpen}
-  enabled={!gameOver && !spinning && turn === "B"}
-  badgeClass="bg-red-700 text-white"
-  gameOver={gameOver}
-  winner={winner}
-/>
+        <div className="mt-4 text-center text-white/60">
+          {gameOver ? (
+            <span className="font-semibold tracking-wide">Draft complete.</span>
+          ) : spinning ? (
+            <span className="font-semibold tracking-wide">Spinning club…</span>
+          ) : (
+            <span className="font-semibold tracking-wide">
+              Turn: <span className="text-white">TEAM {turn}</span>
+            </span>
+          )}
         </div>
 
-        {/* Drafting from (no extra writing) */}
+        {gameOver && (
+          <div className="mt-6 text-center">
+            <div className="text-3xl font-extrabold tracking-wide">
+              {winner === "DRAW" ? "IT'S A DRAW!" : `TEAM ${winner} WINS!`}
+            </div>
+            <div className="mt-2 text-white/70 font-bold">
+              Final: A {teamATotal.toFixed(1)} — B {teamBTotal.toFixed(1)}
+            </div>
+
+            <button
+              className="mt-5 rounded-xl border border-white/20 px-5 py-3 text-white/80 hover:text-white hover:border-white/40"
+              onClick={resetGame}
+            >
+              Play Again
+            </button>
+          </div>
+        )}
+
+        <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
+          <TeamColumn
+            side="A"
+            clubs={AFL_CLUBS}
+            slots={SLOTS}
+            selection={teamA}
+            getPlayer={getPlayerById}
+            onOpen={onOpen}
+            enabled={!gameOver && !spinning && turn === "A"}
+            badgeClass={season === "2026" ? "bg-red-500 text-white" : "bg-blue-600 text-white"}
+            gameOver={gameOver}
+            winner={winner}
+          />
+
+          <TeamColumn
+            side="B"
+            clubs={AFL_CLUBS}
+            slots={SLOTS}
+            selection={teamB}
+            getPlayer={getPlayerById}
+            onOpen={onOpen}
+            enabled={!gameOver && !spinning && turn === "B"}
+            badgeClass="bg-red-700 text-white"
+            gameOver={gameOver}
+            winner={winner}
+          />
+        </div>
+
         <div className="mt-12 text-center">
           <div className="text-white/60 font-semibold tracking-widest">DRAFTING FROM:</div>
 
@@ -442,7 +478,6 @@ style={{
         </div>
       </div>
 
-      {/* Picker Modal (List + Search like your image) */}
       {active && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/70" onClick={() => setActive(null)} />
@@ -496,7 +531,6 @@ style={{
                 ))
               )}
             </div>
-
           </div>
         </div>
       )}
@@ -528,20 +562,15 @@ function TeamColumn({
   gameOver: boolean;
   winner: "A" | "B" | "DRAW" | null;
 }) {
+  const isLoser = gameOver && winner && winner !== "DRAW" && winner !== side;
 
- 
-const isLoser = gameOver && winner && winner !== "DRAW" && winner !== side;
-
-return (
-  <div className={`space-y-3 ${isLoser ? "opacity-40" : ""}`}>
-
-
-    {gameOver && winner === side && (
-    <div className="text-center text-green-400 font-extrabold tracking-widest mb-3 text-3xl">
-  🏆 WINNER
-</div>
-
-    )}
+  return (
+    <div className={`space-y-3 ${isLoser ? "opacity-40" : ""}`}>
+      {gameOver && winner === side && (
+        <div className="text-center text-green-400 font-extrabold tracking-widest mb-3 text-3xl">
+          🏆 WINNER
+        </div>
+      )}
 
       {slots.map((slot) => {
         const p = getPlayer(selection[slot.id]);
@@ -558,66 +587,58 @@ return (
 
             <button
               className={`relative overflow-hidden flex-1 border border-white/70 rounded-md px-4 text-left transition flex items-center justify-between h-14 ${
-  clickable ? "hover:brightness-110" : "cursor-not-allowed"
-}`}
-
-
- style={
-  p && clubMeta
-    ? {
-        backgroundColor: clubMeta.primary,
-        color: clubMeta.text,
-        borderColor: "rgba(255,255,255,0.35)",
-      }
-    : { backgroundColor: "rgba(0,0,0,0.30)" }
-}
-
-
-
+                clickable ? "hover:brightness-110" : "cursor-not-allowed"
+              }`}
+              style={
+                p && clubMeta
+                  ? {
+                      backgroundColor: clubMeta.primary,
+                      color: clubMeta.text,
+                      borderColor: "rgba(255,255,255,0.35)",
+                    }
+                  : { backgroundColor: "rgba(0,0,0,0.30)" }
+              }
               onClick={() => onOpen(side, slot)}
               disabled={!clickable}
               title={isFilled ? "Locked (cannot be replaced)" : undefined}
             >
+              {p && clubMeta && (
+                <>
+                  <span
+                    className="absolute top-0 bottom-0 opacity-95 pointer-events-none"
+                    style={{
+                      left: "58%",
+                      width: "16%",
+                      backgroundImage: `url(${patternUrlForClub(clubMeta.name)})`,
+                      backgroundSize: "cover",
+                      backgroundPosition: "center",
+                      backgroundRepeat: "no-repeat",
+                    }}
+                  />
 
-              {/* Pattern strip (right side only) */}
-{p && clubMeta && (
-  <>
-    {/* Middle pattern band (only between the green lines) */}
-    <span
-      className="absolute top-0 bottom-0 opacity-95 pointer-events-none"
-      style={{
-        left: "58%",          // start of band
-        width: "16%",         // band width
-        backgroundImage: `url(${patternUrlForClub(clubMeta.name)})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-      }}
-    />
+                  <span
+                    className="absolute top-0 bottom-0 right-0 pointer-events-none"
+                    style={{
+                      width: "22%",
+                      backgroundColor: clubMeta.primary,
+                    }}
+                  />
+                </>
+              )}
 
-    {/* Solid right area so pattern NEVER goes under points */}
-    <span
-      className="absolute top-0 bottom-0 right-0 pointer-events-none"
-      style={{
-        width: "22%",                 // points area width
-        backgroundColor: clubMeta.primary,
-      }}
-    />
-  </>
-)}
-
-
-
-<span className={`relative z-10 truncate block ${p ? "font-extrabold" : "font-extrabold text-white/80"}`}>
+              <span
+                className={`relative z-10 truncate block ${
+                  p ? "font-extrabold" : "font-extrabold text-white/80"
+                }`}
+              >
                 {p ? p.name : `+ Select ${slot.label}`}
               </span>
 
               {p?.points != null && (
-  <span className="relative z-10 shrink-0 font-extrabold px-3 py-1 rounded-md bg-black/55 text-white">
-    {p.points.toFixed(1)} PTS
-  </span>
-)}
-
+                <span className="relative z-10 shrink-0 font-extrabold px-3 py-1 rounded-md bg-black/55 text-white">
+                  {p.points.toFixed(1)} PTS
+                </span>
+              )}
             </button>
           </div>
         );

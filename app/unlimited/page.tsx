@@ -2,7 +2,8 @@
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import playersData from "../data/public/afl_players.json";
+import players2025 from "../data/public/afl_players.json";
+import players2026 from "../data/public/afl_players26.json";
 
 /** ================= Types ================= */
 type PlayerPos = "FWD" | "MID" | "DEF" | "RUCK";
@@ -11,15 +12,15 @@ type Position = "FWD" | "MID" | "DEF" | "RUCK" | "FLEX";
 
 type Slot = {
   id: string;
-  label: Position; // slots can be FLEX
-  allowed: PlayerPos[]; // allowed player positions (no FLEX)
+  label: Position;
+  allowed: PlayerPos[];
 };
 
 type Player = {
   id: string;
   name: string;
   club: string;
-  pos: PlayerPos[]; // array
+  pos: PlayerPos[];
   points: number;
 };
 
@@ -85,49 +86,60 @@ function clubForPlayer(clubs: ClubMeta[], player: Player | null): ClubMeta | nul
   if (!player) return null;
   return clubs.find((c) => c.name === player.club) ?? null;
 }
+
 function clubSlug(name: string) {
-  return name
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "_")
-    .replace(/^_|_$/g, "");
+  return name.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "");
 }
 
 function patternUrlForClub(clubName: string) {
   return `/patterns/${clubSlug(clubName)}.svg`;
 }
 
-
 /** ================= Page ================= */
 export default function UnlimitedDraftPage() {
   const router = useRouter();
 
-  const ALL_PLAYERS: Player[] = playersData as Player[];
+  const [season, setSeason] = useState<"2025" | "2026">("2025");
+
+  const ALL_PLAYERS: Player[] = useMemo(() => {
+    return season === "2026"
+      ? (players2026 as Player[])
+      : (players2025 as Player[]);
+  }, [season]);
+
   const SPIN_CLUBS = useMemo(
     () => clampClubsToPlayers(AFL_CLUBS, ALL_PLAYERS),
     [ALL_PLAYERS]
   );
 
-  const [club, setClub] = useState<ClubMeta>(SPIN_CLUBS[0] ?? AFL_CLUBS[0]);
-  const [displayClub, setDisplayClub] = useState<ClubMeta>(club);
+  const [club, setClub] = useState<ClubMeta>(AFL_CLUBS[0]);
+  const [displayClub, setDisplayClub] = useState<ClubMeta>(AFL_CLUBS[0]);
   const [spinning, setSpinning] = useState(false);
 
-  // Spin after every 2 picks
   const [picksSinceSpin, setPicksSinceSpin] = useState(0);
 
-  // Picker modal state
   const [active, setActive] = useState<{
     slotId: string;
     allowed: PlayerPos[];
     slotLabel: SlotPos;
   } | null>(null);
 
-  // Search for list picker
   const [search, setSearch] = useState("");
 
-  // Single Team
   const [team, setTeam] = useState<Record<string, string | null>>(
     Object.fromEntries(SLOTS.map((s) => [s.id, null]))
   );
+
+  useEffect(() => {
+    const firstClub = SPIN_CLUBS[0] ?? AFL_CLUBS[0];
+    setClub(firstClub);
+    setDisplayClub(firstClub);
+    setTeam(Object.fromEntries(SLOTS.map((s) => [s.id, null])));
+    setActive(null);
+    setSearch("");
+    setSpinning(false);
+    setPicksSinceSpin(0);
+  }, [season, SPIN_CLUBS]);
 
   const getPlayerById = (pid: string | null) => {
     if (!pid) return null;
@@ -165,26 +177,31 @@ export default function UnlimitedDraftPage() {
 
   useEffect(() => {
     try {
-      const saved = Number(localStorage.getItem("unlimited_highscore") ?? 0);
+      const key =
+        season === "2026" ? "unlimited_highscore_2026" : "unlimited_highscore_2025";
+      const saved = Number(localStorage.getItem(key) ?? 0);
       setHighScore(Number.isFinite(saved) ? saved : 0);
     } catch {
       setHighScore(0);
     }
-  }, []);
+  }, [season]);
 
   useEffect(() => {
     if (currentScore > highScore) {
       setHighScore(currentScore);
       try {
-        localStorage.setItem("unlimited_highscore", String(currentScore));
+        const key =
+          season === "2026" ? "unlimited_highscore_2026" : "unlimited_highscore_2025";
+        localStorage.setItem(key, String(currentScore));
       } catch {}
     }
-  }, [currentScore, highScore]);
+  }, [currentScore, highScore, season]);
 
   /** ===== Spinner effect ===== */
   const spinTimer = useRef<number | null>(null);
   const spinTimeout = useRef<number | null>(null);
   const delayedSpinTimeout = useRef<number | null>(null);
+  const hasInitialSpun = useRef(false);
 
   function cleanupSpinTimers() {
     if (spinTimer.current) window.clearInterval(spinTimer.current);
@@ -215,13 +232,14 @@ export default function UnlimitedDraftPage() {
     spinTimeout.current = window.setTimeout(() => {
       cleanupSpinTimers();
       let final = club;
-if (SPIN_CLUBS.length > 1) {
-  do {
-    final = SPIN_CLUBS[Math.floor(Math.random() * SPIN_CLUBS.length)];
-  } while (final.name === club.name);
-} else {
-  final = SPIN_CLUBS[0];
-}
+
+      if (SPIN_CLUBS.length > 1) {
+        do {
+          final = SPIN_CLUBS[Math.floor(Math.random() * SPIN_CLUBS.length)];
+        } while (final.name === club.name);
+      } else {
+        final = SPIN_CLUBS[0];
+      }
 
       setClub(final);
       setDisplayClub(final);
@@ -230,10 +248,28 @@ if (SPIN_CLUBS.length > 1) {
   }
 
   useEffect(() => {
+    if (SPIN_CLUBS.length === 0) return;
+    if (hasInitialSpun.current) return;
+
+    hasInitialSpun.current = true;
     spinToRandomClub();
+
     return () => cleanupSpinTimers();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [SPIN_CLUBS]);
+
+  useEffect(() => {
+    hasInitialSpun.current = false;
+    cleanupSpinTimers();
+
+    const timeout = window.setTimeout(() => {
+      hasInitialSpun.current = true;
+      spinToRandomClub();
+    }, 50);
+
+    return () => window.clearTimeout(timeout);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [season]);
 
   useEffect(() => {
     if (!gameOver) return;
@@ -250,8 +286,6 @@ if (SPIN_CLUBS.length > 1) {
   function onOpen(slot: Slot) {
     if (gameOver) return;
     if (spinning) return;
-
-    // LOCKED: can't replace once filled
     if (slotIsFilled(slot.id)) return;
 
     setSearch("");
@@ -262,20 +296,15 @@ if (SPIN_CLUBS.length > 1) {
     if (gameOver) return;
     if (!active) return;
     if (spinning) return;
-
-    // Double-check lock
     if (slotIsFilled(active.slotId)) return;
 
     setTeam((prev) => ({ ...prev, [active.slotId]: playerId }));
-
     setActive(null);
     setSearch("");
 
-    // spin after every 2 picks total
-   delayedSpinTimeout.current = window.setTimeout(() => {
-  if (!gameOver) spinToRandomClub();
-}, 650);
-
+    delayedSpinTimeout.current = window.setTimeout(() => {
+      if (!gameOver) spinToRandomClub();
+    }, 650);
   }
 
   function resetGame() {
@@ -285,35 +314,59 @@ if (SPIN_CLUBS.length > 1) {
     setSearch("");
     setPicksSinceSpin(0);
     setTeam(Object.fromEntries(SLOTS.map((s) => [s.id, null])));
-    // kick off a new spin
+
+    const firstClub = SPIN_CLUBS[0] ?? AFL_CLUBS[0];
+    setClub(firstClub);
+    setDisplayClub(firstClub);
+
     window.setTimeout(() => spinToRandomClub(), 50);
   }
 
   return (
     <main className="min-h-screen text-white relative overflow-hidden">
-{/* Background image */}
-<div
-  className="absolute inset-0"
-  style={{
-    backgroundImage: "url('/versus-bg.jpg')",
-    backgroundSize: "cover",
-    backgroundPosition: "center",
-    backgroundRepeat: "no-repeat",
-    backgroundAttachment: "fixed",
-  }}
-/>
+      <div
+        className="absolute inset-0"
+        style={{
+          backgroundImage: "url('/versus-bg.jpg')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          backgroundAttachment: "fixed",
+        }}
+      />
 
-{/* Overlay (controls darkness) */}
-<div className="absolute inset-0 bg-black/35" />
-
+      <div className="absolute inset-0 bg-black/35" />
 
       <div className="relative mx-auto max-w-5xl px-6 py-10">
-        {/* Header */}
         <div className="flex items-start justify-between">
           <div>
             <h1 className="text-4xl font-extrabold tracking-wide text-white">
               UNLIMITED MODE
             </h1>
+
+            <div className="mt-4 flex items-center gap-3">
+              <button
+                onClick={() => setSeason("2025")}
+                className={`rounded-xl border px-4 py-2 font-bold transition ${
+                  season === "2025"
+                    ? "bg-blue-600 border-blue-500 text-white"
+                    : "border-white/20 text-white/80 hover:text-white hover:border-white/40"
+                }`}
+              >
+                2025
+              </button>
+
+              <button
+                onClick={() => setSeason("2026")}
+                className={`rounded-xl border px-4 py-2 font-bold transition ${
+                  season === "2026"
+                    ? "bg-red-500 border-red-400 text-white"
+                    : "border-white/20 text-white/80 hover:text-white hover:border-white/40"
+                }`}
+              >
+                2026
+              </button>
+            </div>
           </div>
 
           <button
@@ -324,11 +377,9 @@ if (SPIN_CLUBS.length > 1) {
           </button>
         </div>
 
-        {/* Scores */}
         <div className="mt-10 text-center">
           <div className="text-white/70 font-bold tracking-wide">
-            HIGH SCORE:{" "}
-            <span className="text-white">{highScore.toFixed(1)} PTS</span>
+            HIGH SCORE: <span className="text-white">{highScore.toFixed(1)} PTS</span>
           </div>
           <div className="mt-2 text-white/70 font-bold tracking-wide">
             CURRENT SCORE:{" "}
@@ -336,7 +387,6 @@ if (SPIN_CLUBS.length > 1) {
           </div>
         </div>
 
-        {/* Status */}
         <div className="mt-4 text-center text-white/60">
           {gameOver ? (
             <span className="font-semibold tracking-wide">Run complete.</span>
@@ -363,7 +413,6 @@ if (SPIN_CLUBS.length > 1) {
           </div>
         )}
 
-        {/* Single column */}
         <div className="mt-8">
           <SingleTeamColumn
             clubs={AFL_CLUBS}
@@ -372,11 +421,10 @@ if (SPIN_CLUBS.length > 1) {
             getPlayer={getPlayerById}
             onOpen={onOpen}
             enabled={!gameOver && !spinning}
-            badgeClass="bg-blue-600 text-white"
+            badgeClass={season === "2026" ? "bg-red-500 text-white" : "bg-blue-600 text-white"}
           />
         </div>
 
-        {/* Drafting from */}
         <div className="mt-12 text-center">
           <div className="text-white/60 font-semibold tracking-widest">DRAFTING FROM:</div>
 
@@ -394,16 +442,13 @@ if (SPIN_CLUBS.length > 1) {
         </div>
       </div>
 
-      {/* Picker Modal */}
       {active && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/70" onClick={() => setActive(null)} />
 
           <div className="relative w-full max-w-xl rounded-2xl border border-white/15 bg-zinc-950 p-4">
             <div className="flex items-center justify-between gap-3">
-              <div className="font-extrabold tracking-wide">
-                Select {active.slotLabel}
-              </div>
+              <div className="font-extrabold tracking-wide">Select {active.slotLabel}</div>
 
               <button
                 className="rounded-xl border border-white/20 px-3 py-2 text-white/80 hover:text-white hover:border-white/40"
@@ -489,36 +534,35 @@ function SingleTeamColumn({
               className={`flex-1 border border-white/70 rounded-md px-4 text-left transition flex items-center justify-between h-14 ${
                 clickable ? "hover:brightness-110" : "cursor-not-allowed"
               }`}
-             style={
-  p && clubMeta
-    ? {
-        // 👇 pattern background
-        backgroundImage: `url(${patternUrlForClub(clubMeta.name)})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-
-        // keep your text + border
-        color: clubMeta.text,
-        borderColor: "rgba(255,255,255,0.35)",
-      }
-    : { backgroundColor: "rgba(0,0,0,0.30)" }
-}
-
+              style={
+                p && clubMeta
+                  ? {
+                      backgroundImage: `url(${patternUrlForClub(clubMeta.name)})`,
+                      backgroundSize: "cover",
+                      backgroundPosition: "center",
+                      backgroundRepeat: "no-repeat",
+                      color: clubMeta.text,
+                      borderColor: "rgba(255,255,255,0.35)",
+                    }
+                  : { backgroundColor: "rgba(0,0,0,0.30)" }
+              }
               onClick={() => onOpen(slot)}
               disabled={!clickable}
               title={isFilled ? "Locked (cannot be replaced)" : undefined}
             >
-              <span className={`truncate block ${p ? "font-extrabold" : "font-extrabold text-white/80"}`}>
+              <span
+                className={`truncate block ${
+                  p ? "font-extrabold" : "font-extrabold text-white/80"
+                }`}
+              >
                 {p ? p.name : `+ Select ${slot.label}`}
               </span>
 
               {p?.points != null && (
-  <span className="shrink-0 font-extrabold px-3 py-1 rounded-md bg-black/50 text-white backdrop-blur-sm border border-white/15">
-    {p.points.toFixed(1)} PTS
-  </span>
-)}
-
+                <span className="shrink-0 font-extrabold px-3 py-1 rounded-md bg-black/50 text-white backdrop-blur-sm border border-white/15">
+                  {p.points.toFixed(1)} PTS
+                </span>
+              )}
             </button>
           </div>
         );
