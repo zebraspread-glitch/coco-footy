@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import players2025 from "../data/public/afl_players.json";
 import players2026 from "../data/public/afl_players26.json";
 
@@ -88,14 +88,6 @@ function clubForPlayer(clubs: ClubMeta[], player: Player | null): ClubMeta | nul
   return clubs.find((c) => c.name === player.club) ?? null;
 }
 
-function getFakeBadge(club: ClubMeta) {
-  return {
-    letter: club.name[0],
-    bg: club.primary,
-    text: club.text,
-  };
-}
-
 function clubSlug(name: string) {
   return name
     .toLowerCase()
@@ -110,8 +102,44 @@ function patternUrlForClub(clubName: string) {
 /** ================= Page ================= */
 export default function VersusDraftPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const [season, setSeason] = useState<"2025" | "2026">("2025");
+  const [seasonReady, setSeasonReady] = useState(false);
+
+  useEffect(() => {
+    const urlSeason = searchParams.get("season");
+
+    if (urlSeason === "2025" || urlSeason === "2026") {
+      setSeason(urlSeason);
+      try {
+        localStorage.setItem("selectedSeason", urlSeason);
+      } catch {}
+    } else {
+      try {
+        const savedSeason = localStorage.getItem("selectedSeason");
+        if (savedSeason === "2025" || savedSeason === "2026") {
+          setSeason(savedSeason);
+        }
+      } catch {}
+    }
+
+    setSeasonReady(true);
+  }, [searchParams]);
+
+  const changeSeason = (nextSeason: "2025" | "2026") => {
+    setSeason(nextSeason);
+
+    try {
+      localStorage.setItem("selectedSeason", nextSeason);
+    } catch {}
+
+    router.replace(`/versus?season=${nextSeason}`);
+  };
+
+  const goHome = () => {
+    router.push(`/?season=${season}`);
+  };
 
   const ALL_PLAYERS: Player[] = useMemo(() => {
     return season === "2026"
@@ -247,6 +275,8 @@ export default function VersusDraftPage() {
   }
 
   useEffect(() => {
+    if (!seasonReady) return;
+
     const firstClub = SPIN_CLUBS[0] ?? AFL_CLUBS[0];
     setClub(firstClub);
     setDisplayClub(firstClub);
@@ -264,7 +294,7 @@ export default function VersusDraftPage() {
 
     return () => window.clearTimeout(timeout);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [season, SPIN_CLUBS]);
+  }, [season, SPIN_CLUBS, seasonReady]);
 
   useEffect(() => {
     if (!gameOver) return;
@@ -363,7 +393,7 @@ export default function VersusDraftPage() {
 
             <div className="mt-4 flex items-center gap-3">
               <button
-                onClick={() => setSeason("2025")}
+                onClick={() => changeSeason("2025")}
                 className={`rounded-xl border px-4 py-2 font-bold transition ${
                   season === "2025"
                     ? "bg-blue-600 border-blue-500 text-white"
@@ -374,7 +404,7 @@ export default function VersusDraftPage() {
               </button>
 
               <button
-                onClick={() => setSeason("2026")}
+                onClick={() => changeSeason("2026")}
                 className={`rounded-xl border px-4 py-2 font-bold transition ${
                   season === "2026"
                     ? "bg-red-500 border-red-400 text-white"
@@ -388,7 +418,7 @@ export default function VersusDraftPage() {
 
           <button
             className="rounded-xl border border-white/20 px-4 py-2 text-white/80 hover:text-white hover:border-white/40"
-            onClick={() => router.push("/")}
+            onClick={goHome}
           >
             ← Home
           </button>
@@ -442,7 +472,7 @@ export default function VersusDraftPage() {
             getPlayer={getPlayerById}
             onOpen={onOpen}
             enabled={!gameOver && !spinning && turn === "A"}
-            badgeClass={season === "2026" ? "bg-red-500 text-white" : "bg-blue-600 text-white"}
+            badgeClass="bg-blue-600 text-white"
             gameOver={gameOver}
             winner={winner}
           />

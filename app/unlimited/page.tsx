@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import players2025 from "../data/public/afl_players.json";
 import players2026 from "../data/public/afl_players26.json";
 
@@ -98,8 +98,44 @@ function patternUrlForClub(clubName: string) {
 /** ================= Page ================= */
 export default function UnlimitedDraftPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const [season, setSeason] = useState<"2025" | "2026">("2025");
+  const [seasonReady, setSeasonReady] = useState(false);
+
+  useEffect(() => {
+    const urlSeason = searchParams.get("season");
+
+    if (urlSeason === "2025" || urlSeason === "2026") {
+      setSeason(urlSeason);
+      try {
+        localStorage.setItem("selectedSeason", urlSeason);
+      } catch {}
+    } else {
+      try {
+        const savedSeason = localStorage.getItem("selectedSeason");
+        if (savedSeason === "2025" || savedSeason === "2026") {
+          setSeason(savedSeason);
+        }
+      } catch {}
+    }
+
+    setSeasonReady(true);
+  }, [searchParams]);
+
+  const changeSeason = (nextSeason: "2025" | "2026") => {
+    setSeason(nextSeason);
+
+    try {
+      localStorage.setItem("selectedSeason", nextSeason);
+    } catch {}
+
+    router.replace(`/unlimited?season=${nextSeason}`);
+  };
+
+  const goHome = () => {
+    router.push(`/?season=${season}`);
+  };
 
   const ALL_PLAYERS: Player[] = useMemo(() => {
     return season === "2026"
@@ -131,6 +167,8 @@ export default function UnlimitedDraftPage() {
   );
 
   useEffect(() => {
+    if (!seasonReady) return;
+
     const firstClub = SPIN_CLUBS[0] ?? AFL_CLUBS[0];
     setClub(firstClub);
     setDisplayClub(firstClub);
@@ -139,7 +177,7 @@ export default function UnlimitedDraftPage() {
     setSearch("");
     setSpinning(false);
     setPicksSinceSpin(0);
-  }, [season, SPIN_CLUBS]);
+  }, [season, SPIN_CLUBS, seasonReady]);
 
   const getPlayerById = (pid: string | null) => {
     if (!pid) return null;
@@ -248,6 +286,7 @@ export default function UnlimitedDraftPage() {
   }
 
   useEffect(() => {
+    if (!seasonReady) return;
     if (SPIN_CLUBS.length === 0) return;
     if (hasInitialSpun.current) return;
 
@@ -256,9 +295,11 @@ export default function UnlimitedDraftPage() {
 
     return () => cleanupSpinTimers();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [SPIN_CLUBS]);
+  }, [SPIN_CLUBS, seasonReady]);
 
   useEffect(() => {
+    if (!seasonReady) return;
+
     hasInitialSpun.current = false;
     cleanupSpinTimers();
 
@@ -269,7 +310,7 @@ export default function UnlimitedDraftPage() {
 
     return () => window.clearTimeout(timeout);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [season]);
+  }, [season, seasonReady]);
 
   useEffect(() => {
     if (!gameOver) return;
@@ -327,7 +368,7 @@ export default function UnlimitedDraftPage() {
       <div
         className="absolute inset-0"
         style={{
-          backgroundImage: "url('/versus-bg.jpg')",
+          backgroundImage: "url('/vbg.jpg')",
           backgroundSize: "cover",
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
@@ -346,7 +387,7 @@ export default function UnlimitedDraftPage() {
 
             <div className="mt-4 flex items-center gap-3">
               <button
-                onClick={() => setSeason("2025")}
+                onClick={() => changeSeason("2025")}
                 className={`rounded-xl border px-4 py-2 font-bold transition ${
                   season === "2025"
                     ? "bg-blue-600 border-blue-500 text-white"
@@ -357,7 +398,7 @@ export default function UnlimitedDraftPage() {
               </button>
 
               <button
-                onClick={() => setSeason("2026")}
+                onClick={() => changeSeason("2026")}
                 className={`rounded-xl border px-4 py-2 font-bold transition ${
                   season === "2026"
                     ? "bg-red-500 border-red-400 text-white"
@@ -371,7 +412,7 @@ export default function UnlimitedDraftPage() {
 
           <button
             className="rounded-xl border border-white/20 px-4 py-2 text-white/80 hover:text-white hover:border-white/40"
-            onClick={() => router.push("/")}
+            onClick={goHome}
           >
             ← Home
           </button>

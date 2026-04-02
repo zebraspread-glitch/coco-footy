@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import players2025 from "../data/public/afl_players.json";
 import players2026 from "../data/public/afl_players26.json";
 
@@ -213,8 +213,44 @@ function buildPerfectTeam(
 /** ================= Page ================= */
 export default function DailyPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const [season, setSeason] = useState<"2025" | "2026">("2025");
+  const [seasonReady, setSeasonReady] = useState(false);
+
+  useEffect(() => {
+    const urlSeason = searchParams.get("season");
+
+    if (urlSeason === "2025" || urlSeason === "2026") {
+      setSeason(urlSeason);
+      try {
+        localStorage.setItem("selectedSeason", urlSeason);
+      } catch {}
+    } else {
+      try {
+        const savedSeason = localStorage.getItem("selectedSeason");
+        if (savedSeason === "2025" || savedSeason === "2026") {
+          setSeason(savedSeason);
+        }
+      } catch {}
+    }
+
+    setSeasonReady(true);
+  }, [searchParams]);
+
+  const changeSeason = (nextSeason: "2025" | "2026") => {
+    setSeason(nextSeason);
+
+    try {
+      localStorage.setItem("selectedSeason", nextSeason);
+    } catch {}
+
+    router.replace(`/daily?season=${nextSeason}`);
+  };
+
+  const goHome = () => {
+    router.push(`/?season=${season}`);
+  };
 
   const ALL_PLAYERS: Player[] = useMemo(() => {
     return season === "2026"
@@ -232,6 +268,7 @@ export default function DailyPage() {
     []
   );
 
+  const todayKey = useMemo(() => getTodayKeyLocal(), []);
   const MIN_DATE = season === "2026" ? "2026-01-01" : "2026-02-18";
 
   /** ================= LocalStorage keys ================= */
@@ -239,19 +276,19 @@ export default function DailyPage() {
   const LS_PERSONAL_BEST = `coco_daily_personal_best_${season}`;
   const LS_GAMES_PLAYED = `coco_daily_games_played_${season}`;
 
-  const todayKey = useMemo(() => getTodayKeyLocal(), []);
-  const initialSelectedDate =
-    todayKey < MIN_DATE ? MIN_DATE : todayKey;
+  const initialSelectedDate = todayKey < MIN_DATE ? MIN_DATE : todayKey;
 
   const [selectedDate, setSelectedDate] = useState<string>(initialSelectedDate);
 
   useEffect(() => {
+    if (!seasonReady) return;
+
     setSelectedDate((prev) => {
       if (prev < MIN_DATE) return MIN_DATE;
       if (prev > todayKey) return todayKey;
       return prev;
     });
-  }, [MIN_DATE, todayKey]);
+  }, [MIN_DATE, todayKey, seasonReady]);
 
   const isLiveToday = selectedDate === todayKey;
 
@@ -305,6 +342,8 @@ export default function DailyPage() {
   }
 
   useEffect(() => {
+    if (!seasonReady) return;
+
     const locked = loadJSON<{ locked: boolean; team?: Record<string, string | null> }>(lockKey, {
       locked: false,
     });
@@ -323,7 +362,7 @@ export default function DailyPage() {
     setPerfectTeam(null);
     setActive(null);
     setSearch("");
-  }, [lockKey, emptyTeam, LS_PERSONAL_BEST, LS_GAMES_PLAYED]);
+  }, [lockKey, emptyTeam, LS_PERSONAL_BEST, LS_GAMES_PLAYED, seasonReady]);
 
   const getPlayerById = (pid: string | null) => {
     if (!pid) return null;
@@ -420,7 +459,7 @@ export default function DailyPage() {
       <div
         className="absolute inset-0"
         style={{
-          backgroundImage: "url('/versus-bg.jpg')",
+          backgroundImage: "url('/13031df3-8bf5-4818-b2a4-5777164a3db9.png')",
           backgroundSize: "cover",
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
@@ -442,7 +481,7 @@ export default function DailyPage() {
 
             <div className="mt-4 flex flex-wrap items-center gap-3">
               <button
-                onClick={() => setSeason("2025")}
+                onClick={() => changeSeason("2025")}
                 className={`rounded-xl border px-4 py-2 font-bold transition ${
                   season === "2025"
                     ? "bg-blue-600 border-blue-500 text-white"
@@ -453,7 +492,7 @@ export default function DailyPage() {
               </button>
 
               <button
-                onClick={() => setSeason("2026")}
+                onClick={() => changeSeason("2026")}
                 className={`rounded-xl border px-4 py-2 font-bold transition ${
                   season === "2026"
                     ? "bg-red-500 border-red-400 text-white"
@@ -522,7 +561,7 @@ export default function DailyPage() {
 
           <button
             className="rounded-xl border border-white/20 px-4 py-2 text-white/80 hover:text-white hover:border-white/40"
-            onClick={() => router.push("/")}
+            onClick={goHome}
           >
             ← Home
           </button>

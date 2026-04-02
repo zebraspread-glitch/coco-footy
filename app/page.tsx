@@ -12,7 +12,7 @@ import {
   Award,
 } from "lucide-react";
 import AccountDropdown from "../components/AccountDropdown";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 function NavLink({ href, label }: { href: string; label: string }) {
   return (
@@ -39,18 +39,18 @@ function Pill({
   disabled?: boolean;
 }) {
   const base =
-    "px-6 py-2 rounded-full text-sm font-semibold border transition";
+    "px-6 py-2 rounded-full text-sm font-semibold border transition-all duration-300";
 
   const activeStyle =
     color === "blue"
-      ? "bg-blue-500 text-black border-blue-500"
-      : "bg-red-500 text-black border-red-500";
+      ? "bg-blue-500 text-black border-blue-500 shadow-[0_0_20px_rgba(59,130,246,0.35)]"
+      : "bg-red-500 text-black border-red-500 shadow-[0_0_20px_rgba(239,68,68,0.35)]";
 
   const inactiveStyle =
-    "bg-white/5 text-white/80 border-white/10 hover:bg-white/10";
+    "bg-[#111827]/90 text-white/80 border-white/10 hover:bg-white/10 hover:border-white/20";
 
   const disabledStyle =
-    "bg-white/5 text-white/40 border-white/10 cursor-not-allowed opacity-60";
+    "bg-[#111827] text-white/40 border-white/10 cursor-not-allowed opacity-60";
 
   return (
     <button
@@ -75,43 +75,61 @@ function Card({
   desc,
   cta,
   href,
-  mode,
   is2026,
 }: {
-  
   icon: React.ReactNode;
   title: string;
   desc: string;
   cta: string;
   href: string;
-  mode: "season" | "game";
-    is2026: boolean;
+  is2026: boolean;
 }) {
   return (
     <a
       href={href}
-      className="group rounded-2xl border border-white/10 bg-black/35 p-6 shadow-[0_0_0_1px_rgba(255,255,255,0.02)] hover:bg-white/7 transition"
+      className="group relative overflow-hidden rounded-[28px] border border-white/12 bg-[linear-gradient(180deg,rgba(18,18,22,0.96)_0%,rgba(7,7,9,0.98)_100%)] p-7 shadow-[0_12px_40px_rgba(0,0,0,0.50)] transition-all duration-300 hover:-translate-y-1.5 hover:border-white/20 hover:shadow-[0_20px_60px_rgba(0,0,0,0.65)]"
     >
       <div
-        className={`h-12 w-12 rounded-2xl text-black flex items-center justify-center mb-5 ${
-          is2026 ? "bg-red-500/95" : "bg-blue-500/95"
+        className={`pointer-events-none absolute inset-x-0 top-0 h-px ${
+          is2026
+            ? "bg-gradient-to-r from-transparent via-red-400/80 to-transparent"
+            : "bg-gradient-to-r from-transparent via-blue-400/80 to-transparent"
+        }`}
+      />
+
+      <div
+        className={`pointer-events-none absolute -right-10 -top-10 h-36 w-36 rounded-full blur-3xl opacity-20 ${
+          is2026 ? "bg-red-500" : "bg-blue-500"
+        }`}
+      />
+
+      <div
+        className={`relative mb-6 flex h-14 w-14 items-center justify-center rounded-2xl border backdrop-blur-sm shadow-lg ${
+          is2026
+            ? "border-red-400/30 bg-red-500/15 text-red-300 shadow-red-500/10"
+            : "border-blue-400/30 bg-blue-500/15 text-blue-300 shadow-blue-500/10"
         }`}
       >
         {icon}
       </div>
-      <h3 className="text-xl font-extrabold tracking-wide italic mb-2">
+
+      <h3 className="relative mb-3 text-[2rem] leading-none font-black italic tracking-wide text-white">
         {title}
       </h3>
-      <p className="text-sm text-white/70 leading-relaxed mb-6">{desc}</p>
+
+      <p className="relative mb-7 text-[15px] leading-7 text-white/70">
+        {desc}
+      </p>
+
       <div
-        className={`font-semibold text-sm ${
+        className={`relative inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-bold tracking-wide transition-all duration-300 ${
           is2026
-  ? "text-red-400 hover:text-red-300"
-  : "text-blue-400 hover:text-blue-300"
+            ? "border-red-400/25 bg-red-500/10 text-red-300 group-hover:border-red-300/40 group-hover:bg-red-500/15"
+            : "border-blue-400/25 bg-blue-500/10 text-blue-300 group-hover:border-blue-300/40 group-hover:bg-blue-500/15"
         }`}
       >
-        {cta}{" "}
-        <span className="inline-block group-hover:translate-x-1 transition">
+        <span>{cta}</span>
+        <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
           →
         </span>
       </div>
@@ -133,7 +151,7 @@ function ModeButton({
   return (
     <a
       href={href}
-      className="group flex items-center gap-4 rounded-xl border border-white/10 bg-white/5 px-4 py-3 hover:bg-white/10 transition"
+      className="group flex items-center gap-4 rounded-xl border border-white/10 bg-[#0f172a] px-4 py-3 shadow-md hover:bg-[#111827] hover:scale-[1.01] transition"
     >
       <div className="h-9 w-9 rounded-lg bg-white/10 flex items-center justify-center">
         {icon}
@@ -157,8 +175,41 @@ function ModeButton({
 export default function Home() {
   const [mode, setMode] = useState<"season" | "game">("season");
   const [season, setSeason] = useState<"2025" | "2026">("2025");
-  
+  const [isReady, setIsReady] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const params = new URLSearchParams(window.location.search);
+    const urlSeason = params.get("season");
+    const savedSeason = localStorage.getItem("selectedSeason");
+
+    if (urlSeason === "2025" || urlSeason === "2026") {
+      setSeason(urlSeason);
+      localStorage.setItem("selectedSeason", urlSeason);
+    } else if (savedSeason === "2025" || savedSeason === "2026") {
+      setSeason(savedSeason);
+    }
+
+    setIsReady(true);
+  }, []);
+
+  const changeSeason = (nextSeason: "2025" | "2026") => {
+    setSeason(nextSeason);
+
+    if (typeof window !== "undefined") {
+      localStorage.setItem("selectedSeason", nextSeason);
+
+      const params = new URLSearchParams(window.location.search);
+      params.set("season", nextSeason);
+      const nextUrl = `${window.location.pathname}?${params.toString()}`;
+      window.history.replaceState({}, "", nextUrl);
+    }
+  };
+
   const is2026 = season === "2026";
+
+  const seasonHref = (path: string) => `${path}?season=${season}`;
 
   return (
     <div
@@ -167,7 +218,6 @@ export default function Home() {
         backgroundImage: "url('/coco-footy-bg.png')",
       }}
     >
-      {/* Background texture + vignette */}
       <div className="fixed inset-0 -z-10">
         <div className="absolute inset-0 bg-[radial-gradient(1200px_600px_at_50%_-10%,rgba(245,158,11,0.16),transparent_60%)]" />
         <div className="absolute inset-0 bg-[radial-gradient(900px_500px_at_50%_110%,rgba(255,255,255,0.06),transparent_60%)]" />
@@ -175,112 +225,122 @@ export default function Home() {
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/60" />
       </div>
 
-      {/* Hero */}
       <main className="max-w-6xl mx-auto px-6 py-14">
         <div className="text-center">
-          <h1 className="text-5xl md:text-6xl font-black tracking-tight">
-            COCO{" "}
-            <span className={is2026 ? "text-red-500" : "text-blue-500"}>
-              FOOTY
+          <h1 className="text-5xl md:text-7xl font-black tracking-tight text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]">
+            <span className="[text-shadow:_-1px_-1px_0_#000,_1px_-1px_0_#000,_-1px_1px_0_#000,_1px_1px_0_#000]">
+              COCO FOOTY
             </span>
           </h1>
-          <p className="mt-3 text-white/70">
-            Tip the winners each round and climb the ladder.
+
+          <p className="mt-4 text-white/60 text-sm tracking-wide">
+            In memory of Cody Welch
           </p>
 
           <div className="mt-8 flex items-center justify-center gap-4">
-            <Pill
-              label="AFL"
-              active
-              color={is2026 ? "red" : "blue"}
-            />
+            <Pill label="AFL" active color={is2026 ? "red" : "blue"} />
 
             <div className="w-10" />
 
             <Pill
-  label="2025"
-  active={season === "2025"}
-  color={is2026 ? "red" : "blue"}
-  onClick={() => setSeason("2025")}
-/>
+              label="2025"
+              active={season === "2025"}
+              color={is2026 ? "red" : "blue"}
+              onClick={() => changeSeason("2025")}
+            />
 
-<Pill
-  label="2026"
-  active={season === "2026"}
-  color={is2026 ? "red" : "blue"}
-  onClick={() => setSeason("2026")}
-/>
+            <Pill
+              label="2026"
+              active={season === "2026"}
+              color={is2026 ? "red" : "blue"}
+              onClick={() => changeSeason("2026")}
+            />
           </div>
         </div>
 
-        {/* Cards */}
-        <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-3">
           <Card
             icon={<Gem className="h-6 w-6" />}
             title="DAILY GAME"
             desc="Build the perfect lineup from today's randomly selected teams."
             cta="PLAY TODAY"
-            href={`/daily?season=${season}`}
-            mode={mode}
+            href={seasonHref("/daily")}
             is2026={is2026}
           />
+
           <Card
             icon={<Flame className="h-6 w-6" />}
             title="UNLIMITED"
             desc="Draft endlessly and try to beat your personal high score."
             cta="PLAY NOW"
-            href={`/unlimited?season=${season}`}
-            mode={mode}
+            href={seasonHref("/unlimited")}
             is2026={is2026}
           />
+
           <Card
             icon={<Swords className="h-6 w-6" />}
             title="TWO PLAYER"
             desc="Local 1v1. Go head-to-head with a friend on the same device."
             cta="PLAY VERSUS"
-            href={`/versus?season=${season}`}
-            mode={mode}
+            href={seasonHref("/versus")}
             is2026={is2026}
           />
         </div>
 
-        {/* Wide leaderboard card */}
         <div className="mt-6">
           <a
-            href={`/streak?season=${season}`}
-            className="group flex flex-col md:flex-row md:items-center justify-between gap-4 rounded-2xl border border-white/15 bg-black/35 p-6 hover:bg-white/7 transition"
+            href={seasonHref("/streak")}
+            className="group relative flex flex-col justify-between gap-4 overflow-hidden rounded-[28px] border border-white/12 bg-[linear-gradient(180deg,rgba(12,24,56,0.95)_0%,rgba(8,14,32,0.98)_100%)] p-6 shadow-[0_12px_40px_rgba(0,0,0,0.50)] transition-all duration-300 hover:-translate-y-1.5 hover:border-white/20 hover:shadow-[0_20px_60px_rgba(0,0,0,0.65)] md:flex-row md:items-center"
           >
-            <div className="flex items-center gap-4">
+            <div
+              className={`pointer-events-none absolute inset-x-0 top-0 h-px ${
+                is2026
+                  ? "bg-gradient-to-r from-transparent via-red-400/80 to-transparent"
+                  : "bg-gradient-to-r from-transparent via-blue-400/80 to-transparent"
+              }`}
+            />
+
+            <div
+              className={`pointer-events-none absolute right-0 top-0 h-40 w-40 rounded-full blur-3xl opacity-20 ${
+                is2026 ? "bg-red-500" : "bg-blue-500"
+              }`}
+            />
+
+            <div className="relative flex items-center gap-4">
               <div
-                className={`h-12 w-12 rounded-2xl flex items-center justify-center ${
-                  is2026 ? "bg-red-500/95" : "bg-blue-500/95"
+                className={`flex h-14 w-14 items-center justify-center rounded-2xl border backdrop-blur-sm shadow-lg ${
+                  is2026
+                    ? "border-red-400/30 bg-red-500/15 text-red-300 shadow-red-500/10"
+                    : "border-blue-400/30 bg-blue-500/15 text-blue-300 shadow-blue-500/10"
                 }`}
               >
-                <Zap className="h-6 w-6 text-black" />
+                <Zap className="h-6 w-6" />
               </div>
 
               <div>
-                <div className="text-2xl font-black italic tracking-wide">
+                <div className="text-2xl md:text-3xl font-black italic tracking-wide text-white">
                   PLAYER NUMBER STREAK
                 </div>
-                <div className="text-sm text-white/70">
+                <div className="mt-1 text-sm text-white/70">
                   Guess jumper numbers and build a streak.
                 </div>
               </div>
             </div>
 
-            <div className="flex items-center gap-3">
-              <span className="text-[11px] bg-white/10 border border-white/10 px-2 py-1 rounded">
+            <div className="relative flex items-center gap-3">
+              <span className="rounded-full border border-white/12 bg-white/10 px-3 py-1 text-[11px] font-bold tracking-wide text-white/85">
                 NEW
               </span>
 
               <div
-                className={`font-bold tracking-wide ${
-                  is2026 ? "text-red-400" : "text-blue-400"
+                className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-bold tracking-wide transition-all duration-300 ${
+                  is2026
+                    ? "border-red-400/25 bg-red-500/10 text-red-300 group-hover:border-red-300/40 group-hover:bg-red-500/15"
+                    : "border-blue-400/25 bg-blue-500/10 text-blue-300 group-hover:border-blue-300/40 group-hover:bg-blue-500/15"
                 }`}
               >
-                PLAY STREAK{" "}
-                <span className="inline-block group-hover:translate-x-1 transition">
+                <span>PLAY STREAK</span>
+                <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
                   →
                 </span>
               </div>
@@ -288,7 +348,6 @@ export default function Home() {
           </a>
         </div>
 
-        {/* More modes */}
         <div className="mt-6">
           <div className="text-left mb-3">
             <div className="text-sm font-extrabold tracking-widest text-white/80">
@@ -298,31 +357,31 @@ export default function Home() {
 
           <div className="space-y-3">
             <ModeButton
-              href={`/playoff?season=${season}`}
+              href={seasonHref("/playoff")}
               label="Finals Predictor"
               icon={<Trophy className="h-5 w-5 text-white/85" />}
             />
 
             <ModeButton
-              href={`/player-rankings?season=${season}`}
+              href={seasonHref("/player-rankings")}
               label="Player Ranking"
               icon={<ListOrdered className="h-5 w-5 text-white/85" />}
             />
 
             <ModeButton
-              href={`/power-rankings?season=${season}`}
+              href={seasonHref("/power-rankings")}
               label="Power Rankings"
               icon={<TrendingUp className="h-5 w-5 text-white/85" />}
             />
 
             <ModeButton
-              href={`/roster-builder?season=${season}`}
+              href={seasonHref("/roster-builder")}
               label="Roster Builder"
               icon={<Users className="h-5 w-5 text-white/85" />}
             />
 
             <ModeButton
-              href={`/awards?season=${season}`}
+              href={seasonHref("/awards")}
               label="Awards"
               icon={<Award className="h-5 w-5 text-white/85" />}
             />
