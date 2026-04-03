@@ -8,6 +8,7 @@ const NAV = [
   { label: "Daily Challenge", href: "/daily" },
   { label: "Streak Mode", href: "/streak" },
   { label: "Versus Mode", href: "/versus" },
+   { label: "Live Scores", href: "/live-scores" },
 ];
 
 export default function TopBar() {

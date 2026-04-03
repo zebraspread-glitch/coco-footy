@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import players2025 from "../data/public/afl_players.json";
@@ -48,7 +49,7 @@ const AFL_CLUBS: ClubMeta[] = [
   { name: "Collingwood", primary: "#000000", text: "#FFFFFF" },
   { name: "Carlton", primary: "#021e2e", text: "#FFFFFF" },
   { name: "Richmond", primary: "#F7B500", text: "#111111" },
-  { name: "Essendon", primary: "#C8102E", text: "#000000" },
+  { name: "Essendon", primary: "#C8102E", text: "#FFFFFF" },
   { name: "Geelong", primary: "#0F2A4A", text: "#FFFFFF" },
   { name: "Hawthorn", primary: "#4B2E1E", text: "#FFFFFF" },
   { name: "Melbourne", primary: "#0A2A5E", text: "#FFFFFF" },
@@ -95,8 +96,8 @@ function clubSlug(name: string) {
     .replace(/^_|_$/g, "");
 }
 
-function patternUrlForClub(clubName: string) {
-  return `/patterns/${clubSlug(clubName)}.svg`;
+function teamIconUrl(clubName: string) {
+  return `/team-icons/${clubSlug(clubName)}.png`;
 }
 
 function VersusDraftPageInner() {
@@ -292,7 +293,6 @@ function VersusDraftPageInner() {
     }, 50);
 
     return () => window.clearTimeout(timeout);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [season, SPIN_CLUBS, seasonReady]);
 
   useEffect(() => {
@@ -609,13 +609,15 @@ function TeamColumn({
         const clickable = enabled && !isFilled;
 
         return (
-          <div key={slot.id} className="flex gap-3 items-center">
-            <div className={`w-20 shrink-0 rounded-md font-extrabold text-center py-2 ${badgeClass}`}>
+          <div key={slot.id} className="flex gap-3 items-center min-w-0">
+            <div
+              className={`w-20 shrink-0 rounded-md font-extrabold text-center py-2 ${badgeClass}`}
+            >
               {slot.label}
             </div>
 
             <button
-              className={`relative overflow-hidden flex-1 border border-white/70 rounded-md px-4 text-left transition flex items-center justify-between h-14 ${
+              className={`flex-1 min-w-0 border rounded-md px-3 sm:px-4 text-left transition h-[56px] ${
                 clickable ? "hover:brightness-110" : "cursor-not-allowed"
               }`}
               style={
@@ -631,43 +633,40 @@ function TeamColumn({
               disabled={!clickable}
               title={isFilled ? "Locked (cannot be replaced)" : undefined}
             >
-              {p && clubMeta && (
-                <>
+              <div className="flex items-center w-full h-full min-w-0 gap-3">
+                <div className="min-w-0 flex-[1.2]">
                   <span
-                    className="absolute top-0 bottom-0 opacity-95 pointer-events-none"
-                    style={{
-                      left: "58%",
-                      width: "16%",
-                      backgroundImage: `url(${patternUrlForClub(clubMeta.name)})`,
-                      backgroundSize: "cover",
-                      backgroundPosition: "center",
-                      backgroundRepeat: "no-repeat",
-                    }}
-                  />
+                    className={`block truncate ${
+                      p ? "font-extrabold" : "font-extrabold text-white/80"
+                    }`}
+                  >
+                    {p ? p.name : `+ Select ${slot.label}`}
+                  </span>
+                </div>
 
-                  <span
-                    className="absolute top-0 bottom-0 right-0 pointer-events-none"
-                    style={{
-                      width: "22%",
-                      backgroundColor: clubMeta.primary,
-                    }}
-                  />
-                </>
-              )}
+                <div className="flex justify-center flex-[0.9] min-w-0">
+                  {p && clubMeta && (
+                    <div className="h-[46px] w-[132px] max-w-full overflow-hidden rounded-sm shrink-0">
+                      <Image
+                        src={teamIconUrl(clubMeta.name)}
+                        alt={clubMeta.name}
+                        width={132}
+                        height={46}
+                        className="h-full w-full object-fill"
+                        unoptimized
+                      />
+                    </div>
+                  )}
+                </div>
 
-              <span
-                className={`relative z-10 truncate block ${
-                  p ? "font-extrabold" : "font-extrabold text-white/80"
-                }`}
-              >
-                {p ? p.name : `+ Select ${slot.label}`}
-              </span>
-
-              {p?.points != null && (
-                <span className="relative z-10 shrink-0 font-extrabold px-3 py-1 rounded-md bg-black/55 text-white">
-                  {p.points.toFixed(1)} PTS
-                </span>
-              )}
+                <div className="w-[96px] shrink-0 flex justify-end">
+                  {p?.points != null && (
+                    <span className="shrink-0 font-extrabold px-3 py-1 rounded-md bg-black/55 text-white whitespace-nowrap">
+                      {p.points.toFixed(1)} PTS
+                    </span>
+                  )}
+                </div>
+              </div>
             </button>
           </div>
         );

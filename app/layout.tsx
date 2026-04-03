@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Coco Footy 2.0",
+  title: "Coco Footy",
   description: "The best AFL app",
 };
 

@@ -172,6 +172,90 @@ function ModeButton({
   );
 }
 
+function FeatureBanner({
+  href,
+  title,
+  desc,
+  cta,
+  icon,
+  is2026,
+  badge = "NEW",
+  backgroundClassName,
+}: {
+  href: string;
+  title: string;
+  desc: string;
+  cta: string;
+  icon: React.ReactNode;
+  is2026: boolean;
+  badge?: string;
+  backgroundClassName?: string;
+}) {
+  return (
+    <div className="mt-6">
+      <a
+        href={href}
+        className={`group relative flex flex-col justify-between gap-4 overflow-hidden rounded-[28px] border border-white/12 p-6 shadow-[0_12px_40px_rgba(0,0,0,0.50)] transition-all duration-300 hover:-translate-y-1.5 hover:border-white/20 hover:shadow-[0_20px_60px_rgba(0,0,0,0.65)] md:flex-row md:items-center ${
+          backgroundClassName ??
+          "bg-[linear-gradient(180deg,rgba(12,24,56,0.95)_0%,rgba(8,14,32,0.98)_100%)]"
+        }`}
+      >
+        <div
+          className={`pointer-events-none absolute inset-x-0 top-0 h-px ${
+            is2026
+              ? "bg-gradient-to-r from-transparent via-red-400/80 to-transparent"
+              : "bg-gradient-to-r from-transparent via-blue-400/80 to-transparent"
+          }`}
+        />
+
+        <div
+          className={`pointer-events-none absolute right-0 top-0 h-40 w-40 rounded-full blur-3xl opacity-20 ${
+            is2026 ? "bg-red-500" : "bg-blue-500"
+          }`}
+        />
+
+        <div className="relative flex items-center gap-4">
+          <div
+            className={`flex h-14 w-14 items-center justify-center rounded-2xl border backdrop-blur-sm shadow-lg ${
+              is2026
+                ? "border-red-400/30 bg-red-500/15 text-red-300 shadow-red-500/10"
+                : "border-blue-400/30 bg-blue-500/15 text-blue-300 shadow-blue-500/10"
+            }`}
+          >
+            {icon}
+          </div>
+
+          <div>
+            <div className="text-2xl md:text-3xl font-black italic tracking-wide text-white">
+              {title}
+            </div>
+            <div className="mt-1 text-sm text-white/70">{desc}</div>
+          </div>
+        </div>
+
+        <div className="relative flex items-center gap-3">
+          <span className="rounded-full border border-white/12 bg-white/10 px-3 py-1 text-[11px] font-bold tracking-wide text-white/85">
+            {badge}
+          </span>
+
+          <div
+            className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-bold tracking-wide transition-all duration-300 ${
+              is2026
+                ? "border-red-400/25 bg-red-500/10 text-red-300 group-hover:border-red-300/40 group-hover:bg-red-500/15"
+                : "border-blue-400/25 bg-blue-500/10 text-blue-300 group-hover:border-blue-300/40 group-hover:bg-blue-500/15"
+            }`}
+          >
+            <span>{cta}</span>
+            <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
+              →
+            </span>
+          </div>
+        </div>
+      </a>
+    </div>
+  );
+}
+
 export default function Home() {
   const [season, setSeason] = useState<"2025" | "2026">("2025");
   const [showVersion, setShowVersion] = useState(false);
@@ -350,66 +434,27 @@ export default function Home() {
           />
         </div>
 
-        <div className="mt-6">
-          <a
-            href={seasonHref("/streak")}
-            className="group relative flex flex-col justify-between gap-4 overflow-hidden rounded-[28px] border border-white/12 bg-[linear-gradient(180deg,rgba(12,24,56,0.95)_0%,rgba(8,14,32,0.98)_100%)] p-6 shadow-[0_12px_40px_rgba(0,0,0,0.50)] transition-all duration-300 hover:-translate-y-1.5 hover:border-white/20 hover:shadow-[0_20px_60px_rgba(0,0,0,0.65)] md:flex-row md:items-center"
-          >
-            <div
-              className={`pointer-events-none absolute inset-x-0 top-0 h-px ${
-                is2026
-                  ? "bg-gradient-to-r from-transparent via-red-400/80 to-transparent"
-                  : "bg-gradient-to-r from-transparent via-blue-400/80 to-transparent"
-              }`}
-            />
+        <FeatureBanner
+          href={seasonHref("/streak")}
+          title="PLAYER NUMBER STREAK"
+          desc="Guess jumper numbers and build a streak."
+          cta="PLAY STREAK"
+          icon={<Zap className="h-6 w-6" />}
+          is2026={is2026}
+          badge="NEW"
+          backgroundClassName="bg-[linear-gradient(180deg,rgba(12,24,56,0.95)_0%,rgba(8,14,32,0.98)_100%)]"
+        />
 
-            <div
-              className={`pointer-events-none absolute right-0 top-0 h-40 w-40 rounded-full blur-3xl opacity-20 ${
-                is2026 ? "bg-red-500" : "bg-blue-500"
-              }`}
-            />
-
-            <div className="relative flex items-center gap-4">
-              <div
-                className={`flex h-14 w-14 items-center justify-center rounded-2xl border backdrop-blur-sm shadow-lg ${
-                  is2026
-                    ? "border-red-400/30 bg-red-500/15 text-red-300 shadow-red-500/10"
-                    : "border-blue-400/30 bg-blue-500/15 text-blue-300 shadow-blue-500/10"
-                }`}
-              >
-                <Zap className="h-6 w-6" />
-              </div>
-
-              <div>
-                <div className="text-2xl md:text-3xl font-black italic tracking-wide text-white">
-                  PLAYER NUMBER STREAK
-                </div>
-                <div className="mt-1 text-sm text-white/70">
-                  Guess jumper numbers and build a streak.
-                </div>
-              </div>
-            </div>
-
-            <div className="relative flex items-center gap-3">
-              <span className="rounded-full border border-white/12 bg-white/10 px-3 py-1 text-[11px] font-bold tracking-wide text-white/85">
-                NEW
-              </span>
-
-              <div
-                className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-bold tracking-wide transition-all duration-300 ${
-                  is2026
-                    ? "border-red-400/25 bg-red-500/10 text-red-300 group-hover:border-red-300/40 group-hover:bg-red-500/15"
-                    : "border-blue-400/25 bg-blue-500/10 text-blue-300 group-hover:border-blue-300/40 group-hover:bg-blue-500/15"
-                }`}
-              >
-                <span>PLAY STREAK</span>
-                <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
-                  →
-                </span>
-              </div>
-            </div>
-          </a>
-        </div>
+        <FeatureBanner
+          href={seasonHref("/higher-or-lower")}
+          title="HIGHER OR LOWER"
+          desc="Guess if the next player has higher or lower stats."
+          cta="PLAY NOW"
+          icon={<Flame className="h-6 w-6" />}
+          is2026={is2026}
+          badge="NEW"
+          backgroundClassName="bg-[linear-gradient(180deg,rgba(12,24,56,0.95)_0%,rgba(8,14,32,0.98)_100%)]"
+        />
 
         <div className="mt-6">
           <div className="text-left mb-3">

@@ -1,11 +1,11 @@
 "use client";
 
+import Image from "next/image";
 import { Suspense, useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import players2025 from "../data/public/afl_players.json";
 import players2026 from "../data/public/afl_players26.json";
 
-/** ================= Types ================= */
 type PlayerPos = "FWD" | "MID" | "DEF" | "RUCK";
 type Position = "FWD" | "MID" | "DEF" | "RUCK" | "FLEX";
 
@@ -29,7 +29,6 @@ type ClubMeta = {
   text: string;
 };
 
-/** ================= Slots (AFL) ================= */
 const SLOTS: Slot[] = [
   { id: "fwd1", label: "FWD", allowed: ["FWD"] },
   { id: "fwd2", label: "FWD", allowed: ["FWD"] },
@@ -41,7 +40,6 @@ const SLOTS: Slot[] = [
   { id: "flex1", label: "FLEX", allowed: ["FWD", "MID", "DEF"] },
 ];
 
-/** ================= Club colours ================= */
 const AFL_CLUBS: ClubMeta[] = [
   { name: "Collingwood", primary: "#000000", text: "#FFFFFF" },
   { name: "Carlton", primary: "#001B4D", text: "#FFFFFF" },
@@ -54,16 +52,15 @@ const AFL_CLUBS: ClubMeta[] = [
   { name: "Brisbane", primary: "#7C003E", text: "#FFD200" },
   { name: "West Coast", primary: "#002B5C", text: "#FFD200" },
   { name: "Fremantle", primary: "#2B0A3D", text: "#FFFFFF" },
-  { name: "Adelaide", primary: "#002B5C", text: "#E41E2B" },
+  { name: "Adelaide", primary: "#0F1432", text: "#FFFFFF" },
   { name: "Port Adelaide", primary: "#00A1DE", text: "#111111" },
-  { name: "St Kilda", primary: "#C8102E", text: "#000000" },
+  { name: "St Kilda", primary: "#C8102E", text: "#FFFFFF" },
   { name: "Western Bulldogs", primary: "#0047AB", text: "#FFFFFF" },
   { name: "North Melbourne", primary: "#003A70", text: "#FFFFFF" },
   { name: "Gold Coast", primary: "#B30000", text: "#FFD200" },
   { name: "GWS", primary: "#F15A22", text: "#111111" },
 ];
 
-/** ================= Helpers ================= */
 function clampClubsToPlayers(clubs: ClubMeta[], players: Player[]) {
   const available = new Set(players.map((p) => p.club));
   return clubs.filter((c) => available.has(c.name));
@@ -81,8 +78,8 @@ function clubSlug(name: string) {
     .replace(/^_|_$/g, "");
 }
 
-function patternUrlForClub(clubName: string) {
-  return `/patterns/${clubSlug(clubName)}.svg`;
+function teamIconUrl(clubName: string) {
+  return `/team-icons/${clubSlug(clubName)}.png`;
 }
 
 function sumPoints(
@@ -97,7 +94,6 @@ function sumPoints(
   return total;
 }
 
-/** Seeded RNG so daily clubs are stable per date */
 function hashStringToSeed(str: string) {
   let h = 2166136261;
   for (let i = 0; i < str.length; i++) {
@@ -145,7 +141,6 @@ function pickDailyClubsForDate(clubs: ClubMeta[], count: number, dateKey: string
   return pool.slice(0, Math.min(count, pool.length));
 }
 
-/** Perfect team solver */
 function buildPerfectTeam(
   slots: Slot[],
   players: Player[],
@@ -252,9 +247,7 @@ function DailyPageInner() {
   };
 
   const ALL_PLAYERS: Player[] = useMemo(() => {
-    return season === "2026"
-      ? (players2026 as Player[])
-      : (players2025 as Player[]);
+    return season === "2026" ? (players2026 as Player[]) : (players2025 as Player[]);
   }, [season]);
 
   const AVAILABLE_CLUBS = useMemo(
@@ -275,7 +268,6 @@ function DailyPageInner() {
   const LS_GAMES_PLAYED = `coco_daily_games_played_${season}`;
 
   const initialSelectedDate = todayKey < MIN_DATE ? MIN_DATE : todayKey;
-
   const [selectedDate, setSelectedDate] = useState<string>(initialSelectedDate);
 
   useEffect(() => {
@@ -307,10 +299,8 @@ function DailyPageInner() {
 
   const [isLockedToday, setIsLockedToday] = useState(false);
   const [team, setTeam] = useState<Record<string, string | null>>(emptyTeam);
-
   const [perfectTeam, setPerfectTeam] = useState<Record<string, string | null> | null>(null);
   const [showPerfect, setShowPerfect] = useState(false);
-
   const [personalBest, setPersonalBest] = useState<{ score: number; date: string } | null>(null);
   const [gamesPlayed, setGamesPlayed] = useState<number>(0);
 
@@ -368,7 +358,6 @@ function DailyPageInner() {
   };
 
   const gameOver = useMemo(() => SLOTS.every((s) => Boolean(team[s.id])), [team]);
-
   const activeTeam = showPerfect && perfectTeam ? perfectTeam : team;
 
   const yourTotal = useMemo(() => sumPoints(team, getPlayerById), [team]);
@@ -436,8 +425,7 @@ function DailyPageInner() {
         return next;
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [gameOver]);
+  }, [gameOver, isLockedToday, isLiveToday, lockKey, team, todayKey, LS_GAMES_PLAYED, LS_PERSONAL_BEST]);
 
   function onTogglePerfect() {
     if (!gameOver) return;
@@ -706,52 +694,55 @@ function DailyPageInner() {
                 </div>
 
                 <button
-                  className={`flex-1 border border-white/70 rounded-md px-4 text-left transition flex items-center justify-between py-3 sm:h-14 ${
+                className={`flex-1 border rounded-md px-4 text-left transition flex items-center justify-between h-[56px] ${
                     clickable ? "hover:brightness-110" : "cursor-not-allowed"
                   }`}
-                  style={
-                    p && clubMeta
-                      ? {
-                          backgroundImage: `url(${patternUrlForClub(clubMeta.name)})`,
-                          backgroundSize: "cover",
-                          backgroundPosition: "center",
-                          backgroundRepeat: "no-repeat",
-                          color: clubMeta.text,
-                          borderColor: "rgba(255,255,255,0.35)",
-                        }
-                      : { backgroundColor: "rgba(0,0,0,0.30)" }
-                  }
+                  style={{
+                    backgroundColor: p && clubMeta ? clubMeta.primary : "rgba(0,0,0,0.30)",
+                    color: p && clubMeta ? clubMeta.text : "#ffffff",
+                    borderColor: p ? "rgba(255,255,255,0.35)" : "rgba(255,255,255,0.7)",
+                  }}
                   onClick={() => onOpen(slot)}
                   disabled={!clickable}
-                  title={
-                    showPerfect
-                      ? "Viewing perfect team (switch back to edit)"
-                      : isLockedToday
-                        ? "Locked for this date"
-                        : isFilled
-                          ? "Locked (cannot be replaced)"
-                          : undefined
-                  }
                 >
-                  <div className="min-w-0 flex items-center gap-2">
-                    <span
-                      className={`truncate block ${
-                        p ? "font-extrabold" : "font-extrabold text-white/80"
-                      }`}
-                    >
-                      {p ? p.name : `+ Select ${slot.label}`}
-                    </span>
+                  <div className="flex items-center w-full">
+  <div className="min-w-0 w-[220px] sm:w-[260px]">
+    <span
+      className={`truncate block ${
+        p ? "font-extrabold" : "font-extrabold text-white/80"
+      }`}
+    >
+      {p ? p.name : `+ Select ${slot.label}`}
+    </span>
+  </div>
 
-                    {showPerfect && p && isInYourTeam(p.id) && (
-                      <span className="shrink-0 text-green-400 font-extrabold">✓</span>
-                    )}
-                  </div>
+  <div className="flex-1 flex justify-end pr-24 h-full">
+  {p && clubMeta && (
+    <div className="h-[48px] w-[140px] overflow-hidden rounded-sm shrink-0">
+      <Image
+        src={teamIconUrl(clubMeta.name)}
+        alt={clubMeta.name}
+        width={140}
+        height={48}
+        className="h-full w-full object-fill"
+        unoptimized
+      />
+    </div>
+  )}
+</div>
 
-                  {p?.points != null && (
-                    <span className="hidden sm:inline-flex shrink-0 font-extrabold px-3 py-1 rounded-md bg-black/55 text-white">
-                      {p.points.toFixed(1)} PTS
-                    </span>
-                  )}
+  <div className="w-[120px] flex justify-end">
+    {showPerfect && p && isInYourTeam(p.id) && (
+      <span className="mr-3 shrink-0 text-green-400 font-extrabold">✓</span>
+    )}
+
+    {p?.points != null && (
+      <span className="hidden sm:inline-flex shrink-0 font-extrabold px-3 py-1 rounded-md bg-black/45 text-white">
+        {p.points.toFixed(1)} PTS
+      </span>
+    )}
+  </div>
+</div>
                 </button>
               </div>
             );

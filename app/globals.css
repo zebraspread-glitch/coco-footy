@@ -49,4 +49,39 @@ body {
     background-attachment: fixed;
   }
 }
+/* ===== Premium Scrollbar ===== */
+
+/* Chrome, Edge, Safari */
+::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    90deg,
+    rgba(59,130,246,0.4),   /* blue */
+    rgba(139,92,246,0.4)    /* purple */
+  );
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(
+    90deg,
+    rgba(59,130,246,0.7),
+    rgba(139,92,246,0.7)
+  );
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(139,92,246,0.5) transparent;
+}
 
