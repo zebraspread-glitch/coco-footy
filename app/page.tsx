@@ -179,7 +179,7 @@ function FeatureBanner({
   cta,
   icon,
   is2026,
-  badge = "NEW",
+  badge = "",
   backgroundClassName,
 }: {
   href: string;
@@ -441,7 +441,6 @@ export default function Home() {
           cta="PLAY STREAK"
           icon={<Zap className="h-6 w-6" />}
           is2026={is2026}
-          badge="NEW"
           backgroundClassName="bg-[linear-gradient(180deg,rgba(12,24,56,0.95)_0%,rgba(8,14,32,0.98)_100%)]"
         />
 

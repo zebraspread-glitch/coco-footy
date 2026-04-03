@@ -15,8 +15,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Coco Footy",
-  description: "The best AFL app",
+  title: {
+    default: "Coco Footy",
+    template: "%s | Coco Footy",
+  },
+  description: "Play AFL games, live scores, and more on Coco Footy",
 };
 
 export const viewport = {

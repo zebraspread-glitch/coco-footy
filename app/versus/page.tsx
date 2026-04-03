@@ -627,7 +627,10 @@ function TeamColumn({
                       color: clubMeta.text,
                       borderColor: "rgba(255,255,255,0.35)",
                     }
-                  : { backgroundColor: "rgba(0,0,0,0.30)" }
+                  : {
+    backgroundColor: "#0a0a0a",
+    borderColor: "rgba(255,255,255,0.15)",
+  }
               }
               onClick={() => onOpen(side, slot)}
               disabled={!clickable}
