@@ -5,12 +5,15 @@ import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import players2025 from "../data/public/afl_players.json";
 import players2026 from "../data/public/afl_players26.json";
+import goals2025 from "../data/public/afl_goals.json";
+import bounces2025 from "../data/public/afl_bounces.json";
 
-/** ================= Types ================= */
 type Side = "A" | "B";
 type PlayerPos = "FWD" | "MID" | "DEF" | "RUCK";
 type SlotPos = "FWD" | "MID" | "DEF" | "RUCK" | "FLEX";
 type Position = "FWD" | "MID" | "DEF" | "RUCK" | "FLEX";
+type Season = "2025" | "2026";
+type StatMode = "fantasy" | "goals" | "bounces";
 
 type Slot = {
   id: string;
@@ -32,7 +35,6 @@ type ClubMeta = {
   text: string;
 };
 
-/** ================= Slots (AFL) ================= */
 const SLOTS: Slot[] = [
   { id: "fwd1", label: "FWD", allowed: ["FWD"] },
   { id: "fwd2", label: "FWD", allowed: ["FWD"] },
@@ -44,7 +46,6 @@ const SLOTS: Slot[] = [
   { id: "flex1", label: "FLEX", allowed: ["FWD", "MID", "DEF"] },
 ];
 
-/** ================= Club colours ================= */
 const AFL_CLUBS: ClubMeta[] = [
   { name: "Collingwood", primary: "#000000", text: "#FFFFFF" },
   { name: "Carlton", primary: "#021e2e", text: "#FFFFFF" },
@@ -66,14 +67,14 @@ const AFL_CLUBS: ClubMeta[] = [
   { name: "GWS", primary: "#ff7800", text: "#111111" },
 ];
 
-/** ================= Helpers ================= */
 function sumPoints(
   team: Record<string, string | null>,
+  slots: Slot[],
   getById: (id: string | null) => Player | null
 ) {
   let total = 0;
-  for (const slotId of Object.keys(team)) {
-    const p = getById(team[slotId]);
+  for (const slot of slots) {
+    const p = getById(team[slot.id]);
     if (p) total += p.points;
   }
   return total;
@@ -100,52 +101,135 @@ function teamIconUrl(clubName: string) {
   return `/team-icons/${clubSlug(clubName)}.png`;
 }
 
+function getStatTitle(statMode: StatMode) {
+  if (statMode === "goals") return "GOALS MODE";
+  if (statMode === "bounces") return "BOUNCES MODE";
+  return "FANTASY POINTS MODE";
+}
+
+function formatStatValue(value: number, statMode: StatMode) {
+  if (statMode === "goals") return `${Math.round(value)} GOALS`;
+  if (statMode === "bounces") return `${Math.round(value)} BOUNCES`;
+  return `${value.toFixed(1)} PTS`;
+}
+
+function getActiveSlots(statMode: StatMode) {
+  if (statMode === "bounces") {
+    return SLOTS.filter((slot) => slot.id !== "ruck");
+  }
+  return SLOTS;
+}
+
+function createEmptyTeam(slots: Slot[]) {
+  return Object.fromEntries(slots.map((s) => [s.id, null])) as Record<string, string | null>;
+}
+
 function VersusDraftPageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const [season, setSeason] = useState<"2025" | "2026">("2025");
+  const [season, setSeason] = useState<Season>("2025");
+  const [statMode, setStatMode] = useState<StatMode>("fantasy");
   const [seasonReady, setSeasonReady] = useState(false);
+
+  const ACTIVE_SLOTS = useMemo(() => getActiveSlots(statMode), [statMode]);
+
+  const [teamA, setTeamA] = useState<Record<string, string | null>>(createEmptyTeam(SLOTS));
+  const [teamB, setTeamB] = useState<Record<string, string | null>>(createEmptyTeam(SLOTS));
 
   useEffect(() => {
     const urlSeason = searchParams.get("season");
+    const urlStat = searchParams.get("stat");
+
+    let nextSeason: Season = "2025";
+    let nextStat: StatMode = "fantasy";
 
     if (urlSeason === "2025" || urlSeason === "2026") {
-      setSeason(urlSeason);
-      try {
-        localStorage.setItem("selectedSeason", urlSeason);
-      } catch {}
+      nextSeason = urlSeason;
     } else {
       try {
         const savedSeason = localStorage.getItem("selectedSeason");
         if (savedSeason === "2025" || savedSeason === "2026") {
-          setSeason(savedSeason);
+          nextSeason = savedSeason;
         }
       } catch {}
     }
 
-    setSeasonReady(true);
-  }, [searchParams]);
+    if (urlStat === "fantasy" || urlStat === "goals" || urlStat === "bounces") {
+      nextStat = urlStat;
+    } else {
+      try {
+        const savedStat = localStorage.getItem("selectedStatMode");
+        if (
+          savedStat === "fantasy" ||
+          savedStat === "goals" ||
+          savedStat === "bounces"
+        ) {
+          nextStat = savedStat as StatMode;
+        }
+      } catch {}
+    }
 
-  const changeSeason = (nextSeason: "2025" | "2026") => {
+    if (nextSeason === "2026") {
+      nextStat = "fantasy";
+    }
+
     setSeason(nextSeason);
+    setStatMode(nextStat);
 
     try {
       localStorage.setItem("selectedSeason", nextSeason);
+      localStorage.setItem("selectedStatMode", nextStat);
     } catch {}
 
-    router.replace(`/versus?season=${nextSeason}`);
+    setSeasonReady(true);
+  }, [searchParams]);
+
+  const updateRoute = (nextSeason: Season, nextStat: StatMode) => {
+    router.replace(`/versus?season=${nextSeason}&stat=${nextStat}`);
+  };
+
+  const changeSeason = (nextSeason: Season) => {
+    const nextStat = nextSeason === "2026" ? "fantasy" : statMode;
+
+    setSeason(nextSeason);
+    setStatMode(nextStat);
+
+    try {
+      localStorage.setItem("selectedSeason", nextSeason);
+      localStorage.setItem("selectedStatMode", nextStat);
+    } catch {}
+
+    updateRoute(nextSeason, nextStat);
+  };
+
+  const changeStatMode = (nextStat: StatMode) => {
+    setStatMode(nextStat);
+
+    try {
+      localStorage.setItem("selectedStatMode", nextStat);
+    } catch {}
+
+    updateRoute(season, nextStat);
   };
 
   const goHome = () => {
     router.push(`/?season=${season}`);
   };
 
+  const RAW_PLAYERS: Player[] = useMemo(() => {
+    if (season === "2025") {
+      if (statMode === "goals") return goals2025 as Player[];
+      if (statMode === "bounces") return bounces2025 as Player[];
+      return players2025 as Player[];
+    }
+
+    return players2026 as Player[];
+  }, [season, statMode]);
+
   const ALL_PLAYERS: Player[] = useMemo(() => {
-    return season === "2026"
-      ? (players2026 as Player[])
-      : (players2025 as Player[]);
-  }, [season]);
+  return RAW_PLAYERS.filter((p) => p.points > 0);
+}, [RAW_PLAYERS]);
 
   const SPIN_CLUBS = useMemo(
     () => clampClubsToPlayers(AFL_CLUBS, ALL_PLAYERS),
@@ -175,13 +259,6 @@ function VersusDraftPageInner() {
 
   const [search, setSearch] = useState("");
 
-  const [teamA, setTeamA] = useState<Record<string, string | null>>(
-    Object.fromEntries(SLOTS.map((s) => [s.id, null]))
-  );
-  const [teamB, setTeamB] = useState<Record<string, string | null>>(
-    Object.fromEntries(SLOTS.map((s) => [s.id, null]))
-  );
-
   const getPlayerById = (pid: string | null) => {
     if (!pid) return null;
     return ALL_PLAYERS.find((p) => p.id === pid) ?? null;
@@ -207,14 +284,29 @@ function VersusDraftPageInner() {
       .filter((p) => !pickedIds.has(p.id))
       .filter((p) => p.pos.some((pos) => active.allowed.includes(pos)))
       .filter((p) => (q ? p.name.toLowerCase().includes(q) : true))
-      .slice();
+      .slice()
+      .sort((a, b) => a.name.localeCompare(b.name));
   }, [active, clubPlayers, pickedIds, search]);
 
-  const teamATotal = useMemo(() => sumPoints(teamA, getPlayerById), [teamA]);
-  const teamBTotal = useMemo(() => sumPoints(teamB, getPlayerById), [teamB]);
+  const teamATotal = useMemo(
+    () => sumPoints(teamA, ACTIVE_SLOTS, getPlayerById),
+    [teamA, ACTIVE_SLOTS, ALL_PLAYERS]
+  );
 
-  const allFilledA = useMemo(() => SLOTS.every((s) => Boolean(teamA[s.id])), [teamA]);
-  const allFilledB = useMemo(() => SLOTS.every((s) => Boolean(teamB[s.id])), [teamB]);
+  const teamBTotal = useMemo(
+    () => sumPoints(teamB, ACTIVE_SLOTS, getPlayerById),
+    [teamB, ACTIVE_SLOTS, ALL_PLAYERS]
+  );
+
+  const allFilledA = useMemo(
+    () => ACTIVE_SLOTS.every((s) => Boolean(teamA[s.id])),
+    [teamA, ACTIVE_SLOTS]
+  );
+
+  const allFilledB = useMemo(
+    () => ACTIVE_SLOTS.every((s) => Boolean(teamB[s.id])),
+    [teamB, ACTIVE_SLOTS]
+  );
 
   const gameOver = allFilledA && allFilledB;
 
@@ -225,7 +317,6 @@ function VersusDraftPageInner() {
     return "DRAW";
   }, [gameOver, teamATotal, teamBTotal]);
 
-  /** ===== Spinner effect ===== */
   const spinTimer = useRef<number | null>(null);
   const spinTimeout = useRef<number | null>(null);
   const delayedSpinTimeout = useRef<number | null>(null);
@@ -278,22 +369,27 @@ function VersusDraftPageInner() {
     if (!seasonReady) return;
 
     const firstClub = SPIN_CLUBS[0] ?? AFL_CLUBS[0];
+
+    cleanupSpinTimers();
+    setSpinning(false);
+
     setClub(firstClub);
     setDisplayClub(firstClub);
-    setTeamA(Object.fromEntries(SLOTS.map((s) => [s.id, null])));
-    setTeamB(Object.fromEntries(SLOTS.map((s) => [s.id, null])));
+    setTeamA(createEmptyTeam(ACTIVE_SLOTS));
+    setTeamB(createEmptyTeam(ACTIVE_SLOTS));
     setTurnIndex(0);
     setPicksSinceSpin(0);
     setActive(null);
     setSearch("");
-    cleanupSpinTimers();
 
     const timeout = window.setTimeout(() => {
       spinToRandomClub();
     }, 50);
 
-    return () => window.clearTimeout(timeout);
-  }, [season, SPIN_CLUBS, seasonReady]);
+    return () => {
+      window.clearTimeout(timeout);
+    };
+  }, [season, statMode, SPIN_CLUBS, seasonReady, ACTIVE_SLOTS]);
 
   useEffect(() => {
     if (!gameOver) return;
@@ -351,8 +447,8 @@ function VersusDraftPageInner() {
   function resetGame() {
     cleanupSpinTimers();
 
-    setTeamA(Object.fromEntries(SLOTS.map((s) => [s.id, null])));
-    setTeamB(Object.fromEntries(SLOTS.map((s) => [s.id, null])));
+    setTeamA(createEmptyTeam(ACTIVE_SLOTS));
+    setTeamB(createEmptyTeam(ACTIVE_SLOTS));
     setTurnIndex(0);
     setPicksSinceSpin(0);
     setActive(null);
@@ -390,7 +486,11 @@ function VersusDraftPageInner() {
               VERSUS MODE
             </h1>
 
-            <div className="mt-4 flex items-center gap-3">
+            <div className="mt-3 text-white/65 font-bold tracking-wide">
+              {getStatTitle(statMode)}
+            </div>
+
+            <div className="mt-4 flex flex-wrap items-center gap-3">
               <button
                 onClick={() => changeSeason("2025")}
                 className={`rounded-xl border px-4 py-2 font-bold transition ${
@@ -413,6 +513,45 @@ function VersusDraftPageInner() {
                 2026
               </button>
             </div>
+
+            <div className="mt-4 flex flex-wrap items-center gap-3">
+              <button
+                onClick={() => changeStatMode("fantasy")}
+                className={`rounded-xl border px-4 py-2 font-bold transition ${
+                  statMode === "fantasy"
+                    ? "bg-white text-black border-white"
+                    : "border-white/20 text-white/80 hover:text-white hover:border-white/40"
+                }`}
+              >
+                Fantasy Points
+              </button>
+
+              {season === "2025" && (
+                <>
+                  <button
+                    onClick={() => changeStatMode("goals")}
+                    className={`rounded-xl border px-4 py-2 font-bold transition ${
+                      statMode === "goals"
+                        ? "bg-yellow-400 text-black border-yellow-300"
+                        : "border-white/20 text-white/80 hover:text-white hover:border-white/40"
+                    }`}
+                  >
+                    Goals
+                  </button>
+
+                  <button
+                    onClick={() => changeStatMode("bounces")}
+                    className={`rounded-xl border px-4 py-2 font-bold transition ${
+                      statMode === "bounces"
+                        ? "bg-orange-500 text-white border-orange-400"
+                        : "border-white/20 text-white/80 hover:text-white hover:border-white/40"
+                    }`}
+                  >
+                    Bounces
+                  </button>
+                </>
+              )}
+            </div>
           </div>
 
           <button
@@ -423,14 +562,25 @@ function VersusDraftPageInner() {
           </button>
         </div>
 
-        <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-10">
-          <div className="text-center text-white/70 font-bold tracking-wide">
-            TEAM A: <span className="text-white">{teamATotal.toFixed(1)} PTS</span>
-          </div>
-          <div className="text-center text-white/70 font-bold tracking-wide">
-            TEAM B: <span className="text-white">{teamBTotal.toFixed(1)} PTS</span>
-          </div>
-        </div>
+        <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
+  <div className="rounded-2xl border border-blue-400/30 bg-gradient-to-br from-blue-950/80 via-blue-900/45 to-black/70 backdrop-blur-md shadow-[0_10px_30px_rgba(37,99,235,0.22)] px-6 py-5">
+    <div className="text-[11px] sm:text-xs uppercase tracking-[0.28em] text-blue-200/75 font-extrabold">
+      Team A
+    </div>
+    <div className="mt-2 text-3xl sm:text-4xl font-black tracking-tight text-white drop-shadow-[0_2px_10px_rgba(255,255,255,0.18)]">
+      {formatStatValue(teamATotal, statMode)}
+    </div>
+  </div>
+
+  <div className="rounded-2xl border border-red-400/30 bg-gradient-to-br from-red-950/80 via-red-900/45 to-black/70 backdrop-blur-md shadow-[0_10px_30px_rgba(239,68,68,0.22)] px-6 py-5">
+    <div className="text-[11px] sm:text-xs uppercase tracking-[0.28em] text-red-200/75 font-extrabold">
+      Team B
+    </div>
+    <div className="mt-2 text-3xl sm:text-4xl font-black tracking-tight text-white drop-shadow-[0_2px_10px_rgba(255,255,255,0.18)]">
+      {formatStatValue(teamBTotal, statMode)}
+    </div>
+  </div>
+</div>
 
         <div className="mt-4 text-center text-white/60">
           {gameOver ? (
@@ -450,7 +600,7 @@ function VersusDraftPageInner() {
               {winner === "DRAW" ? "IT'S A DRAW!" : `TEAM ${winner} WINS!`}
             </div>
             <div className="mt-2 text-white/70 font-bold">
-              Final: A {teamATotal.toFixed(1)} — B {teamBTotal.toFixed(1)}
+              Final: A {formatStatValue(teamATotal, statMode)} — B {formatStatValue(teamBTotal, statMode)}
             </div>
 
             <button
@@ -466,7 +616,7 @@ function VersusDraftPageInner() {
           <TeamColumn
             side="A"
             clubs={AFL_CLUBS}
-            slots={SLOTS}
+            slots={ACTIVE_SLOTS}
             selection={teamA}
             getPlayer={getPlayerById}
             onOpen={onOpen}
@@ -474,12 +624,13 @@ function VersusDraftPageInner() {
             badgeClass={season === "2026" ? "bg-blue-400 text-white" : "bg-blue-600 text-white"}
             gameOver={gameOver}
             winner={winner}
+            statMode={statMode}
           />
 
           <TeamColumn
             side="B"
             clubs={AFL_CLUBS}
-            slots={SLOTS}
+            slots={ACTIVE_SLOTS}
             selection={teamB}
             getPlayer={getPlayerById}
             onOpen={onOpen}
@@ -487,6 +638,7 @@ function VersusDraftPageInner() {
             badgeClass={season === "2026" ? "bg-red-500 text-white" : "bg-red-700 text-white"}
             gameOver={gameOver}
             winner={winner}
+            statMode={statMode}
           />
         </div>
 
@@ -567,7 +719,6 @@ function VersusDraftPageInner() {
   );
 }
 
-/** ================= Column UI ================= */
 function TeamColumn({
   side,
   clubs,
@@ -579,6 +730,7 @@ function TeamColumn({
   badgeClass,
   gameOver,
   winner,
+  statMode,
 }: {
   side: Side;
   clubs: ClubMeta[];
@@ -590,6 +742,7 @@ function TeamColumn({
   badgeClass: string;
   gameOver: boolean;
   winner: "A" | "B" | "DRAW" | null;
+  statMode: StatMode;
 }) {
   const isLoser = gameOver && winner && winner !== "DRAW" && winner !== side;
 
@@ -628,9 +781,9 @@ function TeamColumn({
                       borderColor: "rgba(255,255,255,0.35)",
                     }
                   : {
-    backgroundColor: "#0a0a0a",
-    borderColor: "rgba(255,255,255,0.15)",
-  }
+                      backgroundColor: "#0a0a0a",
+                      borderColor: "rgba(255,255,255,0.15)",
+                    }
               }
               onClick={() => onOpen(side, slot)}
               disabled={!clickable}
@@ -662,10 +815,14 @@ function TeamColumn({
                   )}
                 </div>
 
-                <div className="w-[96px] shrink-0 flex justify-end">
+                <div className="w-[130px] shrink-0 flex justify-end">
                   {p?.points != null && (
                     <span className="shrink-0 font-extrabold px-3 py-1 rounded-md bg-black/55 text-white whitespace-nowrap">
-                      {p.points.toFixed(1)} PTS
+                      {statMode === "goals"
+                        ? `${Math.round(p.points)} GOALS`
+                        : statMode === "bounces"
+                        ? `${Math.round(p.points)} BOUNCES`
+                        : `${p.points.toFixed(1)} PTS`}
                     </span>
                   )}
                 </div>
