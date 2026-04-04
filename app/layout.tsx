@@ -35,15 +35,15 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <head>
-        <Script
-  id="adsense-script"
-  async
-  strategy="afterInteractive"
-  src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-227605014767400"
-  crossOrigin="anonymous"
-/>
-      </head>
+     <head>
+  <Script
+    id="adsense-script"
+    async
+    strategy="afterInteractive"
+    src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-227605014767400"
+    crossOrigin="anonymous"
+  />
+</head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <TopBar />
         {children}
