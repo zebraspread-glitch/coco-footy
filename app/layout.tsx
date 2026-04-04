@@ -1,4 +1,5 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import TopBar from "./components/TopBar";
@@ -22,7 +23,7 @@ export const metadata: Metadata = {
   description: "Play AFL games, live scores, and more on Coco Footy",
 };
 
-export const viewport = {
+export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
 };
@@ -35,16 +36,18 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7325718497771049"
-          crossOrigin="anonymous"
-        ></script>
+        <Script
+  id="adsense-script"
+  async
+  strategy="afterInteractive"
+  src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-227605014767400"
+  crossOrigin="anonymous"
+/>
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <TopBar />
         {children}
-        <Analytics /> 
+        <Analytics />
       </body>
     </html>
   );
