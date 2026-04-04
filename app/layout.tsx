@@ -35,9 +35,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2276050414767400"
-     crossorigin="anonymous"></script>
-</head>
+        <script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-227605014767400"
+          crossOrigin="anonymous"
+        ></script>
+      </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <TopBar />
         {children}
