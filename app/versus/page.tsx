@@ -7,13 +7,14 @@ import players2025 from "../data/public/afl_players.json";
 import players2026 from "../data/public/afl_players26.json";
 import goals2025 from "../data/public/afl_goals.json";
 import bounces2025 from "../data/public/afl_bounces.json";
+import disposals2025 from "../data/public/afl_disposals.json";
 
 type Side = "A" | "B";
 type PlayerPos = "FWD" | "MID" | "DEF" | "RUCK";
 type SlotPos = "FWD" | "MID" | "DEF" | "RUCK" | "FLEX";
 type Position = "FWD" | "MID" | "DEF" | "RUCK" | "FLEX";
 type Season = "2025" | "2026";
-type StatMode = "fantasy" | "goals" | "bounces";
+type StatMode = "fantasy" | "goals" | "bounces" | "disposals";
 
 type Slot = {
   id: string;
@@ -104,12 +105,14 @@ function teamIconUrl(clubName: string) {
 function getStatTitle(statMode: StatMode) {
   if (statMode === "goals") return "GOALS MODE";
   if (statMode === "bounces") return "BOUNCES MODE";
+  if (statMode === "disposals") return "DISPOSALS MODE";
   return "FANTASY POINTS MODE";
 }
 
 function formatStatValue(value: number, statMode: StatMode) {
   if (statMode === "goals") return `${Math.round(value)} GOALS`;
   if (statMode === "bounces") return `${Math.round(value)} BOUNCES`;
+  if (statMode === "disposals") return `${value.toFixed(1)} DISP`;
   return `${value.toFixed(1)} PTS`;
 }
 
@@ -122,6 +125,39 @@ function getActiveSlots(statMode: StatMode) {
 
 function createEmptyTeam(slots: Slot[]) {
   return Object.fromEntries(slots.map((s) => [s.id, null])) as Record<string, string | null>;
+}
+
+function getWinnerAccent(winner: "A" | "B" | "DRAW" | null) {
+  if (winner === "A") {
+    return {
+      ring: "border-blue-400/35",
+      glow: "shadow-[0_20px_70px_rgba(59,130,246,0.24)]",
+      from: "from-blue-500/18",
+      via: "via-cyan-400/8",
+      to: "to-white/5",
+      badge: "text-blue-200",
+    };
+  }
+
+  if (winner === "B") {
+    return {
+      ring: "border-red-400/35",
+      glow: "shadow-[0_20px_70px_rgba(239,68,68,0.24)]",
+      from: "from-red-500/18",
+      via: "via-orange-400/8",
+      to: "to-white/5",
+      badge: "text-red-200",
+    };
+  }
+
+  return {
+    ring: "border-white/20",
+    glow: "shadow-[0_20px_70px_rgba(255,255,255,0.08)]",
+    from: "from-white/10",
+    via: "via-white/5",
+    to: "to-white/0",
+    badge: "text-white/85",
+  };
 }
 
 function VersusDraftPageInner() {
@@ -155,20 +191,26 @@ function VersusDraftPageInner() {
       } catch {}
     }
 
-    if (urlStat === "fantasy" || urlStat === "goals" || urlStat === "bounces") {
-      nextStat = urlStat;
-    } else {
-      try {
-        const savedStat = localStorage.getItem("selectedStatMode");
-        if (
-          savedStat === "fantasy" ||
-          savedStat === "goals" ||
-          savedStat === "bounces"
-        ) {
-          nextStat = savedStat as StatMode;
-        }
-      } catch {}
+    if (
+  urlStat === "fantasy" ||
+  urlStat === "goals" ||
+  urlStat === "bounces" ||
+  urlStat === "disposals"
+) {
+  nextStat = urlStat;
+} else {
+  try {
+    const savedStat = localStorage.getItem("selectedStatMode");
+    if (
+      savedStat === "fantasy" ||
+      savedStat === "goals" ||
+      savedStat === "bounces" ||
+      savedStat === "disposals"
+    ) {
+      nextStat = savedStat as StatMode;
     }
+  } catch {}
+}
 
     if (nextSeason === "2026") {
       nextStat = "fantasy";
@@ -218,18 +260,19 @@ function VersusDraftPageInner() {
   };
 
   const RAW_PLAYERS: Player[] = useMemo(() => {
-    if (season === "2025") {
-      if (statMode === "goals") return goals2025 as Player[];
-      if (statMode === "bounces") return bounces2025 as Player[];
-      return players2025 as Player[];
-    }
+  if (season === "2025") {
+    if (statMode === "goals") return goals2025 as Player[];
+    if (statMode === "bounces") return bounces2025 as Player[];
+    if (statMode === "disposals") return disposals2025 as Player[];
+    return players2025 as Player[];
+  }
 
-    return players2026 as Player[];
-  }, [season, statMode]);
+  return players2026 as Player[];
+}, [season, statMode]);
 
   const ALL_PLAYERS: Player[] = useMemo(() => {
-  return RAW_PLAYERS.filter((p) => p.points > 0);
-}, [RAW_PLAYERS]);
+    return RAW_PLAYERS.filter((p) => p.points > 0);
+  }, [RAW_PLAYERS]);
 
   const SPIN_CLUBS = useMemo(
     () => clampClubsToPlayers(AFL_CLUBS, ALL_PLAYERS),
@@ -316,6 +359,8 @@ function VersusDraftPageInner() {
     if (teamBTotal > teamATotal) return "B";
     return "DRAW";
   }, [gameOver, teamATotal, teamBTotal]);
+
+  const winnerAccent = getWinnerAccent(winner);
 
   const spinTimer = useRef<number | null>(null);
   const spinTimeout = useRef<number | null>(null);
@@ -475,7 +520,7 @@ function VersusDraftPageInner() {
         }}
       />
 
-      <div className="absolute inset-0 bg-black/65" />
+      <div className="absolute inset-0 bg-black/68" />
 
       <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_20%_20%,#ffffff22,transparent_40%),radial-gradient(circle_at_80%_30%,#ffffff15,transparent_35%),radial-gradient(circle_at_30%_80%,#ffffff10,transparent_40%)]" />
 
@@ -527,30 +572,41 @@ function VersusDraftPageInner() {
               </button>
 
               {season === "2025" && (
-                <>
-                  <button
-                    onClick={() => changeStatMode("goals")}
-                    className={`rounded-xl border px-4 py-2 font-bold transition ${
-                      statMode === "goals"
-                        ? "bg-yellow-400 text-black border-yellow-300"
-                        : "border-white/20 text-white/80 hover:text-white hover:border-white/40"
-                    }`}
-                  >
-                    Goals
-                  </button>
+  <>
+    <button
+      onClick={() => changeStatMode("goals")}
+      className={`rounded-xl border px-4 py-2 font-bold transition ${
+        statMode === "goals"
+          ? "bg-yellow-400 text-black border-yellow-300"
+          : "border-white/20 text-white/80 hover:text-white hover:border-white/40"
+      }`}
+    >
+      Goals
+    </button>
 
-                  <button
-                    onClick={() => changeStatMode("bounces")}
-                    className={`rounded-xl border px-4 py-2 font-bold transition ${
-                      statMode === "bounces"
-                        ? "bg-orange-500 text-white border-orange-400"
-                        : "border-white/20 text-white/80 hover:text-white hover:border-white/40"
-                    }`}
-                  >
-                    Bounces
-                  </button>
-                </>
-              )}
+    <button
+      onClick={() => changeStatMode("disposals")}
+      className={`rounded-xl border px-4 py-2 font-bold transition ${
+        statMode === "disposals"
+          ? "bg-white text-black border-white"
+          : "border-white/20 text-white/80 hover:text-white hover:border-white/40"
+      }`}
+    >
+      Disposals
+    </button>
+
+    <button
+      onClick={() => changeStatMode("bounces")}
+      className={`rounded-xl border px-4 py-2 font-bold transition ${
+        statMode === "bounces"
+          ? "bg-orange-500 text-white border-orange-400"
+          : "border-white/20 text-white/80 hover:text-white hover:border-white/40"
+      }`}
+    >
+      Bounces
+    </button>
+  </>
+)}
             </div>
           </div>
 
@@ -563,52 +619,84 @@ function VersusDraftPageInner() {
         </div>
 
         <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
-  <div className="rounded-2xl border border-blue-400/30 bg-gradient-to-br from-blue-950/80 via-blue-900/45 to-black/70 backdrop-blur-md shadow-[0_10px_30px_rgba(37,99,235,0.22)] px-6 py-5">
-    <div className="text-[11px] sm:text-xs uppercase tracking-[0.28em] text-blue-200/75 font-extrabold">
-      Team A
-    </div>
-    <div className="mt-2 text-3xl sm:text-4xl font-black tracking-tight text-white drop-shadow-[0_2px_10px_rgba(255,255,255,0.18)]">
-      {formatStatValue(teamATotal, statMode)}
-    </div>
-  </div>
+          <div className="rounded-2xl border border-blue-400/30 bg-gradient-to-br from-blue-950/80 via-blue-900/45 to-black/70 backdrop-blur-md shadow-[0_10px_30px_rgba(37,99,235,0.22)] px-6 py-5">
+            <div className="text-[11px] sm:text-xs uppercase tracking-[0.28em] text-blue-200/75 font-extrabold">
+              Team A
+            </div>
+            <div className="mt-2 text-3xl sm:text-4xl font-black tracking-tight text-white drop-shadow-[0_2px_10px_rgba(255,255,255,0.18)]">
+              {formatStatValue(teamATotal, statMode)}
+            </div>
+          </div>
 
-  <div className="rounded-2xl border border-red-400/30 bg-gradient-to-br from-red-950/80 via-red-900/45 to-black/70 backdrop-blur-md shadow-[0_10px_30px_rgba(239,68,68,0.22)] px-6 py-5">
-    <div className="text-[11px] sm:text-xs uppercase tracking-[0.28em] text-red-200/75 font-extrabold">
-      Team B
-    </div>
-    <div className="mt-2 text-3xl sm:text-4xl font-black tracking-tight text-white drop-shadow-[0_2px_10px_rgba(255,255,255,0.18)]">
-      {formatStatValue(teamBTotal, statMode)}
-    </div>
-  </div>
-</div>
-
-        <div className="mt-4 text-center text-white/60">
-          {gameOver ? (
-            <span className="font-semibold tracking-wide">Draft complete.</span>
-          ) : spinning ? (
-            <span className="font-semibold tracking-wide">Spinning club…</span>
-          ) : (
-            <span className="font-semibold tracking-wide">
-              Turn: <span className="text-white">TEAM {turn}</span>
-            </span>
-          )}
+          <div className="rounded-2xl border border-red-400/30 bg-gradient-to-br from-red-950/80 via-red-900/45 to-black/70 backdrop-blur-md shadow-[0_10px_30px_rgba(239,68,68,0.22)] px-6 py-5">
+            <div className="text-[11px] sm:text-xs uppercase tracking-[0.28em] text-red-200/75 font-extrabold">
+              Team B
+            </div>
+            <div className="mt-2 text-3xl sm:text-4xl font-black tracking-tight text-white drop-shadow-[0_2px_10px_rgba(255,255,255,0.18)]">
+              {formatStatValue(teamBTotal, statMode)}
+            </div>
+          </div>
         </div>
 
-        {gameOver && (
-          <div className="mt-6 text-center">
-            <div className="text-3xl font-extrabold tracking-wide">
-              {winner === "DRAW" ? "IT'S A DRAW!" : `TEAM ${winner} WINS!`}
-            </div>
-            <div className="mt-2 text-white/70 font-bold">
-              Final: A {formatStatValue(teamATotal, statMode)} — B {formatStatValue(teamBTotal, statMode)}
-            </div>
+        {!gameOver && (
+          <div className="mt-4 text-center text-white/60">
+            {spinning ? (
+              <span className="font-semibold tracking-wide">Spinning club…</span>
+            ) : (
+              <span className="font-semibold tracking-wide">
+                Turn: <span className="text-white">TEAM {turn}</span>
+              </span>
+            )}
+          </div>
+        )}
 
-            <button
-              className="mt-5 rounded-xl border border-white/20 px-5 py-3 text-white/80 hover:text-white hover:border-white/40"
-              onClick={resetGame}
-            >
-              Play Again
-            </button>
+        {gameOver && (
+          <div
+            className={`mt-8 rounded-[28px] border ${winnerAccent.ring} ${winnerAccent.glow} bg-gradient-to-br ${winnerAccent.from} ${winnerAccent.via} ${winnerAccent.to} backdrop-blur-xl px-6 py-7 sm:px-8 sm:py-8 relative overflow-hidden`}
+          >
+            <div className="absolute inset-0 opacity-40 bg-[radial-gradient(circle_at_top,#ffffff24,transparent_45%)]" />
+            <div className="relative text-center">
+              <div className={`text-xs sm:text-sm font-black uppercase tracking-[0.45em] ${winnerAccent.badge}`}>
+                Final Result
+              </div>
+
+              <div className="mt-3 text-3xl sm:text-5xl font-black tracking-tight text-white drop-shadow-[0_4px_18px_rgba(255,255,255,0.16)]">
+                {winner === "DRAW" ? "IT'S A DRAW" : `TEAM ${winner} WINS`}
+              </div>
+
+              <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3 items-stretch">
+                <div className="rounded-2xl border border-white/12 bg-black/30 px-4 py-4">
+                  <div className="text-[11px] uppercase tracking-[0.28em] text-white/55 font-extrabold">
+                    Team A
+                  </div>
+                  <div className="mt-2 text-2xl font-black text-white">
+                    {formatStatValue(teamATotal, statMode)}
+                  </div>
+                </div>
+
+                <div className="rounded-2xl border border-white/12 bg-white/5 px-4 py-4 flex items-center justify-center">
+                  <div className="text-lg sm:text-xl font-black tracking-[0.25em] text-white/65">
+                    VS
+                  </div>
+                </div>
+
+                <div className="rounded-2xl border border-white/12 bg-black/30 px-4 py-4">
+                  <div className="text-[11px] uppercase tracking-[0.28em] text-white/55 font-extrabold">
+                    Team B
+                  </div>
+                  <div className="mt-2 text-2xl font-black text-white">
+                    {formatStatValue(teamBTotal, statMode)}
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-5 text-sm sm:text-base text-white/72 font-semibold">
+                Margin:{" "}
+                <span className="text-white font-extrabold">
+                  {formatStatValue(Math.abs(teamATotal - teamBTotal), statMode)}
+                </span>
+              </div>
+            </div>
           </div>
         )}
 
@@ -643,19 +731,33 @@ function VersusDraftPageInner() {
         </div>
 
         <div className="mt-12 text-center">
-          <div className="text-white/60 font-semibold tracking-widest">DRAFTING FROM:</div>
-
-          <div className="mt-5 flex items-center justify-center">
-            <div
-              className={`inline-flex items-center justify-center rounded-2xl px-10 py-4 font-extrabold text-xl select-none ${
-                spinning ? "opacity-90" : ""
-              }`}
-              style={{ backgroundColor: displayClub.primary, color: displayClub.text }}
-              title="Auto-spins after every 2 picks"
-            >
-              {displayClub.name.toUpperCase()}
+          {gameOver ? (
+            <div className="flex items-center justify-center">
+              <button
+                onClick={resetGame}
+                className="group relative inline-flex items-center justify-center overflow-hidden rounded-2xl border border-white/20 bg-gradient-to-r from-white to-white/90 px-10 py-4 text-xl font-black text-black shadow-[0_18px_50px_rgba(255,255,255,0.18)] transition hover:scale-[1.02] hover:shadow-[0_22px_60px_rgba(255,255,255,0.24)] active:scale-[0.99]"
+              >
+                <span className="absolute inset-0 opacity-0 transition group-hover:opacity-100 bg-[linear-gradient(110deg,transparent,rgba(255,255,255,0.65),transparent)] animate-[shimmer_1.6s_linear_infinite]" />
+                <span className="relative">PLAY AGAIN</span>
+              </button>
             </div>
-          </div>
+          ) : (
+            <>
+              <div className="text-white/60 font-semibold tracking-widest">DRAFTING FROM:</div>
+
+              <div className="mt-5 flex items-center justify-center">
+                <div
+                  className={`inline-flex items-center justify-center rounded-2xl px-10 py-4 font-extrabold text-xl select-none shadow-[0_14px_40px_rgba(0,0,0,0.35)] border border-white/10 ${
+                    spinning ? "opacity-90" : ""
+                  }`}
+                  style={{ backgroundColor: displayClub.primary, color: displayClub.text }}
+                  title="Auto-spins after every 2 picks"
+                >
+                  {displayClub.name.toUpperCase()}
+                </div>
+              </div>
+            </>
+          )}
         </div>
       </div>
 
@@ -715,6 +817,17 @@ function VersusDraftPageInner() {
           </div>
         </div>
       )}
+
+      <style jsx global>{`
+        @keyframes shimmer {
+          0% {
+            transform: translateX(-130%);
+          }
+          100% {
+            transform: translateX(130%);
+          }
+        }
+      `}</style>
     </main>
   );
 }
