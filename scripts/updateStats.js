@@ -5,70 +5,89 @@ import * as cheerio from "cheerio";
 const URL = "https://www.footywire.com/afl/footy/dream_team_season";
 const FILE_PATH = "./app/data/public/afl_players26.json";
 
-// normalize names so matching works better
 function cleanName(name) {
   return name
     .toLowerCase()
     .replace(/[^a-z\s]/g, "")
+    .replace(/\s+/g, " ")
     .trim();
 }
+
+const NAME_OVERRIDES = {
+  "thomas liberatore": "tom liberatore",
+  "timothy english": "tim english",
+  "cameron rayner": "cam rayner",
+  "matt carroll": "matthew carroll",
+  "lachlan fogarty": "lachie fogarty",
+  "lachlan schultz": "lachie schultz",
+  "nick murray": "nicholas murray",
+  "oliver wines": "ollie wines",
+  "jacob weitering": "jake weitering",
+  "adam saad": "addy saad"
+};
 
 async function updateStats() {
   console.log("Fetching Footywire...");
 
-  const { data: html } = await axios.get(URL);
+  const { data: html } = await axios.get(URL, {
+    headers: {
+      "User-Agent": "Mozilla/5.0",
+    },
+  });
+
   const $ = cheerio.load(html);
 
-  // load your existing JSON
   const raw = fs.readFileSync(FILE_PATH, "utf-8");
   const players = JSON.parse(raw);
 
-  // make lookup map from your JSON
-  const playerMap = {};
-  Object.keys(players).forEach((name) => {
-    playerMap[cleanName(name)] = name;
-  });
+  for (const player of players) {
+    player.points = 0;
+  }
 
   let updated = 0;
+  let unmatched = [];
 
-$("table tbody tr").each((_, row) => {
-  const cols = $(row).find("td");
+  $("table tbody tr").each((_, row) => {
+    const cols = $(row).find("td");
+    if (cols.length < 7) return;
 
-  if (cols.length < 7) return;
+    let name = $(cols[1]).text().replace(/INJ|SUS/g, "").trim();
+    const avg = parseFloat($(cols[6]).text().trim());
 
-  let name = $(cols[1]).text().replace(/INJ|SUS/g, "").trim();
-  const avg = parseFloat($(cols[6]).text().trim());
+    if (!name || isNaN(avg)) return;
 
-  if (!name || isNaN(avg)) return;
+    let cleaned = cleanName(name);
 
-  const cleaned = cleanName(name);
-
-  // loop through your JSON array
-  let found = false;
-
-  for (let player of players) {
-    const cleanedJsonName = cleanName(player.name);
-
-    if (
-      cleanedJsonName.includes(cleaned) ||
-      cleaned.includes(cleanedJsonName)
-    ) {
-      player.points = avg;
-      updated++;
-      found = true;
-      break;
+    if (NAME_OVERRIDES[cleaned]) {
+      cleaned = NAME_OVERRIDES[cleaned];
     }
-  }
 
-  if (!found) {
-    console.log("No match:", name);
-  }
-});
+    let found = false;
 
-  // save back to file
+    for (const player of players) {
+      const cleanedJsonName = cleanName(player.name);
+
+      if (
+        cleanedJsonName === cleaned ||
+        cleanedJsonName.includes(cleaned) ||
+        cleaned.includes(cleanedJsonName)
+      ) {
+        player.points = Number(avg.toFixed(1));
+        updated++;
+        found = true;
+        break;
+      }
+    }
+
+    if (!found) {
+      unmatched.push(name);
+      console.log("No match:", name);
+    }
+  });
+
   fs.writeFileSync(FILE_PATH, JSON.stringify(players, null, 2));
 
   console.log(`✅ Updated ${updated} players`);
+  console.log(`✅ Unmatched players set to 0: ${unmatched.length}`);
 }
-
 updateStats();
