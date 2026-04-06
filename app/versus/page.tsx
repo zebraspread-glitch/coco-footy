@@ -45,6 +45,11 @@ type ClubMeta = {
   text: string;
 };
 
+type AiMove = {
+  slotId: string;
+  player: Player;
+};
+
 const SLOTS: Slot[] = [
   { id: "fwd1", label: "FWD", allowed: ["FWD"] },
   { id: "fwd2", label: "FWD", allowed: ["FWD"] },
@@ -75,6 +80,13 @@ const AFL_CLUBS: ClubMeta[] = [
   { name: "North Melbourne", primary: "#003A70", text: "#FFFFFF" },
   { name: "Gold Coast", primary: "#B30000", text: "#FFD200" },
   { name: "GWS", primary: "#ff7800", text: "#111111" },
+];
+
+const TURN_ORDER: Side[] = [
+  "A", "B", "B", "A",
+  "A", "B", "B", "A",
+  "A", "B", "B", "A",
+  "A", "B", "B", "A",
 ];
 
 function getPlayerStatValue(
@@ -232,6 +244,219 @@ function isRealPlayer(player: Player) {
   return !blocked.some((bad) => name.includes(bad) || club.includes(bad));
 }
 
+function chooseAiPlayer(
+  players: Player[],
+  statMode: StatMode,
+  season: Season,
+  difficulty: number
+) {
+  if (players.length === 0) return null;
+
+  const sorted = [...players].sort((a, b) => {
+    return (
+      getPlayerStatValue(b, statMode, season) -
+      getPlayerStatValue(a, statMode, season)
+    );
+  });
+
+  const d = Math.min(10, Math.max(1, difficulty));
+
+  // Difficulty 10 = always best
+  if (d === 10) return sorted[0];
+
+  // Difficulty 1 = worst players
+  if (d === 1) {
+    const worstPool = sorted.slice(-Math.ceil(sorted.length * 0.3));
+    return worstPool[Math.floor(Math.random() * worstPool.length)];
+  }
+
+  // Scale between best and random
+  const topPercent = 1 - (d - 1) / 9; 
+  const poolSize = Math.max(1, Math.floor(sorted.length * topPercent));
+
+  const pool = sorted.slice(0, poolSize);
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+
+function chooseAiMove(
+  moves: AiMove[],
+  statMode: StatMode,
+  season: Season,
+  difficulty: number
+) {
+  if (moves.length === 0) return null;
+
+  const sorted = [...moves].sort((a, b) => {
+    return (
+      getPlayerStatValue(b.player, statMode, season) -
+      getPlayerStatValue(a.player, statMode, season)
+    );
+  });
+
+  const d = Math.min(10, Math.max(1, difficulty));
+
+  // PERFECT AI
+  if (d === 10) return sorted[0];
+
+  // TERRIBLE AI
+  if (d === 1) {
+    const worstPool = sorted.slice(-Math.ceil(sorted.length * 0.3));
+    return worstPool[Math.floor(Math.random() * worstPool.length)];
+  }
+
+  // Scaling difficulty
+  const topPercent = 1 - (d - 1) / 9;
+  const poolSize = Math.max(1, Math.floor(sorted.length * topPercent));
+
+  const pool = sorted.slice(0, poolSize);
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+
+type TeamColumnProps = {
+  side: Side;
+  clubs: ClubMeta[];
+  slots: Slot[];
+  selection: Record<string, string | null>;
+  getPlayer: (id: string | null) => Player | null;
+  onOpen: (side: Side, slot: Slot) => void;
+  enabled: boolean;
+  badgeClass: string;
+  gameOver: boolean;
+  winner: "A" | "B" | "DRAW" | null;
+  statMode: StatMode;
+  season: Season;
+  aiControlled?: boolean;
+};
+
+function TeamColumn({
+  side,
+  clubs,
+  slots,
+  selection,
+  getPlayer,
+  onOpen,
+  enabled,
+  badgeClass,
+  gameOver,
+  winner,
+  statMode,
+  season,
+  aiControlled = false,
+}: TeamColumnProps) {
+  return (
+    <div className="space-y-3">
+      {slots.map((slot) => {
+        const p = getPlayer(selection[slot.id]);
+        const clubMeta = clubForPlayer(clubs, p);
+        const isFilled = Boolean(p);
+        const clickable = enabled && !isFilled;
+
+        return (
+          <div key={`${side}-${slot.id}`} className="flex items-center gap-3">
+            <div
+              className={`w-[76px] shrink-0 h-[44px] rounded-xl flex items-center justify-center font-black tracking-wide text-sm shadow-[0_10px_24px_rgba(0,0,0,0.28)] ${badgeClass}`}
+            >
+              {slot.label}
+            </div>
+
+            <button
+              onClick={() => clickable && onOpen(side, slot)}
+              disabled={!clickable}
+              className={`flex-1 min-w-0 h-[58px] rounded-xl border px-3 text-left transition ${
+                isFilled
+                  ? "shadow-[0_10px_28px_rgba(0,0,0,0.28)]"
+                  : clickable
+                  ? side === "A"
+                    ? "border-2 border-blue-400/80 bg-blue-500/10 shadow-[0_0_22px_rgba(59,130,246,0.35)] animate-pulse"
+                    : "border-2 border-red-400/80 bg-red-500/10 shadow-[0_0_22px_rgba(239,68,68,0.35)] animate-pulse"
+                  : "border-white/10 bg-white/[0.02] opacity-70 cursor-not-allowed"
+              }`}
+              style={
+                isFilled && clubMeta
+                  ? {
+                      backgroundColor: clubMeta.primary,
+                      color: clubMeta.text,
+                      borderColor: `${clubMeta.text}22`,
+                    }
+                  : undefined
+              }
+              title={
+                clickable
+                  ? `Select ${slot.label}`
+                  : isFilled
+                  ? "Locked (cannot be replaced)"
+                  : aiControlled && side === "B" && !gameOver
+                  ? "AI is controlling Team B"
+                  : undefined
+              }
+            >
+              <div className="flex items-center justify-between w-full h-full min-w-0 gap-3 overflow-hidden">
+                <div className="min-w-0 flex-[1.2]">
+                  <span
+                    className={`block truncate font-extrabold ${
+                      p ? "" : "text-white/80"
+                    }`}
+                  >
+                    {p ? p.name : `+ Select ${slot.label}`}
+                  </span>
+                </div>
+
+                <div className="flex justify-center flex-[0.9] min-w-0">
+                  {p && clubMeta && (
+                    <div className="h-[46px] w-[132px] max-w-full overflow-hidden rounded-sm shrink-0">
+                      <Image
+                        src={teamIconUrl(clubMeta.name)}
+                        alt={clubMeta.name}
+                        width={132}
+                        height={46}
+                        className="h-full w-full object-fill"
+                        unoptimized
+                      />
+                    </div>
+                  )}
+                </div>
+
+                <div className="w-[130px] shrink-0 flex justify-end">
+                  {p && (
+                    <span
+                      className="shrink-0 font-extrabold px-3 py-1 rounded-md whitespace-nowrap"
+                      style={{
+                        backgroundColor: "rgba(0,0,0,0.28)",
+                        color: clubMeta?.text ?? "#fff",
+                      }}
+                    >
+                      {formatStatValue(
+                        getPlayerStatValue(p, statMode, season),
+                        statMode
+                      )}
+                    </span>
+                  )}
+                </div>
+              </div>
+            </button>
+          </div>
+        );
+      })}
+
+      {aiControlled && side === "B" && !gameOver && (
+        <div className="pt-1 text-right text-[11px] font-bold uppercase tracking-[0.3em] text-red-200/70">
+          AI Controlled
+        </div>
+      )}
+
+      {gameOver && winner === side && winner !== "DRAW" && (
+        <div
+          className={`pt-1 text-right text-[11px] font-black uppercase tracking-[0.3em] ${
+            side === "A" ? "text-blue-200/85" : "text-red-200/85"
+          }`}
+        >
+          Winner
+        </div>
+      )}
+    </div>
+  );
+}
+
 function VersusDraftPageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -239,6 +464,9 @@ function VersusDraftPageInner() {
   const [season, setSeason] = useState<Season>("2025");
   const [statMode, setStatMode] = useState<StatMode>("fantasy");
   const [seasonReady, setSeasonReady] = useState(false);
+
+  const [aiMode, setAiMode] = useState(false);
+  const [aiDifficulty, setAiDifficulty] = useState(7);
 
   const ACTIVE_SLOTS = useMemo(() => getActiveSlots(statMode), [statMode]);
 
@@ -248,6 +476,31 @@ function VersusDraftPageInner() {
   const [teamB, setTeamB] = useState<Record<string, string | null>>(
     createEmptyTeam(SLOTS)
   );
+
+  const [club, setClub] = useState<ClubMeta>(AFL_CLUBS[0]);
+  const [displayClub, setDisplayClub] = useState<ClubMeta>(AFL_CLUBS[0]);
+  const [spinning, setSpinning] = useState(false);
+
+  const [turnIndex, setTurnIndex] = useState(0);
+  const turn: Side = TURN_ORDER[turnIndex] ?? "A";
+
+  const [picksSinceSpin, setPicksSinceSpin] = useState(0);
+
+  const [active, setActive] = useState<{
+    side: Side;
+    slotId: string;
+    allowed: PlayerPos[];
+    slotLabel: SlotPos;
+  } | null>(null);
+
+  const [search, setSearch] = useState("");
+
+  const spinTimer = useRef<number | null>(null);
+  const spinTimeout = useRef<number | null>(null);
+  const delayedSpinTimeout = useRef<number | null>(null);
+  const aiPickTimeout = useRef<number | null>(null);
+  const pickLockRef = useRef(false);
+  const pendingSpinRef = useRef(false);
 
   useEffect(() => {
     const urlSeason = searchParams.get("season");
@@ -364,32 +617,6 @@ function VersusDraftPageInner() {
     [ALL_PLAYERS]
   );
 
-  const [club, setClub] = useState<ClubMeta>(AFL_CLUBS[0]);
-  const [displayClub, setDisplayClub] = useState<ClubMeta>(AFL_CLUBS[0]);
-  const [spinning, setSpinning] = useState(false);
-
-  const [turnIndex, setTurnIndex] = useState(0);
-
-const TURN_ORDER: Side[] = [
-  "A","B","B","A",
-  "A","B","B","A",
-  "A","B","B","A",
-  "A","B","B","A"
-];
-
-  const turn: Side = TURN_ORDER[turnIndex] ?? "A";
-
-  const [picksSinceSpin, setPicksSinceSpin] = useState(0);
-
-  const [active, setActive] = useState<{
-    side: Side;
-    slotId: string;
-    allowed: PlayerPos[];
-    slotLabel: SlotPos;
-  } | null>(null);
-
-  const [search, setSearch] = useState("");
-
   const getPlayerById = (pid: string | null) => {
     if (!pid) return null;
     return ALL_PLAYERS.find((p) => p.id === pid) ?? null;
@@ -419,48 +646,14 @@ const TURN_ORDER: Side[] = [
       .sort((a, b) => a.name.localeCompare(b.name));
   }, [active, clubPlayers, pickedIds, search]);
 
-  useEffect(() => {
-  if (!active) return;
-  if (eligiblePlayers.length !== 0) return;
-
-  const currentTeam = active.side === "A" ? teamA : teamB;
-  const remainingOpenSlots = ACTIVE_SLOTS.filter(
-    (slot) => !currentTeam[slot.id]
-  );
-
-  if (remainingOpenSlots.length !== 1) return;
-
-  const timeout = window.setTimeout(() => {
-    setActive(null);
-    setSearch("");
-
-    setTurnIndex((prev) => prev + 1);
-
-    setPicksSinceSpin((prev) => {
-      const next = prev + 1;
-
-      if (next >= 2) {
-  delayedSpinTimeout.current = window.setTimeout(() => {
-    spinToRandomClub();
-  }, 650);
-  return 0;
-}
-
-      return next;
-    });
-  }, 300);
-
-  return () => window.clearTimeout(timeout);
-}, [eligiblePlayers, active, teamA, teamB, ACTIVE_SLOTS]);
-
   const teamATotal = useMemo(
     () => sumStatTotal(teamA, ACTIVE_SLOTS, getPlayerById, statMode, season),
-    [teamA, ACTIVE_SLOTS, ALL_PLAYERS, statMode, season]
+    [teamA, ACTIVE_SLOTS, statMode, season]
   );
 
   const teamBTotal = useMemo(
     () => sumStatTotal(teamB, ACTIVE_SLOTS, getPlayerById, statMode, season),
-    [teamB, ACTIVE_SLOTS, ALL_PLAYERS, statMode, season]
+    [teamB, ACTIVE_SLOTS, statMode, season]
   );
 
   const allFilledA = useMemo(
@@ -484,56 +677,226 @@ const TURN_ORDER: Side[] = [
 
   const winnerAccent = getWinnerAccent(winner);
 
-  const spinTimer = useRef<number | null>(null);
-  const spinTimeout = useRef<number | null>(null);
-  const delayedSpinTimeout = useRef<number | null>(null);
-  const pickLockRef = useRef(false);
-
   function cleanupSpinTimers() {
     if (spinTimer.current) window.clearInterval(spinTimer.current);
     if (spinTimeout.current) window.clearTimeout(spinTimeout.current);
-    if (delayedSpinTimeout.current) {
-      window.clearTimeout(delayedSpinTimeout.current);
-    }
+    if (delayedSpinTimeout.current) window.clearTimeout(delayedSpinTimeout.current);
+    if (aiPickTimeout.current) window.clearTimeout(aiPickTimeout.current);
+
     spinTimer.current = null;
     spinTimeout.current = null;
     delayedSpinTimeout.current = null;
+    aiPickTimeout.current = null;
+    pendingSpinRef.current = false;
   }
 
-  function spinToRandomClub() {
-    if (gameOver) return;
-    if (spinning || SPIN_CLUBS.length === 0) return;
+  function scheduleSpin(delay = 650) {
+    if (pendingSpinRef.current) return;
 
-    pickLockRef.current = false;
-    setSpinning(true);
-    setActive(null);
-    setSearch("");
-    setPicksSinceSpin(0);
+    pendingSpinRef.current = true;
 
-    let i = 0;
-    cleanupSpinTimers();
+    if (delayedSpinTimeout.current) {
+      window.clearTimeout(delayedSpinTimeout.current);
+      delayedSpinTimeout.current = null;
+    }
 
-    spinTimer.current = window.setInterval(() => {
-      i = (i + 1) % SPIN_CLUBS.length;
-      setDisplayClub(SPIN_CLUBS[i]);
-    }, 60);
+    delayedSpinTimeout.current = window.setTimeout(() => {
+      pendingSpinRef.current = false;
+      delayedSpinTimeout.current = null;
+      spinToRandomClub();
+    }, delay);
+  }
 
-    spinTimeout.current = window.setTimeout(() => {
-      cleanupSpinTimers();
+  function advanceTurnAndMaybeSpin() {
+    setTurnIndex((prev) => prev + 1);
+    setPicksSinceSpin((prev) => {
+      const next = prev + 1;
 
-      let final = club;
-      if (SPIN_CLUBS.length > 1) {
-        do {
-          final = SPIN_CLUBS[Math.floor(Math.random() * SPIN_CLUBS.length)];
-        } while (final.name === club.name);
-      } else {
-        final = SPIN_CLUBS[0];
+      if (next >= 2) {
+        scheduleSpin(650);
+        return 0;
       }
 
-      setClub(final);
-      setDisplayClub(final);
-      setSpinning(false);
-    }, 1200);
+      return next;
+    });
+  }
+
+  function spinToRandomClub(forbiddenClubName?: string) {
+  if (gameOver) return;
+  if (spinning || SPIN_CLUBS.length === 0) return;
+
+  pickLockRef.current = false;
+  setSpinning(true);
+  setActive(null);
+  setSearch("");
+  setPicksSinceSpin(0);
+
+  let i = Math.floor(Math.random() * SPIN_CLUBS.length);
+
+  if (spinTimer.current) window.clearInterval(spinTimer.current);
+  if (spinTimeout.current) window.clearTimeout(spinTimeout.current);
+
+  setDisplayClub(SPIN_CLUBS[i]);
+
+  spinTimer.current = window.setInterval(() => {
+    i = (i + 1) % SPIN_CLUBS.length;
+    setDisplayClub(SPIN_CLUBS[i]);
+  }, 60);
+
+  spinTimeout.current = window.setTimeout(() => {
+    if (spinTimer.current) window.clearInterval(spinTimer.current);
+    spinTimer.current = null;
+    spinTimeout.current = null;
+
+    let final = SPIN_CLUBS[Math.floor(Math.random() * SPIN_CLUBS.length)];
+
+    if (SPIN_CLUBS.length > 1) {
+      while (final.name === forbiddenClubName) {
+        final = SPIN_CLUBS[Math.floor(Math.random() * SPIN_CLUBS.length)];
+      }
+    }
+
+    setClub(final);
+    setDisplayClub(final);
+    setSpinning(false);
+  }, 1200);
+}
+
+  function slotIsFilled(side: Side, slotId: string) {
+    return side === "A" ? Boolean(teamA[slotId]) : Boolean(teamB[slotId]);
+  }
+
+  function onOpen(side: Side, slot: Slot) {
+    if (pickLockRef.current) return;
+    if (pendingSpinRef.current) return;
+    if (gameOver) return;
+    if (spinning) return;
+    if (aiMode && side === "B") return;
+    if (side !== turn) return;
+    if (slotIsFilled(side, slot.id)) return;
+
+    setSearch("");
+    setActive({
+      side,
+      slotId: slot.id,
+      allowed: slot.allowed,
+      slotLabel: slot.label,
+    });
+  }
+
+  function onPick(playerId: string) {
+    if (pickLockRef.current) return;
+    if (pendingSpinRef.current) return;
+    if (gameOver) return;
+    if (!active) return;
+    if (spinning) return;
+    if (active.side !== turn) return;
+    if (slotIsFilled(active.side, active.slotId)) return;
+    if (pickedIds.has(playerId)) return;
+
+    pickLockRef.current = true;
+
+    const currentActive = active;
+    setActive(null);
+
+    if (currentActive.side === "A") {
+      setTeamA((prev) => ({ ...prev, [currentActive.slotId]: playerId }));
+    } else {
+      setTeamB((prev) => ({ ...prev, [currentActive.slotId]: playerId }));
+    }
+
+    setSearch("");
+    advanceTurnAndMaybeSpin();
+
+    requestAnimationFrame(() => {
+      pickLockRef.current = false;
+    });
+  }
+
+  function runAiTurn() {
+    if (!aiMode) return;
+    if (gameOver) return;
+    if (turn !== "B") return;
+    if (spinning) return;
+    if (pendingSpinRef.current) return;
+    if (pickLockRef.current) return;
+    if (active) return;
+
+    const openSlots = ACTIVE_SLOTS.filter((slot) => !teamB[slot.id]);
+
+    if (openSlots.length === 0) return;
+
+    const allMoves: AiMove[] = [];
+
+    for (const slot of openSlots) {
+      const candidates = clubPlayers
+        .filter((p) => !pickedIds.has(p.id))
+        .filter((p) => p.pos.some((pos) => slot.allowed.includes(pos)));
+
+      for (const candidate of candidates) {
+        allMoves.push({
+          slotId: slot.id,
+          player: candidate,
+        });
+      }
+    }
+
+    if (allMoves.length === 0) {
+  setActive(null);
+  setSearch("");
+  scheduleSpin(150);
+  return;
+}
+
+const aiMove = chooseAiMove(allMoves, statMode, season, aiDifficulty);
+
+if (!aiMove) {
+  setActive(null);
+  setSearch("");
+  scheduleSpin(150);
+  return;
+}
+
+    pickLockRef.current = true;
+
+    setTeamB((prev) => ({ ...prev, [aiMove.slotId]: aiMove.player.id }));
+    setSearch("");
+    setActive(null);
+    advanceTurnAndMaybeSpin();
+
+    requestAnimationFrame(() => {
+      pickLockRef.current = false;
+    });
+  }
+
+  function resetGame(nextAiMode = aiMode) {
+    cleanupSpinTimers();
+
+    pickLockRef.current = false;
+    pendingSpinRef.current = false;
+    setTeamA(createEmptyTeam(ACTIVE_SLOTS));
+    setTeamB(createEmptyTeam(ACTIVE_SLOTS));
+    setTurnIndex(0);
+    setPicksSinceSpin(0);
+    setActive(null);
+    setSearch("");
+    setSpinning(false);
+
+    const randomStartClub =
+  SPIN_CLUBS[Math.floor(Math.random() * SPIN_CLUBS.length)] ?? AFL_CLUBS[0];
+
+setClub(randomStartClub);
+setDisplayClub(randomStartClub);
+
+window.setTimeout(() => {
+  spinToRandomClub(randomStartClub.name);
+}, 50);
+  }
+
+  function toggleAiMode() {
+    const next = !aiMode;
+    setAiMode(next);
+    resetGame(next);
   }
 
   useEffect(() => {
@@ -563,6 +926,26 @@ const TURN_ORDER: Side[] = [
   }, [season, statMode, SPIN_CLUBS, seasonReady, ACTIVE_SLOTS]);
 
   useEffect(() => {
+    if (!active) return;
+    if (eligiblePlayers.length !== 0) return;
+
+    const currentTeam = active.side === "A" ? teamA : teamB;
+    const remainingOpenSlots = ACTIVE_SLOTS.filter(
+      (slot) => !currentTeam[slot.id]
+    );
+
+    if (remainingOpenSlots.length !== 1) return;
+
+    const timeout = window.setTimeout(() => {
+      setActive(null);
+      setSearch("");
+      advanceTurnAndMaybeSpin();
+    }, 300);
+
+    return () => window.clearTimeout(timeout);
+  }, [eligiblePlayers, active, teamA, teamB, ACTIVE_SLOTS]);
+
+  useEffect(() => {
     if (!gameOver) return;
     cleanupSpinTimers();
     setSpinning(false);
@@ -570,92 +953,39 @@ const TURN_ORDER: Side[] = [
     setSearch("");
   }, [gameOver]);
 
-  function slotIsFilled(side: Side, slotId: string) {
-    return side === "A" ? Boolean(teamA[slotId]) : Boolean(teamB[slotId]);
-  }
-
-  function onOpen(side: Side, slot: Slot) {
-    if (pickLockRef.current) return;
+  useEffect(() => {
+    if (!aiMode) return;
     if (gameOver) return;
+    if (turn !== "B") return;
     if (spinning) return;
-    if (side !== turn) return;
-    if (slotIsFilled(side, slot.id)) return;
+    if (pendingSpinRef.current) return;
+    if (active) return;
 
-    setSearch("");
-    setActive({
-      side,
-      slotId: slot.id,
-      allowed: slot.allowed,
-      slotLabel: slot.label,
-    });
-  }
+    aiPickTimeout.current = window.setTimeout(() => {
+      runAiTurn();
+    }, 500);
 
-  function onPick(playerId: string) {
-  if (pickLockRef.current) return;
-  if (gameOver) return;
-  if (!active) return;
-  if (spinning) return;
-  if (active.side !== turn) return;
-  if (slotIsFilled(active.side, active.slotId)) return;
-  if (pickedIds.has(playerId)) return;
-
-  pickLockRef.current = true;
-
-  const currentActive = active;
-  setActive(null);
-
-  if (currentActive.side === "A") {
-    setTeamA((prev) => ({ ...prev, [currentActive.slotId]: playerId }));
-  } else {
-    setTeamB((prev) => ({ ...prev, [currentActive.slotId]: playerId }));
-  }
-
-  setSearch("");
-  setTurnIndex((prev) => {
-  const next = prev + 1;
-
-  // 🔒 unlock AFTER render
-  requestAnimationFrame(() => {
-    pickLockRef.current = false;
-  });
-
-  return next;
-});
-
-  setPicksSinceSpin((prev) => {
-    const next = prev + 1;
-
-    if (next >= 2) {
-  delayedSpinTimeout.current = window.setTimeout(() => {
-    spinToRandomClub();
-  }, 650);
-  return 0;
-}
-
-    return next;
-  });
-
-  // 🔒 unlock AFTER React updates
-}
-
-  function resetGame() {
-    cleanupSpinTimers();
-
-    pickLockRef.current = false;
-    setTeamA(createEmptyTeam(ACTIVE_SLOTS));
-    setTeamB(createEmptyTeam(ACTIVE_SLOTS));
-    setTurnIndex(0);
-    setPicksSinceSpin(0);
-    setActive(null);
-    setSearch("");
-    setSpinning(false);
-
-    const firstClub = SPIN_CLUBS[0] ?? AFL_CLUBS[0];
-    setClub(firstClub);
-    setDisplayClub(firstClub);
-
-    window.setTimeout(() => spinToRandomClub(), 50);
-  }
+    return () => {
+      if (aiPickTimeout.current) {
+        window.clearTimeout(aiPickTimeout.current);
+        aiPickTimeout.current = null;
+      }
+    };
+  }, [
+    aiMode,
+    gameOver,
+    turn,
+    spinning,
+    active,
+    club,
+    teamB,
+    pickedIds,
+    statMode,
+    season,
+    aiDifficulty,
+    ACTIVE_SLOTS,
+    clubPlayers,
+  ]);
 
   return (
     <main className="min-h-screen text-white relative overflow-hidden">
@@ -769,12 +1099,48 @@ const TURN_ORDER: Side[] = [
             </div>
           </div>
 
-          <button
-            className="rounded-xl border border-white/20 px-4 py-2 text-white/80 hover:text-white hover:border-white/40"
-            onClick={goHome}
-          >
-            ← Home
-          </button>
+          <div className="flex flex-col items-end gap-3">
+            <button
+              className="rounded-xl border border-white/20 px-4 py-2 text-white/80 hover:text-white hover:border-white/40"
+              onClick={goHome}
+            >
+              ← Home
+            </button>
+
+            <button
+              onClick={toggleAiMode}
+              className={`rounded-xl border px-4 py-2 text-sm font-extrabold tracking-wide transition shadow-[0_10px_30px_rgba(0,0,0,0.22)] ${
+                aiMode
+                  ? "border-emerald-400/50 bg-emerald-500/15 text-emerald-200 hover:bg-emerald-500/25"
+                  : "border-white/15 bg-white/8 text-white/85 hover:border-white/35 hover:bg-white/12"
+              }`}
+            >
+              {aiMode ? "Friend Mode" : "A.I Mode"}
+            </button>
+
+            {aiMode && (
+              <div className="w-[220px] rounded-2xl border border-white/12 bg-black/35 backdrop-blur-md px-4 py-3">
+                <div className="flex items-center justify-between text-[11px] uppercase tracking-[0.25em] font-black text-white/65">
+                  <span>Difficulty</span>
+                  <span className="text-white">{aiDifficulty}</span>
+                </div>
+
+                <input
+                  type="range"
+                  min={1}
+                  max={10}
+                  value={aiDifficulty}
+                  onChange={(e) => setAiDifficulty(Number(e.target.value))}
+                  className="mt-3 w-full accent-emerald-400"
+                />
+
+                <div className="mt-2 flex items-center justify-between text-[10px] font-bold uppercase tracking-[0.2em] text-white/45">
+                  <span>Easy</span>
+                  <span>Hard</span>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
 
         <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
@@ -788,9 +1154,18 @@ const TURN_ORDER: Side[] = [
           </div>
 
           <div className="rounded-2xl border border-red-400/30 bg-gradient-to-br from-red-950/80 via-red-900/45 to-black/70 backdrop-blur-md shadow-[0_10px_30px_rgba(239,68,68,0.22)] px-6 py-5">
-            <div className="text-[11px] sm:text-xs uppercase tracking-[0.28em] text-red-200/75 font-extrabold">
-              RED
+            <div className="flex items-center justify-between gap-3">
+              <div className="text-[11px] sm:text-xs uppercase tracking-[0.28em] text-red-200/75 font-extrabold">
+                RED
+              </div>
+
+              {aiMode && (
+                <span className="rounded-full border border-emerald-400/30 bg-emerald-500/12 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.24em] text-emerald-200">
+                  AI
+                </span>
+              )}
             </div>
+
             <div className="mt-2 text-3xl sm:text-4xl font-black tracking-tight text-white drop-shadow-[0_2px_10px_rgba(255,255,255,0.18)]">
               {formatStatValue(teamBTotal, statMode)}
             </div>
@@ -799,8 +1174,12 @@ const TURN_ORDER: Side[] = [
 
         {!gameOver && (
           <div className="mt-4 text-center text-white/60">
-            {spinning ? (
+            {spinning || pendingSpinRef.current ? (
               <span className="font-semibold tracking-wide">Spinning club…</span>
+            ) : aiMode && turn === "B" ? (
+              <span className="font-semibold tracking-wide">
+                Turn: <span className="text-white">TEAM B AI</span>
+              </span>
             ) : (
               <span className="font-semibold tracking-wide">
                 Turn: <span className="text-white">TEAM {turn}</span>
@@ -869,7 +1248,7 @@ const TURN_ORDER: Side[] = [
             selection={teamA}
             getPlayer={getPlayerById}
             onOpen={onOpen}
-            enabled={!gameOver && !spinning && turn === "A"}
+            enabled={!gameOver && !spinning && !pendingSpinRef.current && turn === "A"}
             badgeClass={
               season === "2026"
                 ? "bg-blue-400 text-white"
@@ -888,7 +1267,7 @@ const TURN_ORDER: Side[] = [
             selection={teamB}
             getPlayer={getPlayerById}
             onOpen={onOpen}
-            enabled={!gameOver && !spinning && turn === "B"}
+            enabled={!gameOver && !spinning && !pendingSpinRef.current && turn === "B" && !aiMode}
             badgeClass={
               season === "2026"
                 ? "bg-red-500 text-white"
@@ -898,6 +1277,7 @@ const TURN_ORDER: Side[] = [
             winner={winner}
             statMode={statMode}
             season={season}
+            aiControlled={aiMode}
           />
         </div>
 
@@ -905,7 +1285,7 @@ const TURN_ORDER: Side[] = [
           {gameOver ? (
             <div className="flex items-center justify-center">
               <button
-                onClick={resetGame}
+                onClick={() => resetGame()}
                 className="group relative inline-flex items-center justify-center overflow-hidden rounded-2xl border border-white/20 bg-gradient-to-r from-white to-white/90 px-10 py-4 text-xl font-black text-black shadow-[0_18px_50px_rgba(255,255,255,0.18)] transition hover:scale-[1.02] hover:shadow-[0_22px_60px_rgba(255,255,255,0.24)] active:scale-[0.99]"
               >
                 <span className="absolute inset-0 opacity-0 transition group-hover:opacity-100 bg-[linear-gradient(110deg,transparent,rgba(255,255,255,0.65),transparent)] animate-[shimmer_1.6s_linear_infinite]" />
@@ -921,7 +1301,7 @@ const TURN_ORDER: Side[] = [
               <div className="mt-5 flex items-center justify-center">
                 <div
                   className={`inline-flex items-center justify-center rounded-2xl px-10 py-4 font-extrabold text-xl select-none shadow-[0_14px_40px_rgba(0,0,0,0.35)] border border-white/10 ${
-                    spinning ? "opacity-90" : ""
+                    spinning || pendingSpinRef.current ? "opacity-90" : ""
                   }`}
                   style={{
                     backgroundColor: displayClub.primary,
@@ -945,10 +1325,12 @@ const TURN_ORDER: Side[] = [
           />
 
           <div className="relative w-full max-w-xl rounded-2xl border border-white/15 bg-zinc-950 p-4">
-            <div className="min-w-0">
-              <div className="font-extrabold tracking-wide">
-                Select {active.slotLabel}{" "}
-                <span className="text-white/60 font-bold">• TEAM {active.side}</span>
+            <div className="flex items-center justify-between gap-4">
+              <div className="min-w-0">
+                <div className="font-extrabold tracking-wide">
+                  Select {active.slotLabel}{" "}
+                  <span className="text-white/60 font-bold">• TEAM {active.side}</span>
+                </div>
               </div>
 
               <button
@@ -976,185 +1358,57 @@ const TURN_ORDER: Side[] = [
                 </div>
               ) : (
                 eligiblePlayers.map((p) => {
-                  const meta = clubForPlayer(AFL_CLUBS, p);
+  const meta = clubForPlayer(AFL_CLUBS, p);
 
-                  return (
-                    <button
-                      key={p.id}
-                      onClick={() => onPick(p.id)}
-                      className="w-full border-b border-white/10 last:border-b-0 px-4 py-3 text-left hover:bg-white/5 transition"
-                    >
-                      <div className="flex items-center justify-between gap-3">
-                        <div className="min-w-0">
-                          <div className="truncate font-extrabold text-white">
-                            {p.name}
-                          </div>
-                          <div className="truncate text-sm text-white/60 font-semibold">
-                            {p.club} • {p.pos.join("/")}
-                          </div>
-                        </div>
+  return (
+    <button
+      key={p.id}
+      onClick={() => onPick(p.id)}
+      className="w-full border-b border-white/10 last:border-b-0 px-4 py-3 text-left hover:bg-white/5 transition"
+    >
+      <div className="flex items-center justify-between gap-3">
+        <div className="min-w-0">
+          <div className="truncate font-extrabold text-white">
+            {p.name}
+          </div>
+          <div className="mt-1 text-xs font-bold uppercase tracking-[0.18em] text-white/45">
+            {p.club} • {p.pos.join(", ")}
+          </div>
+        </div>
 
-                        
-                      </div>
-                    </button>
-                  );
-                })
+        <div className="flex items-center gap-3 shrink-0">
+          {meta && (
+            <div className="h-[34px] w-[96px] overflow-hidden rounded-sm">
+              <Image
+                src={teamIconUrl(meta.name)}
+                alt={meta.name}
+                width={96}
+                height={34}
+                className="h-full w-full object-fill"
+                unoptimized
+              />
+            </div>
+          )}
+        </div>
+      </div>
+    </button>
+  );
+})
               )}
             </div>
           </div>
         </div>
       )}
-
-      <style jsx global>{`
-        @keyframes shimmer {
-          0% {
-            transform: translateX(-130%);
-          }
-          100% {
-            transform: translateX(130%);
-          }
-        }
-      `}</style>
     </main>
-  );
-}
-
-function TeamColumn({
-  side,
-  clubs,
-  slots,
-  selection,
-  getPlayer,
-  onOpen,
-  enabled,
-  badgeClass,
-  gameOver,
-  winner,
-  statMode,
-  season,
-}: {
-  side: Side;
-  clubs: ClubMeta[];
-  slots: Slot[];
-  selection: Record<string, string | null>;
-  getPlayer: (pid: string | null) => Player | null;
-  onOpen: (side: Side, slot: Slot) => void;
-  enabled: boolean;
-  badgeClass: string;
-  gameOver: boolean;
-  winner: "A" | "B" | "DRAW" | null;
-  statMode: StatMode;
-  season: Season;
-}) {
-  const isLoser = gameOver && winner && winner !== "DRAW" && winner !== side;
-
-  return (
-    <div className={`space-y-3 ${isLoser ? "opacity-40" : ""}`}>
-      {gameOver && winner === side && (
-        <div className="text-center text-green-400 font-extrabold tracking-widest mb-3 text-3xl">
-          🏆 WINNER
-        </div>
-      )}
-
-      {slots.map((slot) => {
-        const p = getPlayer(selection[slot.id]);
-        const clubMeta = clubForPlayer(clubs, p);
-
-        const isFilled = Boolean(p);
-        const clickable = enabled && !isFilled;
-
-        return (
-          <div key={slot.id} className="flex gap-3 items-center min-w-0">
-            <div
-              className={`w-20 shrink-0 rounded-md font-extrabold text-center py-2 ${badgeClass}`}
-            >
-              {slot.label}
-            </div>
-
-            <button
-              onClick={() => clickable && onOpen(side, slot)}
-              disabled={!clickable}
-              className={`flex-1 min-w-0 h-[58px] rounded-xl border px-3 text-left transition ${
-                isFilled
-                  ? "shadow-[0_10px_28px_rgba(0,0,0,0.28)]"
-                  : clickable
-                  ? side === "A"
-                    ? "border-2 border-blue-400/80 bg-blue-500/10 shadow-[0_0_22px_rgba(59,130,246,0.35)] animate-pulse"
-                    : "border-2 border-red-400/80 bg-red-500/10 shadow-[0_0_22px_rgba(239,68,68,0.35)] animate-pulse"
-                  : "border-white/10 bg-white/[0.02] opacity-70 cursor-not-allowed"
-              }`}
-              style={
-                isFilled && clubMeta
-                  ? {
-                      backgroundColor: clubMeta.primary,
-                      color: clubMeta.text,
-                      borderColor: `${clubMeta.text}22`,
-                    }
-                  : undefined
-              }
-              title={
-                clickable
-                  ? `Select ${slot.label}`
-                  : isFilled
-                  ? "Locked (cannot be replaced)"
-                  : undefined
-              }
-            >
-              <div className="flex items-center justify-between w-full h-full min-w-0 gap-3 overflow-hidden">
-                <div className="min-w-0 flex-[1.2]">
-                  <span
-                    className={`block truncate font-extrabold ${
-                      p ? "" : "text-white/80"
-                    }`}
-                  >
-                    {p ? p.name : `+ Select ${slot.label}`}
-                  </span>
-                </div>
-
-                <div className="flex justify-center flex-[0.9] min-w-0">
-                  {p && clubMeta && (
-                    <div className="h-[46px] w-[132px] max-w-full overflow-hidden rounded-sm shrink-0">
-                      <Image
-                        src={teamIconUrl(clubMeta.name)}
-                        alt={clubMeta.name}
-                        width={132}
-                        height={46}
-                        className="h-full w-full object-fill"
-                        unoptimized
-                      />
-                    </div>
-                  )}
-                </div>
-
-                <div className="w-[130px] shrink-0 flex justify-end">
-                  {p && (
-                    <span
-                      className="shrink-0 font-extrabold px-3 py-1 rounded-md whitespace-nowrap"
-                      style={{
-                        backgroundColor: "rgba(0,0,0,0.28)",
-                        color: clubMeta?.text ?? "#fff",
-                      }}
-                    >
-                      {formatStatValue(
-                        getPlayerStatValue(p, statMode, season),
-                        statMode
-                      )}
-                    </span>
-                  )}
-                </div>
-              </div>
-            </button>
-          </div>
-        );
-      })}
-    </div>
   );
 }
 
 export default function VersusDraftPage() {
   return (
     <Suspense
-      fallback={<div className="min-h-screen bg-black text-white p-6">Loading...</div>}
+      fallback={
+        <div className="min-h-screen bg-black text-white p-6">Loading...</div>
+      }
     >
       <VersusDraftPageInner />
     </Suspense>
