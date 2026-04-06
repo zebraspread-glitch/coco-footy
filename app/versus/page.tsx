@@ -14,7 +14,12 @@ type PlayerPos = "FWD" | "MID" | "DEF" | "RUCK";
 type SlotPos = "FWD" | "MID" | "DEF" | "RUCK" | "FLEX";
 type Position = "FWD" | "MID" | "DEF" | "RUCK" | "FLEX";
 type Season = "2025" | "2026";
-type StatMode = "fantasy" | "goals" | "bounces" | "disposals";
+type StatMode =
+  | "fantasy"
+  | "supercoach"
+  | "goals"
+  | "bounces"
+  | "disposals";
 
 type Slot = {
   id: string;
@@ -28,6 +33,10 @@ type Player = {
   club: string;
   pos: PlayerPos[];
   points: number;
+  supercoachPoints?: number;
+  goals?: number;
+  bounces?: number;
+  disposals?: number;
 };
 
 type ClubMeta = {
@@ -68,15 +77,44 @@ const AFL_CLUBS: ClubMeta[] = [
   { name: "GWS", primary: "#ff7800", text: "#111111" },
 ];
 
-function sumPoints(
+function getPlayerStatValue(
+  player: Player | null,
+  statMode: StatMode,
+  season: Season
+) {
+  if (!player) return 0;
+
+  if (statMode === "supercoach") {
+    return Number(player.supercoachPoints ?? 0);
+  }
+
+  if (statMode === "goals") {
+    return Number(season === "2025" ? player.points ?? 0 : player.goals ?? 0);
+  }
+
+  if (statMode === "bounces") {
+    return Number(season === "2025" ? player.points ?? 0 : player.bounces ?? 0);
+  }
+
+  if (statMode === "disposals") {
+    return Number(
+      season === "2025" ? player.points ?? 0 : player.disposals ?? 0
+    );
+  }
+
+  return Number(player.points ?? 0);
+}
+
+function sumStatTotal(
   team: Record<string, string | null>,
   slots: Slot[],
-  getById: (id: string | null) => Player | null
+  getById: (id: string | null) => Player | null,
+  statMode: StatMode,
+  season: Season
 ) {
   let total = 0;
   for (const slot of slots) {
-    const p = getById(team[slot.id]);
-    if (p) total += p.points;
+    total += getPlayerStatValue(getById(team[slot.id]), statMode, season);
   }
   return total;
 }
@@ -86,7 +124,10 @@ function clampClubsToPlayers(clubs: ClubMeta[], players: Player[]) {
   return clubs.filter((c) => available.has(c.name));
 }
 
-function clubForPlayer(clubs: ClubMeta[], player: Player | null): ClubMeta | null {
+function clubForPlayer(
+  clubs: ClubMeta[],
+  player: Player | null
+): ClubMeta | null {
   if (!player) return null;
   return clubs.find((c) => c.name === player.club) ?? null;
 }
@@ -103,6 +144,7 @@ function teamIconUrl(clubName: string) {
 }
 
 function getStatTitle(statMode: StatMode) {
+  if (statMode === "supercoach") return "SC POINTS MODE";
   if (statMode === "goals") return "GOALS MODE";
   if (statMode === "bounces") return "BOUNCES MODE";
   if (statMode === "disposals") return "DISPOSALS MODE";
@@ -110,6 +152,7 @@ function getStatTitle(statMode: StatMode) {
 }
 
 function formatStatValue(value: number, statMode: StatMode) {
+  if (statMode === "supercoach") return `${value.toFixed(1)} SC`;
   if (statMode === "goals") return `${Math.round(value)} GOALS`;
   if (statMode === "bounces") return `${Math.round(value)} BOUNCES`;
   if (statMode === "disposals") return `${value.toFixed(1)} DISP`;
@@ -124,7 +167,9 @@ function getActiveSlots(statMode: StatMode) {
 }
 
 function createEmptyTeam(slots: Slot[]) {
-  return Object.fromEntries(slots.map((s) => [s.id, null])) as Record<string, string | null>;
+  return Object.fromEntries(
+    slots.map((s) => [s.id, null])
+  ) as Record<string, string | null>;
 }
 
 function getWinnerAccent(winner: "A" | "B" | "DRAW" | null) {
@@ -160,6 +205,33 @@ function getWinnerAccent(winner: "A" | "B" | "DRAW" | null) {
   };
 }
 
+function isRealPlayer(player: Player) {
+  const name = String(player.name ?? "").trim();
+  const club = String(player.club ?? "").trim();
+
+  if (!name || !club) return false;
+  if (name.length < 3) return false;
+
+  const blocked = [
+    "Appearance",
+    "Register New Account",
+    "Reset Password",
+    "Change Password",
+    "Manage Settings",
+    "League Total",
+    "Rankings",
+    "getPlugContent",
+    "Use device theme",
+    "Dark theme",
+    "Light theme",
+    "Year",
+    "Position",
+    "Sort By",
+  ];
+
+  return !blocked.some((bad) => name.includes(bad) || club.includes(bad));
+}
+
 function VersusDraftPageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -170,8 +242,12 @@ function VersusDraftPageInner() {
 
   const ACTIVE_SLOTS = useMemo(() => getActiveSlots(statMode), [statMode]);
 
-  const [teamA, setTeamA] = useState<Record<string, string | null>>(createEmptyTeam(SLOTS));
-  const [teamB, setTeamB] = useState<Record<string, string | null>>(createEmptyTeam(SLOTS));
+  const [teamA, setTeamA] = useState<Record<string, string | null>>(
+    createEmptyTeam(SLOTS)
+  );
+  const [teamB, setTeamB] = useState<Record<string, string | null>>(
+    createEmptyTeam(SLOTS)
+  );
 
   useEffect(() => {
     const urlSeason = searchParams.get("season");
@@ -192,27 +268,29 @@ function VersusDraftPageInner() {
     }
 
     if (
-  urlStat === "fantasy" ||
-  urlStat === "goals" ||
-  urlStat === "bounces" ||
-  urlStat === "disposals"
-) {
-  nextStat = urlStat;
-} else {
-  try {
-    const savedStat = localStorage.getItem("selectedStatMode");
-    if (
-      savedStat === "fantasy" ||
-      savedStat === "goals" ||
-      savedStat === "bounces" ||
-      savedStat === "disposals"
+      urlStat === "fantasy" ||
+      urlStat === "supercoach" ||
+      urlStat === "goals" ||
+      urlStat === "bounces" ||
+      urlStat === "disposals"
     ) {
-      nextStat = savedStat as StatMode;
+      nextStat = urlStat;
+    } else {
+      try {
+        const savedStat = localStorage.getItem("selectedStatMode");
+        if (
+          savedStat === "fantasy" ||
+          savedStat === "supercoach" ||
+          savedStat === "goals" ||
+          savedStat === "bounces" ||
+          savedStat === "disposals"
+        ) {
+          nextStat = savedStat as StatMode;
+        }
+      } catch {}
     }
-  } catch {}
-}
 
-    if (nextSeason === "2026") {
+    if (nextSeason === "2025" && nextStat === "supercoach") {
       nextStat = "fantasy";
     }
 
@@ -232,7 +310,10 @@ function VersusDraftPageInner() {
   };
 
   const changeSeason = (nextSeason: Season) => {
-    const nextStat = nextSeason === "2026" ? "fantasy" : statMode;
+    const nextStat =
+      nextSeason === "2025" && statMode === "supercoach"
+        ? "fantasy"
+        : statMode;
 
     setSeason(nextSeason);
     setStatMode(nextStat);
@@ -246,6 +327,8 @@ function VersusDraftPageInner() {
   };
 
   const changeStatMode = (nextStat: StatMode) => {
+    if (season === "2025" && nextStat === "supercoach") return;
+
     setStatMode(nextStat);
 
     try {
@@ -260,19 +343,21 @@ function VersusDraftPageInner() {
   };
 
   const RAW_PLAYERS: Player[] = useMemo(() => {
-  if (season === "2025") {
-    if (statMode === "goals") return goals2025 as Player[];
-    if (statMode === "bounces") return bounces2025 as Player[];
-    if (statMode === "disposals") return disposals2025 as Player[];
-    return players2025 as Player[];
-  }
+    if (season === "2025") {
+      if (statMode === "goals") return goals2025 as Player[];
+      if (statMode === "bounces") return bounces2025 as Player[];
+      if (statMode === "disposals") return disposals2025 as Player[];
+      return players2025 as Player[];
+    }
 
-  return players2026 as Player[];
-}, [season, statMode]);
+    return players2026 as Player[];
+  }, [season, statMode]);
 
   const ALL_PLAYERS: Player[] = useMemo(() => {
-    return RAW_PLAYERS.filter((p) => p.points > 0);
-  }, [RAW_PLAYERS]);
+    return RAW_PLAYERS.filter(isRealPlayer).filter(
+      (p) => getPlayerStatValue(p, statMode, season) > 0
+    );
+  }, [RAW_PLAYERS, statMode, season]);
 
   const SPIN_CLUBS = useMemo(
     () => clampClubsToPlayers(AFL_CLUBS, ALL_PLAYERS),
@@ -332,13 +417,13 @@ function VersusDraftPageInner() {
   }, [active, clubPlayers, pickedIds, search]);
 
   const teamATotal = useMemo(
-    () => sumPoints(teamA, ACTIVE_SLOTS, getPlayerById),
-    [teamA, ACTIVE_SLOTS, ALL_PLAYERS]
+    () => sumStatTotal(teamA, ACTIVE_SLOTS, getPlayerById, statMode, season),
+    [teamA, ACTIVE_SLOTS, ALL_PLAYERS, statMode, season]
   );
 
   const teamBTotal = useMemo(
-    () => sumPoints(teamB, ACTIVE_SLOTS, getPlayerById),
-    [teamB, ACTIVE_SLOTS, ALL_PLAYERS]
+    () => sumStatTotal(teamB, ACTIVE_SLOTS, getPlayerById, statMode, season),
+    [teamB, ACTIVE_SLOTS, ALL_PLAYERS, statMode, season]
   );
 
   const allFilledA = useMemo(
@@ -369,7 +454,9 @@ function VersusDraftPageInner() {
   function cleanupSpinTimers() {
     if (spinTimer.current) window.clearInterval(spinTimer.current);
     if (spinTimeout.current) window.clearTimeout(spinTimeout.current);
-    if (delayedSpinTimeout.current) window.clearTimeout(delayedSpinTimeout.current);
+    if (delayedSpinTimeout.current) {
+      window.clearTimeout(delayedSpinTimeout.current);
+    }
     spinTimer.current = null;
     spinTimeout.current = null;
     delayedSpinTimeout.current = null;
@@ -455,7 +542,12 @@ function VersusDraftPageInner() {
     if (slotIsFilled(side, slot.id)) return;
 
     setSearch("");
-    setActive({ side, slotId: slot.id, allowed: slot.allowed, slotLabel: slot.label });
+    setActive({
+      side,
+      slotId: slot.id,
+      allowed: slot.allowed,
+      slotLabel: slot.label,
+    });
   }
 
   function onPick(playerId: string) {
@@ -571,42 +663,51 @@ function VersusDraftPageInner() {
                 Fantasy Points
               </button>
 
-              {season === "2025" && (
-  <>
-    <button
-      onClick={() => changeStatMode("goals")}
-      className={`rounded-xl border px-4 py-2 font-bold transition ${
-        statMode === "goals"
-          ? "bg-yellow-400 text-black border-yellow-300"
-          : "border-white/20 text-white/80 hover:text-white hover:border-white/40"
-      }`}
-    >
-      Goals
-    </button>
+              {season === "2026" && (
+                <button
+                  onClick={() => changeStatMode("supercoach")}
+                  className={`rounded-xl border px-4 py-2 font-bold transition ${
+                    statMode === "supercoach"
+                      ? "bg-emerald-400 text-black border-emerald-300"
+                      : "border-white/20 text-white/80 hover:text-white hover:border-white/40"
+                  }`}
+                >
+                  SC Points
+                </button>
+              )}
 
-    <button
-      onClick={() => changeStatMode("disposals")}
-      className={`rounded-xl border px-4 py-2 font-bold transition ${
-        statMode === "disposals"
-          ? "bg-white text-black border-white"
-          : "border-white/20 text-white/80 hover:text-white hover:border-white/40"
-      }`}
-    >
-      Disposals
-    </button>
+              <button
+                onClick={() => changeStatMode("disposals")}
+                className={`rounded-xl border px-4 py-2 font-bold transition ${
+                  statMode === "disposals"
+                    ? "bg-white text-black border-white"
+                    : "border-white/20 text-white/80 hover:text-white hover:border-white/40"
+                }`}
+              >
+                Disposals
+              </button>
 
-    <button
-      onClick={() => changeStatMode("bounces")}
-      className={`rounded-xl border px-4 py-2 font-bold transition ${
-        statMode === "bounces"
-          ? "bg-orange-500 text-white border-orange-400"
-          : "border-white/20 text-white/80 hover:text-white hover:border-white/40"
-      }`}
-    >
-      Bounces
-    </button>
-  </>
-)}
+              <button
+                onClick={() => changeStatMode("goals")}
+                className={`rounded-xl border px-4 py-2 font-bold transition ${
+                  statMode === "goals"
+                    ? "bg-yellow-400 text-black border-yellow-300"
+                    : "border-white/20 text-white/80 hover:text-white hover:border-white/40"
+                }`}
+              >
+                Goals
+              </button>
+
+              <button
+                onClick={() => changeStatMode("bounces")}
+                className={`rounded-xl border px-4 py-2 font-bold transition ${
+                  statMode === "bounces"
+                    ? "bg-orange-500 text-white border-orange-400"
+                    : "border-white/20 text-white/80 hover:text-white hover:border-white/40"
+                }`}
+              >
+                Bounces
+              </button>
             </div>
           </div>
 
@@ -656,7 +757,9 @@ function VersusDraftPageInner() {
           >
             <div className="absolute inset-0 opacity-40 bg-[radial-gradient(circle_at_top,#ffffff24,transparent_45%)]" />
             <div className="relative text-center">
-              <div className={`text-xs sm:text-sm font-black uppercase tracking-[0.45em] ${winnerAccent.badge}`}>
+              <div
+                className={`text-xs sm:text-sm font-black uppercase tracking-[0.45em] ${winnerAccent.badge}`}
+              >
                 Final Result
               </div>
 
@@ -709,10 +812,15 @@ function VersusDraftPageInner() {
             getPlayer={getPlayerById}
             onOpen={onOpen}
             enabled={!gameOver && !spinning && turn === "A"}
-            badgeClass={season === "2026" ? "bg-blue-400 text-white" : "bg-blue-600 text-white"}
+            badgeClass={
+              season === "2026"
+                ? "bg-blue-400 text-white"
+                : "bg-blue-600 text-white"
+            }
             gameOver={gameOver}
             winner={winner}
             statMode={statMode}
+            season={season}
           />
 
           <TeamColumn
@@ -723,10 +831,15 @@ function VersusDraftPageInner() {
             getPlayer={getPlayerById}
             onOpen={onOpen}
             enabled={!gameOver && !spinning && turn === "B"}
-            badgeClass={season === "2026" ? "bg-red-500 text-white" : "bg-red-700 text-white"}
+            badgeClass={
+              season === "2026"
+                ? "bg-red-500 text-white"
+                : "bg-red-700 text-white"
+            }
             gameOver={gameOver}
             winner={winner}
             statMode={statMode}
+            season={season}
           />
         </div>
 
@@ -743,14 +856,19 @@ function VersusDraftPageInner() {
             </div>
           ) : (
             <>
-              <div className="text-white/60 font-semibold tracking-widest">DRAFTING FROM:</div>
+              <div className="text-white/60 font-semibold tracking-widest">
+                DRAFTING FROM:
+              </div>
 
               <div className="mt-5 flex items-center justify-center">
                 <div
                   className={`inline-flex items-center justify-center rounded-2xl px-10 py-4 font-extrabold text-xl select-none shadow-[0_14px_40px_rgba(0,0,0,0.35)] border border-white/10 ${
                     spinning ? "opacity-90" : ""
                   }`}
-                  style={{ backgroundColor: displayClub.primary, color: displayClub.text }}
+                  style={{
+                    backgroundColor: displayClub.primary,
+                    color: displayClub.text,
+                  }}
                   title="Auto-spins after every 2 picks"
                 >
                   {displayClub.name.toUpperCase()}
@@ -763,7 +881,10 @@ function VersusDraftPageInner() {
 
       {active && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/70" onClick={() => setActive(null)} />
+          <div
+            className="absolute inset-0 bg-black/70"
+            onClick={() => setActive(null)}
+          />
 
           <div className="relative w-full max-w-xl rounded-2xl border border-white/15 bg-zinc-950 p-4">
             <div className="flex items-center justify-between gap-3">
@@ -844,6 +965,7 @@ function TeamColumn({
   gameOver,
   winner,
   statMode,
+  season,
 }: {
   side: Side;
   clubs: ClubMeta[];
@@ -856,6 +978,7 @@ function TeamColumn({
   gameOver: boolean;
   winner: "A" | "B" | "DRAW" | null;
   statMode: StatMode;
+  season: Season;
 }) {
   const isLoser = gameOver && winner && winner !== "DRAW" && winner !== side;
 
@@ -883,64 +1006,76 @@ function TeamColumn({
             </div>
 
             <button
-              className={`flex-1 min-w-0 border rounded-md px-3 sm:px-4 text-left transition h-[56px] ${
-                clickable ? "hover:brightness-110" : "cursor-not-allowed"
-              }`}
-              style={
-                p && clubMeta
-                  ? {
-                      backgroundColor: clubMeta.primary,
-                      color: clubMeta.text,
-                      borderColor: "rgba(255,255,255,0.35)",
-                    }
-                  : {
-                      backgroundColor: "#0a0a0a",
-                      borderColor: "rgba(255,255,255,0.15)",
-                    }
-              }
-              onClick={() => onOpen(side, slot)}
-              disabled={!clickable}
-              title={isFilled ? "Locked (cannot be replaced)" : undefined}
-            >
-              <div className="flex items-center w-full h-full min-w-0 gap-3">
-                <div className="min-w-0 flex-[1.2]">
-                  <span
-                    className={`block truncate ${
-                      p ? "font-extrabold" : "font-extrabold text-white/80"
-                    }`}
-                  >
-                    {p ? p.name : `+ Select ${slot.label}`}
-                  </span>
-                </div>
+  onClick={() => clickable && onOpen(side, slot)}
+  disabled={!clickable}
+  className={`flex-1 min-w-0 h-[58px] rounded-xl border px-3 text-left transition ${
+    isFilled
+      ? "shadow-[0_10px_28px_rgba(0,0,0,0.28)]"
+      : clickable
+      ? "border-white/18 bg-white/[0.03] hover:bg-white/[0.06] hover:border-white/30"
+      : "border-white/10 bg-white/[0.02] opacity-70 cursor-not-allowed"
+  }`}
+  style={
+    isFilled && clubMeta
+      ? {
+          backgroundColor: clubMeta.primary,
+          color: clubMeta.text,
+          borderColor: `${clubMeta.text}22`,
+        }
+      : undefined
+  }
+  title={
+    clickable
+      ? `Select ${slot.label}`
+      : isFilled
+      ? "Locked (cannot be replaced)"
+      : undefined
+  }
+>
+  <div className="flex items-center justify-between w-full h-full min-w-0 gap-3 overflow-hidden">
+    <div className="min-w-0 flex-[1.2]">
+      <span
+        className={`block truncate font-extrabold ${
+          p ? "" : "text-white/80"
+        }`}
+      >
+        {p ? p.name : `+ Select ${slot.label}`}
+      </span>
+    </div>
 
-                <div className="flex justify-center flex-[0.9] min-w-0">
-                  {p && clubMeta && (
-                    <div className="h-[46px] w-[132px] max-w-full overflow-hidden rounded-sm shrink-0">
-                      <Image
-                        src={teamIconUrl(clubMeta.name)}
-                        alt={clubMeta.name}
-                        width={132}
-                        height={46}
-                        className="h-full w-full object-fill"
-                        unoptimized
-                      />
-                    </div>
-                  )}
-                </div>
+    <div className="flex justify-center flex-[0.9] min-w-0">
+      {p && clubMeta && (
+        <div className="h-[46px] w-[132px] max-w-full overflow-hidden rounded-sm shrink-0">
+          <Image
+            src={teamIconUrl(clubMeta.name)}
+            alt={clubMeta.name}
+            width={132}
+            height={46}
+            className="h-full w-full object-fill"
+            unoptimized
+          />
+        </div>
+      )}
+    </div>
 
-                <div className="w-[130px] shrink-0 flex justify-end">
-                  {p?.points != null && (
-                    <span className="shrink-0 font-extrabold px-3 py-1 rounded-md bg-black/55 text-white whitespace-nowrap">
-                      {statMode === "goals"
-                        ? `${Math.round(p.points)} GOALS`
-                        : statMode === "bounces"
-                        ? `${Math.round(p.points)} BOUNCES`
-                        : `${p.points.toFixed(1)} PTS`}
-                    </span>
-                  )}
-                </div>
-              </div>
-            </button>
+    <div className="w-[130px] shrink-0 flex justify-end">
+      {p && (
+        <span
+          className="shrink-0 font-extrabold px-3 py-1 rounded-md whitespace-nowrap"
+          style={{
+            backgroundColor: "rgba(0,0,0,0.28)",
+            color: clubMeta?.text ?? "#fff",
+          }}
+        >
+          {formatStatValue(
+            getPlayerStatValue(p, statMode, season),
+            statMode
+          )}
+        </span>
+      )}
+    </div>
+  </div>
+</button>
           </div>
         );
       })}
@@ -950,7 +1085,9 @@ function TeamColumn({
 
 export default function VersusDraftPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-black text-white p-6">Loading...</div>}>
+    <Suspense
+      fallback={<div className="min-h-screen bg-black text-white p-6">Loading...</div>}
+    >
       <VersusDraftPageInner />
     </Suspense>
   );

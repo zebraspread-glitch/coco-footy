@@ -12,7 +12,7 @@ import players2026 from "../data/public/afl_players26.json";
 type PlayerPos = "FWD" | "MID" | "DEF" | "RUCK";
 type SlotPos = "FWD" | "MID" | "DEF" | "RUCK" | "FLEX";
 type Position = "FWD" | "MID" | "DEF" | "RUCK" | "FLEX";
-type GameMode = "fantasy" | "goals" | "disposals" | "bounces";
+type GameMode = "fantasy" | "sc" | "goals" | "disposals" | "bounces";
 
 type Slot = {
   id: string;
@@ -28,10 +28,53 @@ type Player = {
   points: number;
 };
 
+type RawPlayer2026 = {
+  id?: string | number;
+  name?: string;
+  fullName?: string;
+  player?: string;
+  playerName?: string;
+  club?: string;
+  team?: string;
+  pos?: PlayerPos[] | string;
+  position?: PlayerPos[] | string;
+  positions?: PlayerPos[] | string;
+  points?: number | string;
+  fantasy?: number | string;
+  fantasyPoints?: number | string;
+  aflFantasy?: number | string;
+  avg?: number | string;
+  average?: number | string;
+  sc?: number | string;
+  scPoints?: number | string;
+  supercoach?: number | string;
+  superCoach?: number | string;
+  supercoachPoints?: number | string;
+  goals?: number | string;
+  avgGoals?: number | string;
+  goalAverage?: number | string;
+  disposals?: number | string;
+  avgDisposals?: number | string;
+  disposalAverage?: number | string;
+  bounces?: number | string;
+  avgBounces?: number | string;
+  bounceAverage?: number | string;
+  [key: string]: unknown;
+};
+
 type ClubMeta = {
   name: string;
   primary: string;
   text: string;
+};
+
+type HighScoreEntry = {
+  key: string;
+  season: "2025" | "2026";
+  mode: GameMode;
+  label: string;
+  unit: string;
+  value: number;
 };
 
 /** ================= Slots (AFL) ================= */
@@ -101,6 +144,8 @@ function patternUrlForClub(clubName: string) {
 
 function modeLabel(mode: GameMode) {
   switch (mode) {
+    case "sc":
+      return "SC";
     case "goals":
       return "GOALS";
     case "disposals":
@@ -112,11 +157,227 @@ function modeLabel(mode: GameMode) {
   }
 }
 
+function modeTitle(mode: GameMode) {
+  switch (mode) {
+    case "sc":
+      return "SC Points";
+    case "goals":
+      return "Goals";
+    case "disposals":
+      return "Disposals";
+    case "bounces":
+      return "Bounces";
+    default:
+      return "Fantasy Points";
+  }
+}
+
 function formatStatValue(value: number, statLabel: string) {
   if (statLabel === "GOALS" || statLabel === "BOUNCES") {
     return String(Math.round(value));
   }
   return value.toFixed(1);
+}
+
+function getAvailableModes(season: "2025" | "2026"): GameMode[] {
+  if (season === "2026") {
+    return ["fantasy", "sc", "goals", "disposals", "bounces"];
+  }
+  return ["fantasy", "goals", "disposals", "bounces"];
+}
+
+function isModeAllowedForSeason(
+  season: "2025" | "2026",
+  mode: string | null
+): mode is GameMode {
+  if (!mode) return false;
+  return getAvailableModes(season).includes(mode as GameMode);
+}
+
+function parseNumber(value: unknown): number {
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+  if (typeof value === "string") {
+    const cleaned = value.replace(/,/g, "").trim();
+    const parsed = Number(cleaned);
+    if (Number.isFinite(parsed)) return parsed;
+  }
+  return 0;
+}
+
+function normalizePositions(value: unknown): PlayerPos[] {
+  if (Array.isArray(value)) {
+    return value.filter(
+      (v): v is PlayerPos =>
+        v === "FWD" || v === "MID" || v === "DEF" || v === "RUCK"
+    );
+  }
+
+  if (typeof value === "string") {
+    const parts = value
+      .split(/[\/,| ]+/)
+      .map((p) => p.trim().toUpperCase())
+      .filter(Boolean);
+
+    const mapped = parts.filter(
+      (v): v is PlayerPos =>
+        v === "FWD" || v === "MID" || v === "DEF" || v === "RUCK"
+    );
+
+    if (mapped.length) return mapped;
+  }
+
+  return ["MID"];
+}
+
+function get2026StatValue(player: RawPlayer2026, mode: GameMode): number {
+  const candidates: Record<GameMode, string[]> = {
+    fantasy: ["points", "fantasyPoints", "fantasy", "aflFantasy", "avg", "average"],
+    sc: ["sc", "scPoints", "supercoach", "superCoach", "supercoachPoints"],
+    goals: ["goals", "avgGoals", "goalAverage"],
+    disposals: ["disposals", "avgDisposals", "disposalAverage"],
+    bounces: ["bounces", "avgBounces", "bounceAverage"],
+  };
+
+  for (const key of candidates[mode]) {
+    if (key in player) {
+      const value = parseNumber(player[key]);
+      if (Number.isFinite(value)) return value;
+    }
+  }
+
+  return 0;
+}
+
+function normalize2026Players(data: RawPlayer2026[], mode: GameMode): Player[] {
+  return data
+    .map((p, index) => {
+      const name =
+        (typeof p.name === "string" && p.name) ||
+        (typeof p.fullName === "string" && p.fullName) ||
+        (typeof p.player === "string" && p.player) ||
+        (typeof p.playerName === "string" && p.playerName) ||
+        `Player ${index + 1}`;
+
+      const club =
+        (typeof p.club === "string" && p.club) ||
+        (typeof p.team === "string" && p.team) ||
+        "";
+
+      const pos = normalizePositions(p.pos ?? p.position ?? p.positions);
+
+      const id =
+        p.id != null && String(p.id).trim().length > 0
+          ? String(p.id)
+          : `${name}-${club}-${index}`;
+
+      return {
+        id,
+        name,
+        club,
+        pos,
+        points: get2026StatValue(p, mode),
+      };
+    })
+    .filter((p) => p.name && p.club)
+    .filter((p) => p.points > 0);
+}
+
+function getHighScoreKey(season: "2025" | "2026", mode: GameMode) {
+  if (season === "2025") {
+    if (mode === "goals") return "unlimited_highscore_2025_goals";
+    if (mode === "disposals") return "unlimited_highscore_2025_disposals";
+    if (mode === "bounces") return "unlimited_highscore_2025_bounces";
+    return "unlimited_highscore_2025_fantasy";
+  }
+
+  if (mode === "sc") return "unlimited_highscore_2026_sc";
+  if (mode === "goals") return "unlimited_highscore_2026_goals";
+  if (mode === "disposals") return "unlimited_highscore_2026_disposals";
+  if (mode === "bounces") return "unlimited_highscore_2026_bounces";
+  return "unlimited_highscore_2026_fantasy";
+}
+
+function getAllHighScoreEntries(): HighScoreEntry[] {
+  const entries: Array<Omit<HighScoreEntry, "value">> = [
+    {
+      key: getHighScoreKey("2025", "fantasy"),
+      season: "2025",
+      mode: "fantasy",
+      label: "2025 Fantasy Points",
+      unit: modeLabel("fantasy"),
+    },
+    {
+      key: getHighScoreKey("2025", "goals"),
+      season: "2025",
+      mode: "goals",
+      label: "2025 Goals",
+      unit: modeLabel("goals"),
+    },
+    {
+      key: getHighScoreKey("2025", "disposals"),
+      season: "2025",
+      mode: "disposals",
+      label: "2025 Disposals",
+      unit: modeLabel("disposals"),
+    },
+    {
+      key: getHighScoreKey("2025", "bounces"),
+      season: "2025",
+      mode: "bounces",
+      label: "2025 Bounces",
+      unit: modeLabel("bounces"),
+    },
+    {
+      key: getHighScoreKey("2026", "fantasy"),
+      season: "2026",
+      mode: "fantasy",
+      label: "2026 Fantasy Points",
+      unit: modeLabel("fantasy"),
+    },
+    {
+      key: getHighScoreKey("2026", "sc"),
+      season: "2026",
+      mode: "sc",
+      label: "2026 SC Points",
+      unit: modeLabel("sc"),
+    },
+    {
+      key: getHighScoreKey("2026", "goals"),
+      season: "2026",
+      mode: "goals",
+      label: "2026 Goals",
+      unit: modeLabel("goals"),
+    },
+    {
+      key: getHighScoreKey("2026", "disposals"),
+      season: "2026",
+      mode: "disposals",
+      label: "2026 Disposals",
+      unit: modeLabel("disposals"),
+    },
+    {
+      key: getHighScoreKey("2026", "bounces"),
+      season: "2026",
+      mode: "bounces",
+      label: "2026 Bounces",
+      unit: modeLabel("bounces"),
+    },
+  ];
+
+  return entries.map((entry) => {
+    let value = 0;
+    try {
+      value = Number(localStorage.getItem(entry.key) ?? 0);
+      if (!Number.isFinite(value)) value = 0;
+    } catch {
+      value = 0;
+    }
+
+    return {
+      ...entry,
+      value,
+    };
+  });
 }
 
 function UnlimitedDraftPageInner() {
@@ -126,98 +387,111 @@ function UnlimitedDraftPageInner() {
   const [season, setSeason] = useState<"2025" | "2026">("2025");
   const [seasonReady, setSeasonReady] = useState(false);
   const [mode, setMode] = useState<GameMode>("fantasy");
+  const [showHighScores, setShowHighScores] = useState(false);
+  const [allHighScores, setAllHighScores] = useState<HighScoreEntry[]>([]);
 
   useEffect(() => {
     const urlSeason = searchParams.get("season");
+    const resolvedSeason: "2025" | "2026" =
+      urlSeason === "2026" ? "2026" : "2025";
+
+    setSeason(resolvedSeason);
+
+    try {
+      localStorage.setItem("selectedSeason", resolvedSeason);
+    } catch {}
+
     const urlMode = searchParams.get("mode");
+    let resolvedMode: GameMode = "fantasy";
 
-    if (urlSeason === "2025" || urlSeason === "2026") {
-      setSeason(urlSeason);
-      try {
-        localStorage.setItem("selectedSeason", urlSeason);
-      } catch {}
+    if (isModeAllowedForSeason(resolvedSeason, urlMode)) {
+      resolvedMode = urlMode;
     } else {
       try {
-        const savedSeason = localStorage.getItem("selectedSeason");
-        if (savedSeason === "2025" || savedSeason === "2026") {
-          setSeason(savedSeason);
+        const savedMode = localStorage.getItem(
+          resolvedSeason === "2026"
+            ? "selectedUnlimitedMode_2026"
+            : "selectedUnlimitedMode_2025"
+        );
+        if (isModeAllowedForSeason(resolvedSeason, savedMode)) {
+          resolvedMode = savedMode;
         }
       } catch {}
     }
 
-    if (
-      urlMode === "fantasy" ||
-      urlMode === "goals" ||
-      urlMode === "disposals" ||
-      urlMode === "bounces"
-    ) {
-      setMode(urlMode);
-      try {
-        localStorage.setItem("selectedUnlimitedMode", urlMode);
-      } catch {}
-    } else {
-      try {
-        const savedMode = localStorage.getItem("selectedUnlimitedMode");
-        if (
-          savedMode === "fantasy" ||
-          savedMode === "goals" ||
-          savedMode === "disposals" ||
-          savedMode === "bounces"
-        ) {
-          setMode(savedMode);
-        }
-      } catch {}
-    }
+    setMode(resolvedMode);
+
+    try {
+      localStorage.setItem(
+        resolvedSeason === "2026"
+          ? "selectedUnlimitedMode_2026"
+          : "selectedUnlimitedMode_2025",
+        resolvedMode
+      );
+    } catch {}
 
     setSeasonReady(true);
   }, [searchParams]);
 
-  const changeSeason = (nextSeason: "2025" | "2026") => {
-    setSeason(nextSeason);
-
-    try {
-      localStorage.setItem("selectedSeason", nextSeason);
-    } catch {}
-
+  const pushRoute = (nextSeason: "2025" | "2026", nextMode: GameMode) => {
     const params = new URLSearchParams();
     params.set("season", nextSeason);
-    if (nextSeason === "2025") {
-      params.set("mode", mode);
-    }
-
+    params.set("mode", nextMode);
     router.replace(`/unlimited?${params.toString()}`);
   };
 
+  const changeSeason = (nextSeason: "2025" | "2026") => {
+    const nextMode = isModeAllowedForSeason(nextSeason, mode) ? mode : "fantasy";
+
+    setSeason(nextSeason);
+    setMode(nextMode);
+
+    try {
+      localStorage.setItem("selectedSeason", nextSeason);
+      localStorage.setItem(
+        nextSeason === "2026"
+          ? "selectedUnlimitedMode_2026"
+          : "selectedUnlimitedMode_2025",
+        nextMode
+      );
+    } catch {}
+
+    pushRoute(nextSeason, nextMode);
+  };
+
   const changeMode = (nextMode: GameMode) => {
-    if (season !== "2025") return;
+    if (!isModeAllowedForSeason(season, nextMode)) return;
 
     setMode(nextMode);
 
     try {
-      localStorage.setItem("selectedUnlimitedMode", nextMode);
+      localStorage.setItem(
+        season === "2026"
+          ? "selectedUnlimitedMode_2026"
+          : "selectedUnlimitedMode_2025",
+        nextMode
+      );
     } catch {}
 
-    router.replace(`/unlimited?season=2025&mode=${nextMode}`);
+    pushRoute(season, nextMode);
   };
 
   const goHome = () => {
-    if (season === "2025") {
-      router.push(`/?season=${season}&mode=${mode}`);
-    } else {
-      router.push(`/?season=${season}`);
-    }
+    router.push(`/?season=${season}&mode=${mode}`);
   };
 
   const ALL_PLAYERS: Player[] = useMemo(() => {
     if (season === "2026") {
-      return players2026 as Player[];
+      return normalize2026Players(players2026 as RawPlayer2026[], mode);
     }
 
-    if (mode === "goals") return goals2025 as Player[];
-    if (mode === "disposals") return disposals2025 as Player[];
-    if (mode === "bounces") return bounces2025 as Player[];
+    if (mode === "goals") return (goals2025 as Player[]).filter((p) => p.points > 0);
+    if (mode === "disposals") {
+      return (disposals2025 as Player[]).filter((p) => p.points > 0);
+    }
+    if (mode === "bounces") return (bounces2025 as Player[]).filter((p) => p.points > 0);
 
-    return players2025 as Player[];
+    return (players2025 as Player[]).filter((p) => p.points > 0);
   }, [season, mode]);
 
   const SPIN_CLUBS = useMemo(
@@ -266,9 +540,9 @@ function UnlimitedDraftPageInner() {
 
   const clubPlayers = useMemo(
     () =>
-      ALL_PLAYERS
-        .filter((p) => p.club === club.name)
-        .filter((p) => p.points > 0),
+      ALL_PLAYERS.filter((p) => p.club === club.name)
+        .filter((p) => p.points > 0)
+        .sort((a, b) => a.name.localeCompare(b.name)),
     [ALL_PLAYERS, club.name]
   );
 
@@ -279,10 +553,11 @@ function UnlimitedDraftPageInner() {
     return clubPlayers
       .filter((p) => !pickedIds.has(p.id))
       .filter((p) => p.pos.some((pos) => active.allowed.includes(pos)))
-      .filter((p) => (q ? p.name.toLowerCase().includes(q) : true));
+      .filter((p) => (q ? p.name.toLowerCase().includes(q) : true))
+      .sort((a, b) => a.name.localeCompare(b.name));
   }, [active, clubPlayers, pickedIds, search]);
 
-  const currentScore = useMemo(() => sumPoints(team, getPlayerById), [team]);
+  const currentScore = useMemo(() => sumPoints(team, getPlayerById), [team, ALL_PLAYERS]);
 
   const allFilled = useMemo(() => SLOTS.every((s) => Boolean(team[s.id])), [team]);
   const gameOver = allFilled;
@@ -292,20 +567,7 @@ function UnlimitedDraftPageInner() {
 
   useEffect(() => {
     try {
-      let key = "unlimited_highscore_2025";
-
-      if (season === "2026") {
-        key = "unlimited_highscore_2026";
-      } else if (mode === "goals") {
-        key = "unlimited_highscore_2025_goals";
-      } else if (mode === "disposals") {
-        key = "unlimited_highscore_2025_disposals";
-      } else if (mode === "bounces") {
-        key = "unlimited_highscore_2025_bounces";
-      } else {
-        key = "unlimited_highscore_2025_fantasy";
-      }
-
+      const key = getHighScoreKey(season, mode);
       const saved = Number(localStorage.getItem(key) ?? 0);
       setHighScore(Number.isFinite(saved) ? saved : 0);
     } catch {
@@ -317,24 +579,14 @@ function UnlimitedDraftPageInner() {
     if (currentScore > highScore) {
       setHighScore(currentScore);
       try {
-        let key = "unlimited_highscore_2025";
-
-        if (season === "2026") {
-          key = "unlimited_highscore_2026";
-        } else if (mode === "goals") {
-          key = "unlimited_highscore_2025_goals";
-        } else if (mode === "disposals") {
-          key = "unlimited_highscore_2025_disposals";
-        } else if (mode === "bounces") {
-          key = "unlimited_highscore_2025_bounces";
-        } else {
-          key = "unlimited_highscore_2025_fantasy";
-        }
-
-        localStorage.setItem(key, String(currentScore));
+        localStorage.setItem(getHighScoreKey(season, mode), String(currentScore));
       } catch {}
     }
   }, [currentScore, highScore, season, mode]);
+
+  const refreshAllHighScores = () => {
+    setAllHighScores(getAllHighScoreEntries());
+  };
 
   /** ===== Spinner effect ===== */
   const spinTimer = useRef<number | null>(null);
@@ -369,8 +621,8 @@ function UnlimitedDraftPageInner() {
 
     spinTimeout.current = window.setTimeout(() => {
       cleanupSpinTimers();
-      let final = club;
 
+      let final = club;
       if (SPIN_CLUBS.length > 1) {
         do {
           final = SPIN_CLUBS[Math.floor(Math.random() * SPIN_CLUBS.length)];
@@ -462,8 +714,8 @@ function UnlimitedDraftPageInner() {
     window.setTimeout(() => spinToRandomClub(), 50);
   }
 
-  const scoreMode = season === "2026" ? "fantasy" : mode;
-  const unit = modeLabel(scoreMode);
+  const unit = modeLabel(mode);
+  const availableModes = getAvailableModes(season);
 
   return (
     <main className="min-h-screen text-white relative overflow-hidden">
@@ -512,8 +764,8 @@ function UnlimitedDraftPageInner() {
               </button>
             </div>
 
-            {season === "2025" && (
-              <div className="mt-4 flex flex-wrap items-center gap-3">
+            <div className="mt-4 flex flex-wrap items-center gap-3">
+              {availableModes.includes("fantasy") && (
                 <button
                   onClick={() => changeMode("fantasy")}
                   className={`rounded-2xl border px-4 py-2 font-bold transition ${
@@ -524,7 +776,22 @@ function UnlimitedDraftPageInner() {
                 >
                   Fantasy Points
                 </button>
+              )}
 
+              {availableModes.includes("sc") && (
+                <button
+                  onClick={() => changeMode("sc")}
+                  className={`rounded-2xl border px-4 py-2 font-bold transition ${
+                    mode === "sc"
+                      ? "bg-white text-black border-white shadow-[0_10px_28px_rgba(255,255,255,0.18)]"
+                      : "border-white/20 bg-black/20 text-white/80 hover:text-white hover:border-white/40"
+                  }`}
+                >
+                  SC Points
+                </button>
+              )}
+
+              {availableModes.includes("goals") && (
                 <button
                   onClick={() => changeMode("goals")}
                   className={`rounded-2xl border px-4 py-2 font-bold transition ${
@@ -535,7 +802,9 @@ function UnlimitedDraftPageInner() {
                 >
                   Goals
                 </button>
+              )}
 
+              {availableModes.includes("disposals") && (
                 <button
                   onClick={() => changeMode("disposals")}
                   className={`rounded-2xl border px-4 py-2 font-bold transition ${
@@ -546,7 +815,9 @@ function UnlimitedDraftPageInner() {
                 >
                   Disposals
                 </button>
+              )}
 
+              {availableModes.includes("bounces") && (
                 <button
                   onClick={() => changeMode("bounces")}
                   className={`rounded-2xl border px-4 py-2 font-bold transition ${
@@ -557,8 +828,8 @@ function UnlimitedDraftPageInner() {
                 >
                   Bounces
                 </button>
-              </div>
-            )}
+              )}
+            </div>
           </div>
 
           <button
@@ -569,7 +840,7 @@ function UnlimitedDraftPageInner() {
           </button>
         </div>
 
-                <div className="mt-10 flex justify-center">
+        <div className="mt-10 flex justify-center">
           <div className="w-full max-w-2xl overflow-hidden rounded-[30px] border border-white/12 bg-[linear-gradient(135deg,rgba(255,255,255,0.10),rgba(255,255,255,0.03))] shadow-[0_20px_80px_rgba(0,0,0,0.5)] backdrop-blur-2xl">
             <div className="grid grid-cols-1 md:grid-cols-2">
               <div className="relative px-7 py-7 md:py-8">
@@ -605,6 +876,16 @@ function UnlimitedDraftPageInner() {
                       {unit}
                     </span>
                   </div>
+
+                  <button
+                    onClick={() => {
+                      refreshAllHighScores();
+                      setShowHighScores(true);
+                    }}
+                    className="mt-4 rounded-xl border border-white/15 bg-white/8 px-3 py-2 text-sm font-bold text-white/85 transition hover:bg-white/12 hover:text-white hover:border-white/30"
+                  >
+                    Show All High Scores
+                  </button>
                 </div>
               </div>
             </div>
@@ -651,7 +932,7 @@ function UnlimitedDraftPageInner() {
                 spinning ? "opacity-90 scale-[1.01]" : ""
               }`}
               style={{ backgroundColor: displayClub.primary, color: displayClub.text }}
-              title="Auto-spins after every 2 picks"
+              title="Auto-spins after every pick"
             >
               {displayClub.name.toUpperCase()}
             </div>
@@ -706,6 +987,79 @@ function UnlimitedDraftPageInner() {
                   </button>
                 ))
               )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showHighScores && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+          <div
+            className="absolute inset-0 bg-black/75"
+            onClick={() => setShowHighScores(false)}
+          />
+
+          <div className="relative w-full max-w-2xl rounded-3xl border border-white/15 bg-zinc-950/95 p-5 backdrop-blur-xl shadow-[0_25px_80px_rgba(0,0,0,0.65)]">
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <div className="text-2xl font-extrabold tracking-[0.08em] text-white">
+                  ALL HIGH SCORES
+                </div>
+                <div className="mt-1 text-sm text-white/55">
+                  Your best score for every season and mode
+                </div>
+              </div>
+
+              <button
+                className="rounded-2xl border border-white/20 px-3 py-2 text-white/80 hover:text-white hover:border-white/40"
+                onClick={() => setShowHighScores(false)}
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="mt-5 grid grid-cols-1 md:grid-cols-2 gap-3">
+              {allHighScores.map((entry) => {
+                const seasonCardClass =
+                  entry.season === "2025"
+                    ? "border-blue-400/20 bg-[linear-gradient(135deg,rgba(37,99,235,0.22),rgba(15,23,42,0.92))]"
+                    : "border-red-400/20 bg-[linear-gradient(135deg,rgba(239,68,68,0.22),rgba(15,23,42,0.92))]";
+
+                return (
+                  <div
+                    key={entry.key}
+                    className={`rounded-2xl border px-4 py-4 shadow-[0_10px_30px_rgba(0,0,0,0.22)] ${seasonCardClass}`}
+                  >
+                    <div className="text-sm font-bold uppercase tracking-[0.16em] text-white/60">
+                      {entry.season}
+                    </div>
+
+                    <div className="mt-1 text-lg font-extrabold text-white">
+                      {modeTitle(entry.mode)}
+                    </div>
+
+                    <div className="mt-3 flex items-end gap-2">
+                      <span className="bg-gradient-to-b from-[#fff7c2] via-[#f2cf63] to-[#c78a18] bg-clip-text text-3xl font-extrabold text-transparent drop-shadow-[0_2px_14px_rgba(242,207,99,0.18)]">
+                        {formatStatValue(entry.value, entry.unit)}
+                      </span>
+                      <span className="pb-1 text-xs font-bold tracking-[0.16em] text-[#d7bb67]">
+                        {entry.unit}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="mt-5 flex justify-end">
+              <button
+                onClick={() => {
+                  refreshAllHighScores();
+                }}
+                className="rounded-2xl border border-white/15 bg-white/8 px-4 py-2 font-bold text-white/85 transition hover:bg-white/12 hover:text-white hover:border-white/30"
+              >
+                Refresh
+              </button>
             </div>
           </div>
         </div>
