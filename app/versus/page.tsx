@@ -444,7 +444,7 @@ function TeamColumn({
         </div>
       )}
 
-      {gameOver && winner === side && winner !== "DRAW" && (
+      {gameOver && winner === side && (
         <div
           className={`pt-1 text-right text-[11px] font-black uppercase tracking-[0.3em] ${
             side === "A" ? "text-blue-200/85" : "text-red-200/85"
