@@ -20,6 +20,11 @@ export const metadata: Metadata = {
     template: "%s | Coco Footy",
   },
   description: "Play AFL games, live scores, and more on Coco Footy",
+  icons: {
+    icon: "/favicon.png",
+    shortcut: "/favicon.png",
+    apple: "/favicon.png",
+  },
 };
 
 export const viewport: Viewport = {

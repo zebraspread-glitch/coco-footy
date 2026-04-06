@@ -496,7 +496,7 @@ export default function Home() {
         </div>
 
         <footer className="mt-12 text-center text-xs text-white/40">
-          {"AFL Pick’em • Built by you"}
+          {"Footy Pick’em"}
         </footer>
       </main>
     </div>
