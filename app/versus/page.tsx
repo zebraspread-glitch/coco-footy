@@ -370,11 +370,14 @@ function VersusDraftPageInner() {
 
   const [turnIndex, setTurnIndex] = useState(0);
 
-  const turn: Side = (() => {
-    if (turnIndex === 0) return "A";
-    const block = Math.floor((turnIndex - 1) / 2);
-    return block % 2 === 0 ? "B" : "A";
-  })();
+const TURN_ORDER: Side[] = [
+  "A","B","B","A",
+  "A","B","B","A",
+  "A","B","B","A",
+  "A","B","B","A"
+];
+
+  const turn: Side = TURN_ORDER[turnIndex] ?? "A";
 
   const [picksSinceSpin, setPicksSinceSpin] = useState(0);
 
@@ -416,6 +419,40 @@ function VersusDraftPageInner() {
       .sort((a, b) => a.name.localeCompare(b.name));
   }, [active, clubPlayers, pickedIds, search]);
 
+  useEffect(() => {
+  if (!active) return;
+  if (eligiblePlayers.length !== 0) return;
+
+  const currentTeam = active.side === "A" ? teamA : teamB;
+  const remainingOpenSlots = ACTIVE_SLOTS.filter(
+    (slot) => !currentTeam[slot.id]
+  );
+
+  if (remainingOpenSlots.length !== 1) return;
+
+  const timeout = window.setTimeout(() => {
+    setActive(null);
+    setSearch("");
+
+    setTurnIndex((prev) => prev + 1);
+
+    setPicksSinceSpin((prev) => {
+      const next = prev + 1;
+
+      if (next >= 2) {
+  delayedSpinTimeout.current = window.setTimeout(() => {
+    spinToRandomClub();
+  }, 650);
+  return 0;
+}
+
+      return next;
+    });
+  }, 300);
+
+  return () => window.clearTimeout(timeout);
+}, [eligiblePlayers, active, teamA, teamB, ACTIVE_SLOTS]);
+
   const teamATotal = useMemo(
     () => sumStatTotal(teamA, ACTIVE_SLOTS, getPlayerById, statMode, season),
     [teamA, ACTIVE_SLOTS, ALL_PLAYERS, statMode, season]
@@ -450,6 +487,7 @@ function VersusDraftPageInner() {
   const spinTimer = useRef<number | null>(null);
   const spinTimeout = useRef<number | null>(null);
   const delayedSpinTimeout = useRef<number | null>(null);
+  const pickLockRef = useRef(false);
 
   function cleanupSpinTimers() {
     if (spinTimer.current) window.clearInterval(spinTimer.current);
@@ -466,6 +504,7 @@ function VersusDraftPageInner() {
     if (gameOver) return;
     if (spinning || SPIN_CLUBS.length === 0) return;
 
+    pickLockRef.current = false;
     setSpinning(true);
     setActive(null);
     setSearch("");
@@ -536,6 +575,7 @@ function VersusDraftPageInner() {
   }
 
   function onOpen(side: Side, slot: Slot) {
+    if (pickLockRef.current) return;
     if (gameOver) return;
     if (spinning) return;
     if (side !== turn) return;
@@ -551,39 +591,57 @@ function VersusDraftPageInner() {
   }
 
   function onPick(playerId: string) {
-    if (gameOver) return;
-    if (!active) return;
-    if (spinning) return;
-    if (active.side !== turn) return;
-    if (slotIsFilled(active.side, active.slotId)) return;
+  if (pickLockRef.current) return;
+  if (gameOver) return;
+  if (!active) return;
+  if (spinning) return;
+  if (active.side !== turn) return;
+  if (slotIsFilled(active.side, active.slotId)) return;
+  if (pickedIds.has(playerId)) return;
 
-    if (active.side === "A") {
-      setTeamA((prev) => ({ ...prev, [active.slotId]: playerId }));
-    } else {
-      setTeamB((prev) => ({ ...prev, [active.slotId]: playerId }));
-    }
+  pickLockRef.current = true;
 
-    setActive(null);
-    setSearch("");
-    setTurnIndex((prev) => prev + 1);
+  const currentActive = active;
+  setActive(null);
 
-    setPicksSinceSpin((prev) => {
-      const next = prev + 1;
-
-      if (next >= 2) {
-        delayedSpinTimeout.current = window.setTimeout(() => {
-          if (!gameOver) spinToRandomClub();
-        }, 650);
-        return 0;
-      }
-
-      return next;
-    });
+  if (currentActive.side === "A") {
+    setTeamA((prev) => ({ ...prev, [currentActive.slotId]: playerId }));
+  } else {
+    setTeamB((prev) => ({ ...prev, [currentActive.slotId]: playerId }));
   }
+
+  setSearch("");
+  setTurnIndex((prev) => {
+  const next = prev + 1;
+
+  // 🔒 unlock AFTER render
+  requestAnimationFrame(() => {
+    pickLockRef.current = false;
+  });
+
+  return next;
+});
+
+  setPicksSinceSpin((prev) => {
+    const next = prev + 1;
+
+    if (next >= 2) {
+  delayedSpinTimeout.current = window.setTimeout(() => {
+    spinToRandomClub();
+  }, 650);
+  return 0;
+}
+
+    return next;
+  });
+
+  // 🔒 unlock AFTER React updates
+}
 
   function resetGame() {
     cleanupSpinTimers();
 
+    pickLockRef.current = false;
     setTeamA(createEmptyTeam(ACTIVE_SLOTS));
     setTeamB(createEmptyTeam(ACTIVE_SLOTS));
     setTurnIndex(0);
@@ -722,7 +780,7 @@ function VersusDraftPageInner() {
         <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
           <div className="rounded-2xl border border-blue-400/30 bg-gradient-to-br from-blue-950/80 via-blue-900/45 to-black/70 backdrop-blur-md shadow-[0_10px_30px_rgba(37,99,235,0.22)] px-6 py-5">
             <div className="text-[11px] sm:text-xs uppercase tracking-[0.28em] text-blue-200/75 font-extrabold">
-              Team A
+              BLUE
             </div>
             <div className="mt-2 text-3xl sm:text-4xl font-black tracking-tight text-white drop-shadow-[0_2px_10px_rgba(255,255,255,0.18)]">
               {formatStatValue(teamATotal, statMode)}
@@ -731,7 +789,7 @@ function VersusDraftPageInner() {
 
           <div className="rounded-2xl border border-red-400/30 bg-gradient-to-br from-red-950/80 via-red-900/45 to-black/70 backdrop-blur-md shadow-[0_10px_30px_rgba(239,68,68,0.22)] px-6 py-5">
             <div className="text-[11px] sm:text-xs uppercase tracking-[0.28em] text-red-200/75 font-extrabold">
-              Team B
+              RED
             </div>
             <div className="mt-2 text-3xl sm:text-4xl font-black tracking-tight text-white drop-shadow-[0_2px_10px_rgba(255,255,255,0.18)]">
               {formatStatValue(teamBTotal, statMode)}
@@ -770,7 +828,7 @@ function VersusDraftPageInner() {
               <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3 items-stretch">
                 <div className="rounded-2xl border border-white/12 bg-black/30 px-4 py-4">
                   <div className="text-[11px] uppercase tracking-[0.28em] text-white/55 font-extrabold">
-                    Team A
+                    BLUE
                   </div>
                   <div className="mt-2 text-2xl font-black text-white">
                     {formatStatValue(teamATotal, statMode)}
@@ -785,7 +843,7 @@ function VersusDraftPageInner() {
 
                 <div className="rounded-2xl border border-white/12 bg-black/30 px-4 py-4">
                   <div className="text-[11px] uppercase tracking-[0.28em] text-white/55 font-extrabold">
-                    Team B
+                    RED
                   </div>
                   <div className="mt-2 text-2xl font-black text-white">
                     {formatStatValue(teamBTotal, statMode)}
@@ -887,7 +945,7 @@ function VersusDraftPageInner() {
           />
 
           <div className="relative w-full max-w-xl rounded-2xl border border-white/15 bg-zinc-950 p-4">
-            <div className="flex items-center justify-between gap-3">
+            <div className="min-w-0">
               <div className="font-extrabold tracking-wide">
                 Select {active.slotLabel}{" "}
                 <span className="text-white/60 font-bold">• TEAM {active.side}</span>
@@ -911,28 +969,36 @@ function VersusDraftPageInner() {
               />
             </div>
 
-            <div className="mt-3 max-h-[360px] overflow-y-auto rounded-xl border border-white/10 bg-black/20">
+            <div className="mt-3 max-h-[360px] overflow-y-auto rounded-xl border border-white/10">
               {eligiblePlayers.length === 0 ? (
-                <div className="p-4 text-white/60">No eligible players found.</div>
+                <div className="px-4 py-8 text-center text-white/55 font-semibold">
+                  No eligible players found.
+                </div>
               ) : (
-                eligiblePlayers.map((p) => (
-                  <button
-                    key={p.id}
-                    onClick={() => onPick(p.id)}
-                    className="w-full px-4 py-3 text-left hover:bg-white/5 border-b border-white/5 last:border-b-0 flex items-center justify-between gap-3"
-                  >
-                    <div className="min-w-0 flex items-center gap-3">
-                      <div className="font-extrabold truncate">{p.name}</div>
-                      <div className="text-white/55 text-xs">{p.club}</div>
-                    </div>
+                eligiblePlayers.map((p) => {
+                  const meta = clubForPlayer(AFL_CLUBS, p);
 
-                    <div className="shrink-0 flex items-center gap-3">
-                      <div className="text-white/60 text-sm font-bold">
-                        {p.pos.join("/")}
+                  return (
+                    <button
+                      key={p.id}
+                      onClick={() => onPick(p.id)}
+                      className="w-full border-b border-white/10 last:border-b-0 px-4 py-3 text-left hover:bg-white/5 transition"
+                    >
+                      <div className="flex items-center justify-between gap-3">
+                        <div className="min-w-0">
+                          <div className="truncate font-extrabold text-white">
+                            {p.name}
+                          </div>
+                          <div className="truncate text-sm text-white/60 font-semibold">
+                            {p.club} • {p.pos.join("/")}
+                          </div>
+                        </div>
+
+                        
                       </div>
-                    </div>
-                  </button>
-                ))
+                    </button>
+                  );
+                })
               )}
             </div>
           </div>
@@ -1006,76 +1072,78 @@ function TeamColumn({
             </div>
 
             <button
-  onClick={() => clickable && onOpen(side, slot)}
-  disabled={!clickable}
-  className={`flex-1 min-w-0 h-[58px] rounded-xl border px-3 text-left transition ${
-    isFilled
-      ? "shadow-[0_10px_28px_rgba(0,0,0,0.28)]"
-      : clickable
-      ? "border-white/18 bg-white/[0.03] hover:bg-white/[0.06] hover:border-white/30"
-      : "border-white/10 bg-white/[0.02] opacity-70 cursor-not-allowed"
-  }`}
-  style={
-    isFilled && clubMeta
-      ? {
-          backgroundColor: clubMeta.primary,
-          color: clubMeta.text,
-          borderColor: `${clubMeta.text}22`,
-        }
-      : undefined
-  }
-  title={
-    clickable
-      ? `Select ${slot.label}`
-      : isFilled
-      ? "Locked (cannot be replaced)"
-      : undefined
-  }
->
-  <div className="flex items-center justify-between w-full h-full min-w-0 gap-3 overflow-hidden">
-    <div className="min-w-0 flex-[1.2]">
-      <span
-        className={`block truncate font-extrabold ${
-          p ? "" : "text-white/80"
-        }`}
-      >
-        {p ? p.name : `+ Select ${slot.label}`}
-      </span>
-    </div>
+              onClick={() => clickable && onOpen(side, slot)}
+              disabled={!clickable}
+              className={`flex-1 min-w-0 h-[58px] rounded-xl border px-3 text-left transition ${
+                isFilled
+                  ? "shadow-[0_10px_28px_rgba(0,0,0,0.28)]"
+                  : clickable
+                  ? side === "A"
+                    ? "border-2 border-blue-400/80 bg-blue-500/10 shadow-[0_0_22px_rgba(59,130,246,0.35)] animate-pulse"
+                    : "border-2 border-red-400/80 bg-red-500/10 shadow-[0_0_22px_rgba(239,68,68,0.35)] animate-pulse"
+                  : "border-white/10 bg-white/[0.02] opacity-70 cursor-not-allowed"
+              }`}
+              style={
+                isFilled && clubMeta
+                  ? {
+                      backgroundColor: clubMeta.primary,
+                      color: clubMeta.text,
+                      borderColor: `${clubMeta.text}22`,
+                    }
+                  : undefined
+              }
+              title={
+                clickable
+                  ? `Select ${slot.label}`
+                  : isFilled
+                  ? "Locked (cannot be replaced)"
+                  : undefined
+              }
+            >
+              <div className="flex items-center justify-between w-full h-full min-w-0 gap-3 overflow-hidden">
+                <div className="min-w-0 flex-[1.2]">
+                  <span
+                    className={`block truncate font-extrabold ${
+                      p ? "" : "text-white/80"
+                    }`}
+                  >
+                    {p ? p.name : `+ Select ${slot.label}`}
+                  </span>
+                </div>
 
-    <div className="flex justify-center flex-[0.9] min-w-0">
-      {p && clubMeta && (
-        <div className="h-[46px] w-[132px] max-w-full overflow-hidden rounded-sm shrink-0">
-          <Image
-            src={teamIconUrl(clubMeta.name)}
-            alt={clubMeta.name}
-            width={132}
-            height={46}
-            className="h-full w-full object-fill"
-            unoptimized
-          />
-        </div>
-      )}
-    </div>
+                <div className="flex justify-center flex-[0.9] min-w-0">
+                  {p && clubMeta && (
+                    <div className="h-[46px] w-[132px] max-w-full overflow-hidden rounded-sm shrink-0">
+                      <Image
+                        src={teamIconUrl(clubMeta.name)}
+                        alt={clubMeta.name}
+                        width={132}
+                        height={46}
+                        className="h-full w-full object-fill"
+                        unoptimized
+                      />
+                    </div>
+                  )}
+                </div>
 
-    <div className="w-[130px] shrink-0 flex justify-end">
-      {p && (
-        <span
-          className="shrink-0 font-extrabold px-3 py-1 rounded-md whitespace-nowrap"
-          style={{
-            backgroundColor: "rgba(0,0,0,0.28)",
-            color: clubMeta?.text ?? "#fff",
-          }}
-        >
-          {formatStatValue(
-            getPlayerStatValue(p, statMode, season),
-            statMode
-          )}
-        </span>
-      )}
-    </div>
-  </div>
-</button>
+                <div className="w-[130px] shrink-0 flex justify-end">
+                  {p && (
+                    <span
+                      className="shrink-0 font-extrabold px-3 py-1 rounded-md whitespace-nowrap"
+                      style={{
+                        backgroundColor: "rgba(0,0,0,0.28)",
+                        color: clubMeta?.text ?? "#fff",
+                      }}
+                    >
+                      {formatStatValue(
+                        getPlayerStatValue(p, statMode, season),
+                        statMode
+                      )}
+                    </span>
+                  )}
+                </div>
+              </div>
+            </button>
           </div>
         );
       })}
