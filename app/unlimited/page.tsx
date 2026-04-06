@@ -265,12 +265,12 @@ function UnlimitedDraftPageInner() {
   }, [team]);
 
   const clubPlayers = useMemo(
-  () =>
-    ALL_PLAYERS
-      .filter((p) => p.club === club.name)
-      .filter((p) => p.points > 0),
-  [ALL_PLAYERS, club.name]
-);
+    () =>
+      ALL_PLAYERS
+        .filter((p) => p.club === club.name)
+        .filter((p) => p.points > 0),
+    [ALL_PLAYERS, club.name]
+  );
 
   const eligiblePlayers = useMemo(() => {
     if (!active) return [];
@@ -462,6 +462,9 @@ function UnlimitedDraftPageInner() {
     window.setTimeout(() => spinToRandomClub(), 50);
   }
 
+  const scoreMode = season === "2026" ? "fantasy" : mode;
+  const unit = modeLabel(scoreMode);
+
   return (
     <main className="min-h-screen text-white relative overflow-hidden">
       <div
@@ -475,22 +478,23 @@ function UnlimitedDraftPageInner() {
         }}
       />
 
-      <div className="absolute inset-0 bg-black/35" />
+      <div className="absolute inset-0 bg-black/50" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.08),transparent_35%),linear-gradient(to_bottom,rgba(4,10,24,0.25),rgba(0,0,0,0.35))]" />
 
       <div className="relative mx-auto max-w-5xl px-6 py-10">
-        <div className="flex items-start justify-between">
+        <div className="flex items-start justify-between gap-4">
           <div>
-            <h1 className="text-4xl font-extrabold tracking-wide text-white">
+            <h1 className="text-4xl font-extrabold tracking-[0.08em] text-white drop-shadow-[0_4px_18px_rgba(0,0,0,0.45)]">
               UNLIMITED MODE
             </h1>
 
             <div className="mt-4 flex items-center gap-3">
               <button
                 onClick={() => changeSeason("2025")}
-                className={`rounded-xl border px-4 py-2 font-bold transition ${
+                className={`rounded-2xl border px-4 py-2 font-bold transition ${
                   season === "2025"
-                    ? "bg-blue-600 border-blue-500 text-white"
-                    : "border-white/20 text-white/80 hover:text-white hover:border-white/40"
+                    ? "bg-blue-600 border-blue-400 text-white shadow-[0_10px_30px_rgba(37,99,235,0.35)]"
+                    : "border-white/20 bg-black/20 text-white/80 hover:text-white hover:border-white/40"
                 }`}
               >
                 2025
@@ -498,10 +502,10 @@ function UnlimitedDraftPageInner() {
 
               <button
                 onClick={() => changeSeason("2026")}
-                className={`rounded-xl border px-4 py-2 font-bold transition ${
+                className={`rounded-2xl border px-4 py-2 font-bold transition ${
                   season === "2026"
-                    ? "bg-red-500 border-red-400 text-white"
-                    : "border-white/20 text-white/80 hover:text-white hover:border-white/40"
+                    ? "bg-red-500 border-red-400 text-white shadow-[0_10px_30px_rgba(239,68,68,0.35)]"
+                    : "border-white/20 bg-black/20 text-white/80 hover:text-white hover:border-white/40"
                 }`}
               >
                 2026
@@ -512,10 +516,10 @@ function UnlimitedDraftPageInner() {
               <div className="mt-4 flex flex-wrap items-center gap-3">
                 <button
                   onClick={() => changeMode("fantasy")}
-                  className={`rounded-xl border px-4 py-2 font-bold transition ${
+                  className={`rounded-2xl border px-4 py-2 font-bold transition ${
                     mode === "fantasy"
-                      ? "bg-white text-black border-white"
-                      : "border-white/20 text-white/80 hover:text-white hover:border-white/40"
+                      ? "bg-white text-black border-white shadow-[0_10px_28px_rgba(255,255,255,0.18)]"
+                      : "border-white/20 bg-black/20 text-white/80 hover:text-white hover:border-white/40"
                   }`}
                 >
                   Fantasy Points
@@ -523,10 +527,10 @@ function UnlimitedDraftPageInner() {
 
                 <button
                   onClick={() => changeMode("goals")}
-                  className={`rounded-xl border px-4 py-2 font-bold transition ${
+                  className={`rounded-2xl border px-4 py-2 font-bold transition ${
                     mode === "goals"
-                      ? "bg-white text-black border-white"
-                      : "border-white/20 text-white/80 hover:text-white hover:border-white/40"
+                      ? "bg-white text-black border-white shadow-[0_10px_28px_rgba(255,255,255,0.18)]"
+                      : "border-white/20 bg-black/20 text-white/80 hover:text-white hover:border-white/40"
                   }`}
                 >
                   Goals
@@ -534,10 +538,10 @@ function UnlimitedDraftPageInner() {
 
                 <button
                   onClick={() => changeMode("disposals")}
-                  className={`rounded-xl border px-4 py-2 font-bold transition ${
+                  className={`rounded-2xl border px-4 py-2 font-bold transition ${
                     mode === "disposals"
-                      ? "bg-white text-black border-white"
-                      : "border-white/20 text-white/80 hover:text-white hover:border-white/40"
+                      ? "bg-white text-black border-white shadow-[0_10px_28px_rgba(255,255,255,0.18)]"
+                      : "border-white/20 bg-black/20 text-white/80 hover:text-white hover:border-white/40"
                   }`}
                 >
                   Disposals
@@ -545,10 +549,10 @@ function UnlimitedDraftPageInner() {
 
                 <button
                   onClick={() => changeMode("bounces")}
-                  className={`rounded-xl border px-4 py-2 font-bold transition ${
+                  className={`rounded-2xl border px-4 py-2 font-bold transition ${
                     mode === "bounces"
-                      ? "bg-white text-black border-white"
-                      : "border-white/20 text-white/80 hover:text-white hover:border-white/40"
+                      ? "bg-white text-black border-white shadow-[0_10px_28px_rgba(255,255,255,0.18)]"
+                      : "border-white/20 bg-black/20 text-white/80 hover:text-white hover:border-white/40"
                   }`}
                 >
                   Bounces
@@ -558,50 +562,66 @@ function UnlimitedDraftPageInner() {
           </div>
 
           <button
-            className="rounded-xl border border-white/20 px-4 py-2 text-white/80 hover:text-white hover:border-white/40"
+            className="rounded-2xl border border-white/15 bg-black/25 px-4 py-2 text-white/80 backdrop-blur-md hover:text-white hover:border-white/35"
             onClick={goHome}
           >
             ← Home
           </button>
         </div>
 
-        <div className="mt-10 text-center">
-          <div className="text-white/70 font-bold tracking-wide">
-            HIGH SCORE:{" "}
-            <span className="text-white">
-              {formatStatValue(highScore, modeLabel(season === "2026" ? "fantasy" : mode))}{" "}
-{modeLabel(season === "2026" ? "fantasy" : mode)}
-            </span>
-          </div>
-          <div className="mt-2 text-white/70 font-bold tracking-wide">
-  CURRENT SCORE:{" "}
-  <span className="text-white">
-    {formatStatValue(currentScore, modeLabel(season === "2026" ? "fantasy" : mode))}{" "}
-    {modeLabel(season === "2026" ? "fantasy" : mode)}
-  </span>
-</div>
-        </div>
+                <div className="mt-10 flex justify-center">
+          <div className="w-full max-w-2xl overflow-hidden rounded-[30px] border border-white/12 bg-[linear-gradient(135deg,rgba(255,255,255,0.10),rgba(255,255,255,0.03))] shadow-[0_20px_80px_rgba(0,0,0,0.5)] backdrop-blur-2xl">
+            <div className="grid grid-cols-1 md:grid-cols-2">
+              <div className="relative px-7 py-7 md:py-8">
+                <div className="absolute inset-0 bg-gradient-to-br from-white/[0.04] via-transparent to-transparent pointer-events-none" />
+                <div className="relative">
+                  <div className="text-[11px] font-extrabold tracking-[0.28em] text-white/45">
+                    CURRENT SCORE
+                  </div>
 
-        <div className="mt-4 text-center text-white/60">
-          {gameOver ? (
-            <span className="font-semibold tracking-wide">Run complete.</span>
-          ) : spinning ? (
-            <span className="font-semibold tracking-wide">Spinning club…</span>
-          ) : (
-            <span className="font-semibold tracking-wide">Pick a player.</span>
-          )}
+                  <div className="mt-4 flex items-end gap-2">
+                    <span className="text-5xl md:text-6xl font-extrabold leading-none text-white">
+                      {formatStatValue(currentScore, unit)}
+                    </span>
+                    <span className="pb-2 text-sm font-bold tracking-[0.16em] text-white/40">
+                      {unit}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="relative border-t border-white/10 md:border-t-0 md:border-l md:border-white/10 px-7 py-7 md:py-8">
+                <div className="absolute inset-0 bg-gradient-to-br from-white/[0.06] via-transparent to-transparent pointer-events-none" />
+                <div className="relative">
+                  <div className="text-[11px] font-extrabold tracking-[0.28em] text-white/45">
+                    HIGH SCORE
+                  </div>
+
+                  <div className="mt-4 flex items-end gap-2">
+                    <span className="bg-gradient-to-b from-[#fff7c2] via-[#f2cf63] to-[#c78a18] bg-clip-text text-5xl md:text-6xl font-extrabold leading-none text-transparent drop-shadow-[0_2px_14px_rgba(242,207,99,0.18)]">
+                      {formatStatValue(highScore, unit)}
+                    </span>
+                    <span className="pb-2 text-sm font-bold tracking-[0.16em] text-[#d7bb67]">
+                      {unit}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         {gameOver && (
           <div className="mt-6 text-center">
-            <div className="text-3xl font-extrabold tracking-wide">RUN COMPLETE</div>
+            <div className="text-3xl font-extrabold tracking-[0.14em] text-white">
+              RUN COMPLETE
+            </div>
             <div className="mt-2 text-white/70 font-bold">
-  Final Score: {formatStatValue(currentScore, modeLabel(season === "2026" ? "fantasy" : mode))}{" "}
-  {modeLabel(season === "2026" ? "fantasy" : mode)}
-</div>
+              Final Score: {formatStatValue(currentScore, unit)} {unit}
+            </div>
 
             <button
-              className="mt-5 rounded-xl border border-white/20 px-5 py-3 text-white/80 hover:text-white hover:border-white/40"
+              className="mt-5 rounded-2xl border border-white/15 bg-white/10 px-5 py-3 text-white/90 backdrop-blur-md hover:bg-white/14 hover:border-white/30"
               onClick={resetGame}
             >
               Play Again
@@ -618,17 +638,17 @@ function UnlimitedDraftPageInner() {
             onOpen={onOpen}
             enabled={!gameOver && !spinning}
             badgeClass={season === "2026" ? "bg-red-500 text-white" : "bg-blue-600 text-white"}
-            statLabel={modeLabel(season === "2026" ? "fantasy" : mode)}
+            statLabel={unit}
           />
         </div>
 
         <div className="mt-12 text-center">
-          <div className="text-white/60 font-semibold tracking-widest">DRAFTING FROM:</div>
+          <div className="text-white/55 font-semibold tracking-[0.28em]">DRAFTING FROM</div>
 
           <div className="mt-5 flex items-center justify-center">
             <div
-              className={`inline-flex items-center justify-center rounded-2xl px-10 py-4 font-extrabold text-xl select-none ${
-                spinning ? "opacity-90" : ""
+              className={`inline-flex items-center justify-center rounded-[22px] px-10 py-4 font-extrabold text-xl select-none border border-white/10 shadow-[0_16px_50px_rgba(0,0,0,0.38)] ${
+                spinning ? "opacity-90 scale-[1.01]" : ""
               }`}
               style={{ backgroundColor: displayClub.primary, color: displayClub.text }}
               title="Auto-spins after every 2 picks"
@@ -643,12 +663,12 @@ function UnlimitedDraftPageInner() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/70" onClick={() => setActive(null)} />
 
-          <div className="relative w-full max-w-xl rounded-2xl border border-white/15 bg-zinc-950 p-4">
+          <div className="relative w-full max-w-xl rounded-3xl border border-white/15 bg-zinc-950/95 backdrop-blur-xl p-4 shadow-[0_25px_80px_rgba(0,0,0,0.6)]">
             <div className="flex items-center justify-between gap-3">
               <div className="font-extrabold tracking-wide">Select {active.slotLabel}</div>
 
               <button
-                className="rounded-xl border border-white/20 px-3 py-2 text-white/80 hover:text-white hover:border-white/40"
+                className="rounded-2xl border border-white/20 px-3 py-2 text-white/80 hover:text-white hover:border-white/40"
                 onClick={() => setActive(null)}
               >
                 ✕
@@ -660,12 +680,12 @@ function UnlimitedDraftPageInner() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder={`Search ${active.slotLabel}...`}
-                className="w-full rounded-xl border border-white/15 bg-black/40 px-4 py-3 text-white outline-none focus:border-white/40"
+                className="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-3 text-white outline-none focus:border-white/40"
                 autoFocus
               />
             </div>
 
-            <div className="mt-3 max-h-[360px] overflow-y-auto rounded-xl border border-white/10 bg-black/20">
+            <div className="mt-3 max-h-[360px] overflow-y-auto rounded-2xl border border-white/10 bg-black/20">
               {eligiblePlayers.length === 0 ? (
                 <div className="p-4 text-white/60">No eligible players found.</div>
               ) : (
@@ -725,12 +745,14 @@ function SingleTeamColumn({
 
         return (
           <div key={slot.id} className="flex gap-3 items-center">
-            <div className={`w-20 shrink-0 rounded-md font-extrabold text-center py-2 ${badgeClass}`}>
+            <div
+              className={`w-20 shrink-0 rounded-lg font-extrabold text-center py-2.5 shadow-[0_8px_22px_rgba(0,0,0,0.2)] ${badgeClass}`}
+            >
               {slot.label}
             </div>
 
             <button
-              className={`flex-1 border border-white/70 rounded-md px-4 text-left transition flex items-center justify-between h-14 ${
+              className={`flex-1 border border-white/60 rounded-xl px-4 text-left transition flex items-center justify-between h-14 ${
                 clickable ? "hover:brightness-110" : "cursor-not-allowed"
               }`}
               style={
@@ -741,7 +763,7 @@ function SingleTeamColumn({
                       backgroundPosition: "center",
                       backgroundRepeat: "no-repeat",
                       color: clubMeta.text,
-                      borderColor: "rgba(255,255,255,0.35)",
+                      borderColor: "rgba(255,255,255,0.30)",
                     }
                   : { backgroundColor: "rgba(0,0,0,0.30)" }
               }
@@ -758,7 +780,7 @@ function SingleTeamColumn({
               </span>
 
               {p?.points != null && (
-                <span className="shrink-0 font-extrabold px-3 py-1 rounded-md bg-black/50 text-white backdrop-blur-sm border border-white/15">
+                <span className="shrink-0 font-extrabold px-3 py-1 rounded-lg bg-black/45 text-white backdrop-blur-md border border-white/15">
                   {formatStatValue(p.points, statLabel)} {statLabel}
                 </span>
               )}

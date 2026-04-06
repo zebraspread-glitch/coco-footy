@@ -8,7 +8,7 @@ const NAV = [
   { label: "Daily Challenge", href: "/daily" },
   { label: "Streak Mode", href: "/streak" },
   { label: "Versus Mode", href: "/versus" },
-   { label: "Live Scores", href: "/live-scores" },
+  { label: "Live Scores", href: "/live-scores" },
 ];
 
 export default function TopBar() {
@@ -35,7 +35,7 @@ export default function TopBar() {
             })}
           </div>
 
-          {/* RIGHT: brand + account + privacy/contact */}
+          {/* RIGHT: brand + account */}
           <div className="flex items-center gap-6 text-white/70 text-sm font-semibold">
 
             {/* Brand */}
@@ -49,14 +49,6 @@ export default function TopBar() {
 
             {/* Account */}
             <AccountDropdown />
-
-            {/* ✅ Now AFTER account (far right) */}
-            <Link href="/privacy" className="hover:text-white">
-              Privacy
-            </Link>
-            <Link href="/contact" className="hover:text-white">
-              Contact
-            </Link>
 
           </div>
 

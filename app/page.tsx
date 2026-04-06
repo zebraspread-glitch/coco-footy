@@ -495,9 +495,58 @@ export default function Home() {
           </div>
         </div>
 
-        <footer className="mt-12 text-center text-xs text-white/40">
-          {"Footy Pick’em"}
-        </footer>
+<div className="mt-8">
+  <div className="group relative overflow-hidden rounded-[28px] border border-white/12 bg-[linear-gradient(180deg,rgba(12,24,56,0.95)_0%,rgba(8,14,32,0.98)_100%)] p-8 text-center shadow-[0_12px_40px_rgba(0,0,0,0.50)] transition-all duration-300 hover:-translate-y-1 hover:border-white/20 hover:shadow-[0_20px_60px_rgba(0,0,0,0.65)]">
+    <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-amber-400/70 to-transparent" />
+    <div className="pointer-events-none absolute right-0 top-0 h-40 w-40 rounded-full bg-amber-500/10 blur-3xl" />
+
+    <div className="relative mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl border border-amber-400/30 bg-amber-500/15 text-amber-300 shadow-lg shadow-amber-500/10">
+      <span className="text-3xl font-black">?</span>
+    </div>
+
+    <h3 className="relative text-3xl md:text-4xl font-black italic tracking-wide text-white">
+      Missing a player?
+    </h3>
+
+    <p className="relative mt-2 text-sm text-white/65">
+      Submit a request and help improve Coco Footy.
+    </p>
+
+    <a
+      href="https://docs.google.com/forms/d/e/1FAIpQLSf9O0doWNm33AbWukEhkOtRdtgppTpqVOtuqV6cTFuVCMZjVQ/viewform?usp=publish-editor"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="relative mt-6 inline-flex items-center gap-2 rounded-full border border-amber-400/25 bg-amber-500/10 px-5 py-2.5 text-sm font-bold tracking-wide text-amber-300 transition-all duration-300 group-hover:border-amber-300/40 group-hover:bg-amber-500/15"
+    >
+      <span>SUBMIT A REQUEST</span>
+      <span className="transition-transform duration-300 group-hover:translate-x-1">
+        →
+      </span>
+    </a>
+  </div>
+</div>
+
+        <footer className="mt-16 border-t border-white/10 pt-6 text-center text-xs text-white/40 space-y-3">
+  <div className="flex items-center justify-center gap-6 text-white/60">
+    <a href="/privacy" className="hover:text-white transition">
+      Privacy Policy
+    </a>
+    <a href="/contact" className="hover:text-white transition">
+      Contact
+    </a>
+    <a href="/terms" className="hover:text-white transition">
+      Terms & Conditions
+    </a>
+  </div>
+
+  <div className="text-white/30">
+    © {new Date().getFullYear()} Coco Footy
+  </div>
+
+  <div className="text-[11px] text-white/20 max-w-md mx-auto leading-relaxed">
+    Built for AFL fans. Not affiliated with the AFL.
+  </div>
+</footer>
       </main>
     </div>
   );
