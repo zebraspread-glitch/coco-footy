@@ -494,6 +494,13 @@ function UnlimitedDraftPageInner() {
     return (players2025 as Player[]).filter((p) => p.points > 0);
   }, [season, mode]);
 
+    const slots = useMemo(() => {
+    if (mode === "bounces") {
+      return SLOTS.filter((slot) => slot.id !== "ruck");
+    }
+    return SLOTS;
+  }, [mode]);
+
   const SPIN_CLUBS = useMemo(
     () => clampClubsToPlayers(AFL_CLUBS, ALL_PLAYERS),
     [ALL_PLAYERS]
@@ -511,7 +518,7 @@ function UnlimitedDraftPageInner() {
 
   const [search, setSearch] = useState("");
 
-  const [team, setTeam] = useState<Record<string, string | null>>(
+    const [team, setTeam] = useState<Record<string, string | null>>(
     Object.fromEntries(SLOTS.map((s) => [s.id, null]))
   );
 
@@ -521,7 +528,7 @@ function UnlimitedDraftPageInner() {
     const firstClub = SPIN_CLUBS[0] ?? AFL_CLUBS[0];
     setClub(firstClub);
     setDisplayClub(firstClub);
-    setTeam(Object.fromEntries(SLOTS.map((s) => [s.id, null])));
+        setTeam(Object.fromEntries(SLOTS.map((s) => [s.id, null])));
     setActive(null);
     setSearch("");
     setSpinning(false);
@@ -557,9 +564,28 @@ function UnlimitedDraftPageInner() {
       .sort((a, b) => a.name.localeCompare(b.name));
   }, [active, clubPlayers, pickedIds, search]);
 
+      const emptySlots = useMemo(
+    () => slots.filter((slot) => !team[slot.id]),
+    [team, slots]
+  );
+
+  function hasEligiblePlayersForSlot(slot: Slot, clubName: string) {
+    return ALL_PLAYERS.some(
+      (p) =>
+        p.club === clubName &&
+        p.points > 0 &&
+        !pickedIds.has(p.id) &&
+        p.pos.some((pos) => slot.allowed.includes(pos))
+    );
+  }
+
+  const clubHasAnyValidPick = useMemo(() => {
+    return emptySlots.some((slot) => hasEligiblePlayersForSlot(slot, club.name));
+  }, [emptySlots, club.name, pickedIds, ALL_PLAYERS]);
+
   const currentScore = useMemo(() => sumPoints(team, getPlayerById), [team, ALL_PLAYERS]);
 
-  const allFilled = useMemo(() => SLOTS.every((s) => Boolean(team[s.id])), [team]);
+    const allFilled = useMemo(() => slots.every((s) => Boolean(team[s.id])), [team, slots]);
   const gameOver = allFilled;
 
   /** ===== High score (localStorage) ===== */
@@ -672,16 +698,45 @@ function UnlimitedDraftPageInner() {
     setSearch("");
   }, [gameOver]);
 
+    useEffect(() => {
+    if (!active) return;
+    if (spinning) return;
+    if (gameOver) return;
+
+    const noEligibleForOpenedSlot = eligiblePlayers.length === 0;
+    const noOtherValidSlotsForClub = !clubHasAnyValidPick;
+
+    if (noEligibleForOpenedSlot && noOtherValidSlotsForClub) {
+      setActive(null);
+      setSearch("");
+
+      delayedSpinTimeout.current = window.setTimeout(() => {
+        spinToRandomClub();
+      }, 250);
+    }
+  }, [active, spinning, gameOver, eligiblePlayers, clubHasAnyValidPick]);
+
   function slotIsFilled(slotId: string) {
     return Boolean(team[slotId]);
   }
 
-  function onOpen(slot: Slot) {
+    function onOpen(slot: Slot) {
     if (gameOver) return;
     if (spinning) return;
     if (slotIsFilled(slot.id)) return;
 
     setSearch("");
+
+    const slotHasPlayers = hasEligiblePlayersForSlot(slot, club.name);
+    const clubCanFillAnySlot = emptySlots.some((s) =>
+      hasEligiblePlayersForSlot(s, club.name)
+    );
+
+    if (!slotHasPlayers && !clubCanFillAnySlot) {
+      spinToRandomClub();
+      return;
+    }
+
     setActive({ slotId: slot.id, allowed: slot.allowed, slotLabel: slot.label });
   }
 
@@ -705,7 +760,7 @@ function UnlimitedDraftPageInner() {
     setSpinning(false);
     setActive(null);
     setSearch("");
-    setTeam(Object.fromEntries(SLOTS.map((s) => [s.id, null])));
+        setTeam(Object.fromEntries(SLOTS.map((s) => [s.id, null])));
 
     const firstClub = SPIN_CLUBS[0] ?? AFL_CLUBS[0];
     setClub(firstClub);
@@ -911,9 +966,9 @@ function UnlimitedDraftPageInner() {
         )}
 
         <div className="mt-8">
-          <SingleTeamColumn
+                    <SingleTeamColumn
             clubs={AFL_CLUBS}
-            slots={SLOTS}
+            slots={slots}
             selection={team}
             getPlayer={getPlayerById}
             onOpen={onOpen}
