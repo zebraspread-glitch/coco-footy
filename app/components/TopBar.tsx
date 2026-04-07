@@ -35,7 +35,7 @@ export default function TopBar() {
             })}
           </div>
 
-          {/* RIGHT: brand + account */}
+          {/* RIGHT: brand + settings + account */}
           <div className="flex items-center gap-6 text-white/70 text-sm font-semibold">
 
             {/* Brand */}
@@ -48,7 +48,16 @@ export default function TopBar() {
             </Link>
 
             {/* Account */}
-            <AccountDropdown />
+<AccountDropdown />
+
+{/* Settings Button */}
+<Link
+  href="/settings"
+  className="flex items-center gap-1 hover:text-white transition"
+>
+  <span>⚙️</span>
+  <span>Settings</span>
+</Link>
 
           </div>
 
