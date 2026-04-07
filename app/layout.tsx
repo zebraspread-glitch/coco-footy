@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import TopBar from "./components/TopBar";
 import { Analytics } from "@vercel/analytics/react";
+import Script from "next/script";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -21,9 +22,9 @@ export const metadata: Metadata = {
   },
   description: "Play AFL games, live scores, and more on Coco Footy",
   icons: {
-    icon: "/favicon.png",
-    shortcut: "/favicon.png",
-    apple: "/favicon.png",
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+    apple: "/favicon.ico",
   },
 };
 
@@ -34,19 +35,19 @@ export const viewport: Viewport = {
 
 export default function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
+}>) {
   return (
     <html lang="en">
-      <head>
-        <script
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <Script
+          id="adsense-script"
           async
+          strategy="afterInteractive"
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-227605014767400"
           crossOrigin="anonymous"
-        ></script>
-      </head>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        />
         <TopBar />
         {children}
         <Analytics />
