@@ -514,6 +514,16 @@ export default function Home() {
         </div>
 
         <FeatureBanner
+  href={seasonHref("/predictor")}
+  title="LADDER + FINALS PREDICTOR"
+  desc="Predict the final AFL ladder, Top 8, and premiership winner."
+  cta="OPEN PREDICTOR"
+  icon={<Trophy className="h-6 w-6" />}
+  primaryColor={primaryColor}
+  badge="NEW"
+/>
+
+        <FeatureBanner
           href={seasonHref("/streak")}
           title="PLAYER NUMBER STREAK"
           desc="Guess jumper numbers and build a streak."
