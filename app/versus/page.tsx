@@ -350,6 +350,9 @@ function TeamColumn({
         const clubMeta = clubForPlayer(clubs, p);
         const isFilled = Boolean(p);
         const clickable = enabled && !isFilled;
+        const statText = p
+          ? formatStatValue(getPlayerStatValue(p, statMode, season), statMode)
+          : null;
 
         return (
           <div key={`${side}-${slot.id}`} className="flex items-center gap-3">
@@ -390,7 +393,7 @@ function TeamColumn({
                   : undefined
               }
             >
-              <div className="flex items-center justify-between w-full h-full min-w-0 gap-3 overflow-hidden">
+              <div className="flex items-center w-full h-full min-w-0 gap-3 overflow-hidden">
                 <div className="min-w-0 flex-[1.2]">
                   <span
                     className={`block truncate font-extrabold ${
@@ -416,22 +419,11 @@ function TeamColumn({
                   )}
                 </div>
 
-                <div className="w-[130px] shrink-0 flex justify-end">
-                  {p && (
-                    <span
-                      className="shrink-0 font-extrabold px-3 py-1 rounded-md whitespace-nowrap"
-                      style={{
-                        backgroundColor: "rgba(0,0,0,0.28)",
-                        color: clubMeta?.text ?? "#fff",
-                      }}
-                    >
-                      {formatStatValue(
-                        getPlayerStatValue(p, statMode, season),
-                        statMode
-                      )}
-                    </span>
-                  )}
-                </div>
+                {p && statText && (
+                  <div className="ml-auto shrink-0 rounded-full bg-black/20 px-3 py-1 text-sm font-black tracking-[0.18em]">
+                    {statText}
+                  </div>
+                )}
               </div>
             </button>
           </div>
@@ -1190,7 +1182,13 @@ window.setTimeout(() => {
 
         {gameOver && (
           <div
-            className={`mt-8 rounded-[28px] border ${winnerAccent.ring} ${winnerAccent.glow} bg-gradient-to-br ${winnerAccent.from} ${winnerAccent.via} ${winnerAccent.to} backdrop-blur-xl px-6 py-7 sm:px-8 sm:py-8 relative overflow-hidden`}
+            className={`mt-8 rounded-[28px] border ${winnerAccent.ring} ${winnerAccent.glow} ${
+  winner === "A"
+    ? "bg-gradient-to-br from-blue-700/70 via-blue-600/50 to-blue-400/30"
+    : winner === "B"
+    ? "bg-gradient-to-br from-red-700/70 via-red-600/50 to-red-400/30"
+    : "bg-gradient-to-br from-white/10 via-white/5 to-transparent"
+} backdrop-blur-xl px-6 py-7 sm:px-8 sm:py-8 relative overflow-hidden`}
           >
             <div className="absolute inset-0 opacity-40 bg-[radial-gradient(circle_at_top,#ffffff24,transparent_45%)]" />
             <div className="relative text-center">
@@ -1201,7 +1199,7 @@ window.setTimeout(() => {
               </div>
 
               <div className="mt-3 text-3xl sm:text-5xl font-black tracking-tight text-white drop-shadow-[0_4px_18px_rgba(255,255,255,0.16)]">
-                {winner === "DRAW" ? "IT'S A DRAW" : `TEAM ${winner} WINS`}
+                {winner === "DRAW" ? "IT'S A DRAW" : winner === "A" ? "BLUE WINS" : "RED WINS"}
               </div>
 
               <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3 items-stretch">
@@ -1351,51 +1349,59 @@ window.setTimeout(() => {
               />
             </div>
 
-            <div className="mt-3 max-h-[360px] overflow-y-auto rounded-xl border border-white/10">
-              {eligiblePlayers.length === 0 ? (
-                <div className="px-4 py-8 text-center text-white/55 font-semibold">
-                  No eligible players found.
+            <div className="mt-4 max-h-[540px] overflow-y-auto rounded-[22px] border border-white/10 bg-black/30 p-2 pr-1">
+  {eligiblePlayers.length === 0 ? (
+    <div className="px-4 py-10 text-center text-white/55 font-semibold">
+      No eligible players found.
+    </div>
+  ) : (
+    <div className="space-y-2">
+      {eligiblePlayers.map((p) => {
+        const meta = clubForPlayer(AFL_CLUBS, p);
+
+        return (
+          <button
+            key={p.id}
+            onClick={() => onPick(p.id)}
+            className="w-full overflow-hidden rounded-[18px] border border-white/10 text-left transition hover:scale-[1.01] hover:border-white/20 active:scale-[0.99]"
+            style={{
+              backgroundColor: meta?.primary ?? "#111827",
+              color: meta?.text ?? "#ffffff",
+            }}
+          >
+            <div className="flex items-center gap-4 px-4 py-3.5">
+              <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-black/20">
+                {meta ? (
+                  <Image
+                    src={teamIconUrl(meta.name)}
+                    alt={meta.name}
+                    width={56}
+                    height={56}
+                    className="h-full w-full object-cover"
+                    unoptimized
+                  />
+                ) : (
+                  <div className="text-lg font-black">?</div>
+                )}
+              </div>
+
+              <div className="min-w-0 flex-1">
+                <div className="truncate text-[1.05rem] font-extrabold leading-tight">
+                  {p.name}
                 </div>
-              ) : (
-                eligiblePlayers.map((p) => {
-  const meta = clubForPlayer(AFL_CLUBS, p);
 
-  return (
-    <button
-      key={p.id}
-      onClick={() => onPick(p.id)}
-      className="w-full border-b border-white/10 last:border-b-0 px-4 py-3 text-left hover:bg-white/5 transition"
-    >
-      <div className="flex items-center justify-between gap-3">
-        <div className="min-w-0">
-          <div className="truncate font-extrabold text-white">
-            {p.name}
-          </div>
-          <div className="mt-1 text-xs font-bold uppercase tracking-[0.18em] text-white/45">
-            {p.club} • {p.pos.join(", ")}
-          </div>
-        </div>
+                <div className="mt-1 text-sm font-bold opacity-85">
+                  {p.club} • {p.pos.join("/")}
+                </div>
+              </div>
 
-        <div className="flex items-center gap-3 shrink-0">
-          {meta && (
-            <div className="h-[34px] w-[96px] overflow-hidden rounded-sm">
-              <Image
-                src={teamIconUrl(meta.name)}
-                alt={meta.name}
-                width={96}
-                height={34}
-                className="h-full w-full object-fill"
-                unoptimized
-              />
             </div>
-          )}
-        </div>
-      </div>
-    </button>
-  );
-})
-              )}
-            </div>
+          </button>
+        );
+      })}
+    </div>
+  )}
+</div>
           </div>
         </div>
       )}

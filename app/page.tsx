@@ -34,25 +34,26 @@ function getAccentClasses(primaryColor: PrimaryColor) {
           "border-sky-400/30 bg-sky-500/15 text-sky-300 shadow-sky-500/10",
         cta:
           "border-sky-400/25 bg-sky-500/10 text-sky-300 group-hover:border-sky-300/40 group-hover:bg-sky-500/15",
-        badge:
-          "border-sky-400/25 bg-sky-500/10 text-sky-300",
+        badge: "border-sky-400/25 bg-sky-500/10 text-sky-300",
         softPanel: "border-sky-400/30 bg-sky-500/10 text-sky-300",
-        missingTop: "bg-gradient-to-r from-transparent via-sky-400/70 to-transparent",
+        missingTop:
+          "bg-gradient-to-r from-transparent via-sky-400/70 to-transparent",
         missingGlow: "bg-sky-500/10",
-        missingIcon: "border-sky-400/30 bg-sky-500/15 text-sky-300 shadow-sky-500/10",
+        missingIcon:
+          "border-sky-400/30 bg-sky-500/15 text-sky-300 shadow-sky-500/10",
         missingButton:
           "border-sky-400/25 bg-sky-500/10 text-sky-300 group-hover:border-sky-300/40 group-hover:bg-sky-500/15",
       };
     case "green":
       return {
-        topLine: "bg-gradient-to-r from-transparent via-emerald-400/80 to-transparent",
+        topLine:
+          "bg-gradient-to-r from-transparent via-emerald-400/80 to-transparent",
         glowBlob: "bg-emerald-500",
         iconWrap:
           "border-emerald-400/30 bg-emerald-500/15 text-emerald-300 shadow-emerald-500/10",
         cta:
           "border-emerald-400/25 bg-emerald-500/10 text-emerald-300 group-hover:border-emerald-300/40 group-hover:bg-emerald-500/15",
-        badge:
-          "border-emerald-400/25 bg-emerald-500/10 text-emerald-300",
+        badge: "border-emerald-400/25 bg-emerald-500/10 text-emerald-300",
         softPanel: "border-emerald-400/30 bg-emerald-500/10 text-emerald-300",
         missingTop:
           "bg-gradient-to-r from-transparent via-emerald-400/70 to-transparent",
@@ -64,14 +65,14 @@ function getAccentClasses(primaryColor: PrimaryColor) {
       };
     case "yellow":
       return {
-        topLine: "bg-gradient-to-r from-transparent via-yellow-300/80 to-transparent",
+        topLine:
+          "bg-gradient-to-r from-transparent via-yellow-300/80 to-transparent",
         glowBlob: "bg-yellow-400",
         iconWrap:
           "border-yellow-300/30 bg-yellow-400/15 text-yellow-200 shadow-yellow-400/10",
         cta:
           "border-yellow-300/25 bg-yellow-400/10 text-yellow-200 group-hover:border-yellow-200/40 group-hover:bg-yellow-400/15",
-        badge:
-          "border-yellow-300/25 bg-yellow-400/10 text-yellow-200",
+        badge: "border-yellow-300/25 bg-yellow-400/10 text-yellow-200",
         softPanel: "border-yellow-300/30 bg-yellow-400/10 text-yellow-200",
         missingTop:
           "bg-gradient-to-r from-transparent via-yellow-300/70 to-transparent",
@@ -83,14 +84,14 @@ function getAccentClasses(primaryColor: PrimaryColor) {
       };
     case "purple":
       return {
-        topLine: "bg-gradient-to-r from-transparent via-violet-400/80 to-transparent",
+        topLine:
+          "bg-gradient-to-r from-transparent via-violet-400/80 to-transparent",
         glowBlob: "bg-violet-500",
         iconWrap:
           "border-violet-400/30 bg-violet-500/15 text-violet-300 shadow-violet-500/10",
         cta:
           "border-violet-400/25 bg-violet-500/10 text-violet-300 group-hover:border-violet-300/40 group-hover:bg-violet-500/15",
-        badge:
-          "border-violet-400/25 bg-violet-500/10 text-violet-300",
+        badge: "border-violet-400/25 bg-violet-500/10 text-violet-300",
         softPanel: "border-violet-400/30 bg-violet-500/10 text-violet-300",
         missingTop:
           "bg-gradient-to-r from-transparent via-violet-400/70 to-transparent",
@@ -102,14 +103,14 @@ function getAccentClasses(primaryColor: PrimaryColor) {
       };
     case "orange":
       return {
-        topLine: "bg-gradient-to-r from-transparent via-orange-400/80 to-transparent",
+        topLine:
+          "bg-gradient-to-r from-transparent via-orange-400/80 to-transparent",
         glowBlob: "bg-orange-500",
         iconWrap:
           "border-orange-400/30 bg-orange-500/15 text-orange-300 shadow-orange-500/10",
         cta:
           "border-orange-400/25 bg-orange-500/10 text-orange-300 group-hover:border-orange-300/40 group-hover:bg-orange-500/15",
-        badge:
-          "border-orange-400/25 bg-orange-500/10 text-orange-300",
+        badge: "border-orange-400/25 bg-orange-500/10 text-orange-300",
         softPanel: "border-orange-400/30 bg-orange-500/10 text-orange-300",
         missingTop:
           "bg-gradient-to-r from-transparent via-orange-400/70 to-transparent",
@@ -121,14 +122,14 @@ function getAccentClasses(primaryColor: PrimaryColor) {
       };
     case "pink":
       return {
-        topLine: "bg-gradient-to-r from-transparent via-pink-400/80 to-transparent",
+        topLine:
+          "bg-gradient-to-r from-transparent via-pink-400/80 to-transparent",
         glowBlob: "bg-pink-500",
         iconWrap:
           "border-pink-400/30 bg-pink-500/15 text-pink-300 shadow-pink-500/10",
         cta:
           "border-pink-400/25 bg-pink-500/10 text-pink-300 group-hover:border-pink-300/40 group-hover:bg-pink-500/15",
-        badge:
-          "border-pink-400/25 bg-pink-500/10 text-pink-300",
+        badge: "border-pink-400/25 bg-pink-500/10 text-pink-300",
         softPanel: "border-pink-400/30 bg-pink-500/10 text-pink-300",
         missingTop:
           "bg-gradient-to-r from-transparent via-pink-400/70 to-transparent",
@@ -146,12 +147,13 @@ function getAccentClasses(primaryColor: PrimaryColor) {
           "border-red-400/30 bg-red-500/15 text-red-300 shadow-red-500/10",
         cta:
           "border-red-400/25 bg-red-500/10 text-red-300 group-hover:border-red-300/40 group-hover:bg-red-500/15",
-        badge:
-          "border-red-400/25 bg-red-500/10 text-red-300",
+        badge: "border-red-400/25 bg-red-500/10 text-red-300",
         softPanel: "border-red-400/30 bg-red-500/10 text-red-300",
-        missingTop: "bg-gradient-to-r from-transparent via-red-400/70 to-transparent",
+        missingTop:
+          "bg-gradient-to-r from-transparent via-red-400/70 to-transparent",
         missingGlow: "bg-red-500/10",
-        missingIcon: "border-red-400/30 bg-red-500/15 text-red-300 shadow-red-500/10",
+        missingIcon:
+          "border-red-400/30 bg-red-500/15 text-red-300 shadow-red-500/10",
         missingButton:
           "border-red-400/25 bg-red-500/10 text-red-300 group-hover:border-red-300/40 group-hover:bg-red-500/15",
       };
@@ -163,12 +165,13 @@ function getAccentClasses(primaryColor: PrimaryColor) {
           "border-red-400/30 bg-red-500/15 text-red-300 shadow-red-500/10",
         cta:
           "border-red-400/25 bg-red-500/10 text-red-300 group-hover:border-red-300/40 group-hover:bg-red-500/15",
-        badge:
-          "border-red-400/25 bg-red-500/10 text-red-300",
+        badge: "border-red-400/25 bg-red-500/10 text-red-300",
         softPanel: "border-red-400/30 bg-red-500/10 text-red-300",
-        missingTop: "bg-gradient-to-r from-transparent via-red-400/70 to-transparent",
+        missingTop:
+          "bg-gradient-to-r from-transparent via-red-400/70 to-transparent",
         missingGlow: "bg-red-500/10",
-        missingIcon: "border-red-400/30 bg-red-500/15 text-red-300 shadow-red-500/10",
+        missingIcon:
+          "border-red-400/30 bg-red-500/15 text-red-300 shadow-red-500/10",
         missingButton:
           "border-red-400/25 bg-red-500/10 text-red-300 group-hover:border-red-300/40 group-hover:bg-red-500/15",
       };
@@ -195,30 +198,32 @@ function Card({
   return (
     <a
       href={href}
-      className="group relative overflow-hidden rounded-[28px] border border-white/12 bg-[linear-gradient(180deg,rgba(18,18,22,0.96)_0%,rgba(7,7,9,0.98)_100%)] p-7 shadow-[0_12px_40px_rgba(0,0,0,0.50)] transition-all duration-300 hover:-translate-y-1.5 hover:border-white/20 hover:shadow-[0_20px_60px_rgba(0,0,0,0.65)]"
+      className="group relative overflow-hidden rounded-[22px] border border-white/12 bg-[linear-gradient(180deg,rgba(18,18,22,0.96)_0%,rgba(7,7,9,0.98)_100%)] p-5 shadow-[0_12px_40px_rgba(0,0,0,0.50)] transition-all duration-300 hover:-translate-y-1.5 hover:border-white/20 hover:shadow-[0_20px_60px_rgba(0,0,0,0.65)] sm:rounded-[24px] sm:p-6 lg:rounded-[28px] lg:p-7"
     >
-      <div className={`pointer-events-none absolute inset-x-0 top-0 h-px ${accent.topLine}`} />
-
       <div
-        className={`pointer-events-none absolute -right-10 -top-10 h-36 w-36 rounded-full blur-3xl opacity-20 ${accent.glowBlob}`}
+        className={`pointer-events-none absolute inset-x-0 top-0 h-px ${accent.topLine}`}
       />
 
       <div
-        className={`relative mb-6 flex h-14 w-14 items-center justify-center rounded-2xl border backdrop-blur-sm shadow-lg ${accent.iconWrap}`}
+        className={`pointer-events-none absolute -right-10 -top-10 h-28 w-28 rounded-full blur-3xl opacity-20 sm:h-32 sm:w-32 lg:h-36 lg:w-36 ${accent.glowBlob}`}
+      />
+
+      <div
+        className={`relative mb-4 flex h-12 w-12 items-center justify-center rounded-2xl border backdrop-blur-sm shadow-lg sm:mb-5 sm:h-13 sm:w-13 lg:mb-6 lg:h-14 lg:w-14 ${accent.iconWrap}`}
       >
         {icon}
       </div>
 
-      <h3 className="relative mb-3 text-[2rem] leading-none font-black italic tracking-wide text-white">
+      <h3 className="relative mb-2 text-[1.45rem] leading-none font-black italic tracking-wide text-white sm:text-[1.7rem] lg:mb-3 lg:text-[2rem]">
         {title}
       </h3>
 
-      <p className="relative mb-7 text-[15px] leading-7 text-white/70">
+      <p className="relative mb-5 text-[14px] leading-6 text-white/70 sm:text-[15px] sm:leading-7 lg:mb-7">
         {desc}
       </p>
 
       <div
-        className={`relative inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-bold tracking-wide transition-all duration-300 ${accent.cta}`}
+        className={`relative inline-flex min-h-[42px] items-center gap-2 rounded-full border px-4 py-2 text-[12px] font-bold tracking-wide transition-all duration-300 sm:text-sm ${accent.cta}`}
       >
         <span>{cta}</span>
         <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
@@ -243,21 +248,25 @@ function ModeButton({
   return (
     <a
       href={href}
-      className="group flex items-center gap-4 rounded-xl border border-white/10 bg-[#0f172a] px-4 py-3 shadow-md transition hover:scale-[1.01] hover:bg-[#111827]"
+      className="group flex min-h-[60px] items-center gap-3 rounded-xl border border-white/10 bg-[#0f172a] px-4 py-3 shadow-md transition hover:scale-[1.01] hover:bg-[#111827] sm:gap-4"
     >
-      <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/10">
+      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white/10">
         {icon}
       </div>
 
-      <div className="flex-1 font-semibold text-white/90">{label}</div>
+      <div className="min-w-0 flex-1 text-sm font-semibold text-white/90 sm:text-base">
+        {label}
+      </div>
 
       {badge ? (
-        <span className="rounded border border-white/10 bg-white/10 px-2 py-1 text-[11px]">
+        <span className="shrink-0 rounded border border-white/10 bg-white/10 px-2 py-1 text-[10px] sm:text-[11px]">
           {badge}
         </span>
       ) : null}
 
-      <span className="text-white/40 transition group-hover:text-white/70">→</span>
+      <span className="shrink-0 text-white/40 transition group-hover:text-white/70">
+        →
+      </span>
     </a>
   );
 }
@@ -284,42 +293,46 @@ function FeatureBanner({
   const accent = getAccentClasses(primaryColor);
 
   return (
-    <div className="mt-6">
+    <div className="mt-5 sm:mt-6">
       <a
         href={href}
-        className={`group relative flex flex-col justify-between gap-4 overflow-hidden rounded-[28px] border border-white/12 p-6 shadow-[0_12px_40px_rgba(0,0,0,0.50)] transition-all duration-300 hover:-translate-y-1.5 hover:border-white/20 hover:shadow-[0_20px_60px_rgba(0,0,0,0.65)] md:flex-row md:items-center ${
+        className={`group relative flex flex-col justify-between gap-4 overflow-hidden rounded-[22px] border border-white/12 p-5 shadow-[0_12px_40px_rgba(0,0,0,0.50)] transition-all duration-300 hover:-translate-y-1.5 hover:border-white/20 hover:shadow-[0_20px_60px_rgba(0,0,0,0.65)] sm:rounded-[24px] sm:p-6 md:flex-row md:items-center lg:rounded-[28px] ${
           backgroundClassName ??
           "bg-[linear-gradient(180deg,rgba(12,24,56,0.95)_0%,rgba(8,14,32,0.98)_100%)]"
         }`}
       >
-        <div className={`pointer-events-none absolute inset-x-0 top-0 h-px ${accent.topLine}`} />
-
         <div
-          className={`pointer-events-none absolute right-0 top-0 h-40 w-40 rounded-full blur-3xl opacity-20 ${accent.glowBlob}`}
+          className={`pointer-events-none absolute inset-x-0 top-0 h-px ${accent.topLine}`}
         />
 
-        <div className="relative flex items-center gap-4">
+        <div
+          className={`pointer-events-none absolute right-0 top-0 h-28 w-28 rounded-full blur-3xl opacity-20 sm:h-32 sm:w-32 lg:h-40 lg:w-40 ${accent.glowBlob}`}
+        />
+
+        <div className="relative flex min-w-0 items-center gap-3 sm:gap-4">
           <div
-            className={`flex h-14 w-14 items-center justify-center rounded-2xl border backdrop-blur-sm shadow-lg ${accent.iconWrap}`}
+            className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border backdrop-blur-sm shadow-lg sm:h-14 sm:w-14 ${accent.iconWrap}`}
           >
             {icon}
           </div>
 
-          <div>
-            <div className="text-2xl font-black italic tracking-wide text-white md:text-3xl">
+          <div className="min-w-0">
+            <div className="text-xl font-black italic tracking-wide text-white sm:text-2xl md:text-3xl">
               {title}
             </div>
-            <div className="mt-1 text-sm text-white/70">{desc}</div>
+            <div className="mt-1 text-sm leading-6 text-white/70">{desc}</div>
           </div>
         </div>
 
-        <div className="relative flex items-center gap-3">
-          <span className="rounded-full border border-white/12 bg-white/10 px-3 py-1 text-[11px] font-bold tracking-wide text-white/85">
-            {badge}
-          </span>
+        <div className="relative flex flex-wrap items-center gap-3 md:justify-end">
+          {badge ? (
+            <span className="rounded-full border border-white/12 bg-white/10 px-3 py-1 text-[10px] font-bold tracking-wide text-white/85 sm:text-[11px]">
+              {badge}
+            </span>
+          ) : null}
 
           <div
-            className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-bold tracking-wide transition-all duration-300 ${accent.cta}`}
+            className={`inline-flex min-h-[42px] items-center gap-2 rounded-full border px-4 py-2 text-[12px] font-bold tracking-wide transition-all duration-300 sm:text-sm ${accent.cta}`}
           >
             <span>{cta}</span>
             <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
@@ -433,25 +446,25 @@ export default function Home() {
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/60" />
       </div>
 
-      <main className="mx-auto max-w-6xl px-6 py-14">
+      <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10 lg:px-6 lg:py-14">
         <div className="text-center">
-          <div className="relative inline-flex items-center justify-center">
-            <h1 className="text-5xl font-black tracking-tight text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)] md:text-7xl">
+          <div className="relative inline-flex max-w-full items-center justify-center">
+            <h1 className="text-[2.4rem] font-black tracking-tight text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)] sm:text-5xl md:text-6xl lg:text-7xl">
               <span className="[text-shadow:_-1px_-1px_0_#000,_1px_-1px_0_#000,_-1px_1px_0_#000,_1px_1px_0_#000]">
                 COCO FOOTY
               </span>
 
-              <span className="relative ml-3 inline-block align-top md:ml-4">
+              <span className="relative ml-2 inline-block align-top sm:ml-3 md:ml-4">
                 {showVersion && (
                   <>
                     <span
-                      className="absolute left-1/2 top-1/2 h-12 w-12 -translate-x-1/2 -translate-y-1/2 rounded-full border border-cyan-300/60 md:h-16 md:w-16"
+                      className="absolute left-1/2 top-1/2 h-10 w-10 -translate-x-1/2 -translate-y-1/2 rounded-full border border-cyan-300/60 sm:h-12 sm:w-12 md:h-14 md:w-14 lg:h-16 lg:w-16"
                       style={{
                         animation: "slamShockwave 0.6s ease-out forwards",
                       }}
                     />
                     <span
-                      className="inline-block text-[1.6rem] font-extrabold italic text-cyan-300 [text-shadow:_0_0_10px_rgba(103,232,249,0.6),_-1px_-1px_0_#000,_1px_-1px_0_#000,_-1px_1px_0_#000,_1px_1px_0_#000] md:text-[2.5rem]"
+                      className="inline-block text-[1.15rem] font-extrabold italic text-cyan-300 [text-shadow:_0_0_10px_rgba(103,232,249,0.6),_-1px_-1px_0_#000,_1px_-1px_0_#000,_-1px_1px_0_#000,_1px_1px_0_#000] sm:text-[1.6rem] md:text-[2rem] lg:text-[2.5rem]"
                       style={{
                         animation:
                           "slamIn 0.72s cubic-bezier(.2,.9,.22,1.15) forwards",
@@ -466,12 +479,12 @@ export default function Home() {
             </h1>
           </div>
 
-          <p className="mt-4 text-sm tracking-wide text-white/60">
+          <p className="mx-auto mt-3 max-w-md text-xs tracking-wide text-white/60 sm:mt-4 sm:text-sm">
             Draft AFL players. Build the perfect team. Beat your high score
           </p>
         </div>
 
-        <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-3">
+        <div className="mt-8 grid grid-cols-1 gap-4 sm:mt-10 sm:gap-5 md:mt-12 md:gap-6 md:grid-cols-3">
           <Card
             icon={<Gem className="h-6 w-6" />}
             title="DAILY GAME"
@@ -523,7 +536,7 @@ export default function Home() {
 
         <div className="mt-6">
           <div className="mb-3 text-left">
-            <div className="text-sm font-extrabold tracking-widest text-white/100">
+            <div className="text-xs font-extrabold tracking-[0.25em] text-white sm:text-sm">
               MORE MODES
             </div>
           </div>
@@ -561,20 +574,26 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="mt-8">
-          <div className="group relative overflow-hidden rounded-[28px] border border-white/12 bg-[linear-gradient(180deg,rgba(12,24,56,0.95)_0%,rgba(8,14,32,0.98)_100%)] p-8 text-center shadow-[0_12px_40px_rgba(0,0,0,0.50)] transition-all duration-300 hover:-translate-y-1 hover:border-white/20 hover:shadow-[0_20px_60px_rgba(0,0,0,0.65)]">
-            <div className={`pointer-events-none absolute inset-x-0 top-0 h-px ${accent.missingTop}`} />
-            <div className={`pointer-events-none absolute right-0 top-0 h-40 w-40 rounded-full blur-3xl ${accent.missingGlow}`} />
+        <div className="mt-7 sm:mt-8">
+          <div className="group relative overflow-hidden rounded-[22px] border border-white/12 bg-[linear-gradient(180deg,rgba(12,24,56,0.95)_0%,rgba(8,14,32,0.98)_100%)] p-5 text-center shadow-[0_12px_40px_rgba(0,0,0,0.50)] transition-all duration-300 hover:-translate-y-1 hover:border-white/20 hover:shadow-[0_20px_60px_rgba(0,0,0,0.65)] sm:rounded-[24px] sm:p-6 lg:rounded-[28px] lg:p-8">
+            <div
+              className={`pointer-events-none absolute inset-x-0 top-0 h-px ${accent.missingTop}`}
+            />
+            <div
+              className={`pointer-events-none absolute right-0 top-0 h-32 w-32 rounded-full blur-3xl sm:h-36 sm:w-36 lg:h-40 lg:w-40 ${accent.missingGlow}`}
+            />
 
-            <div className={`relative mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl border shadow-lg ${accent.missingIcon}`}>
-              <span className="text-3xl font-black">?</span>
+            <div
+              className={`relative mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl border shadow-lg sm:mb-5 sm:h-14 sm:w-14 ${accent.missingIcon}`}
+            >
+              <span className="text-2xl font-black sm:text-3xl">?</span>
             </div>
 
-            <h3 className="relative text-3xl font-black italic tracking-wide text-white md:text-4xl">
+            <h3 className="relative text-2xl font-black italic tracking-wide text-white sm:text-3xl md:text-4xl">
               Missing a player?
             </h3>
 
-            <p className="relative mt-2 text-sm text-white/65">
+            <p className="relative mt-2 text-sm leading-6 text-white/65">
               Submit a request and help improve Coco Footy.
             </p>
 
@@ -582,7 +601,7 @@ export default function Home() {
               href="https://docs.google.com/forms/d/e/1FAIpQLSf9O0doWNm33AbWukEhkOtRdtgppTpqVOtuqV6cTFuVCMZjVQ/viewform?usp=publish-editor"
               target="_blank"
               rel="noopener noreferrer"
-              className={`relative mt-6 inline-flex items-center gap-2 rounded-full border px-5 py-2.5 text-sm font-bold tracking-wide transition-all duration-300 ${accent.missingButton}`}
+              className={`relative mt-5 inline-flex min-h-[44px] items-center gap-2 rounded-full border px-5 py-2.5 text-[12px] font-bold tracking-wide transition-all duration-300 sm:mt-6 sm:text-sm ${accent.missingButton}`}
             >
               <span>SUBMIT A REQUEST</span>
               <span className="transition-transform duration-300 group-hover:translate-x-1">
@@ -592,8 +611,8 @@ export default function Home() {
           </div>
         </div>
 
-        <footer className="mt-16 space-y-3 border-t border-white/10 pt-6 text-center text-xs text-white/40">
-          <div className="flex items-center justify-center gap-6 text-white/60">
+        <footer className="mt-12 space-y-3 border-t border-white/10 pt-6 text-center text-xs text-white/40 sm:mt-16">
+          <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-white/60 sm:gap-6">
             <a href="/privacy" className="transition hover:text-white">
               Privacy Policy
             </a>
@@ -609,7 +628,7 @@ export default function Home() {
             © {new Date().getFullYear()} Coco Footy
           </div>
 
-          <div className="mx-auto max-w-md text-[11px] leading-relaxed text-white/20">
+          <div className="mx-auto max-w-md px-4 text-[11px] leading-relaxed text-white/20">
             Built for AFL fans. Not affiliated with the AFL.
           </div>
         </footer>

@@ -19,7 +19,6 @@ type RawPlayer = {
   name: string;
   club: string;
   pos: PlayerPos[];
-
   points?: number;
   sc_points?: number;
   scPoints?: number;
@@ -47,6 +46,7 @@ type ClubMeta = {
 };
 
 type DailyStatKey = "fantasy" | "sc" | "disposals" | "goals";
+type BackgroundMode = "normal" | "white" | "black";
 
 type PersonalBestEntry = {
   score: number;
@@ -188,7 +188,6 @@ function resolvePlayerValue(player: RawPlayer, statKey: DailyStatKey) {
   switch (statKey) {
     case "fantasy":
       return toNumber(player.points);
-
     case "sc":
       return Math.max(
         toNumber(player.sc_points),
@@ -198,13 +197,10 @@ function resolvePlayerValue(player: RawPlayer, statKey: DailyStatKey) {
         toNumber(player.supercoach_points),
         toNumber(player.superCoachPoints)
       );
-
     case "disposals":
       return Math.max(toNumber(player.disposals), toNumber(player.disposal));
-
     case "goals":
       return toNumber(player.goals);
-
     default:
       return 0;
   }
@@ -225,15 +221,13 @@ function buildPerfectTeam(
   players: Player[],
   topKPerSlot = 35
 ): Record<string, string | null> {
-  const empty: Record<string, string | null> = Object.fromEntries(
-    slots.map((s) => [s.id, null])
-  );
+  const empty: Record<string, string | null> = Object.fromEntries(slots.map((s) => [s.id, null]));
 
   const cand: Record<string, Player[]> = {};
   for (const slot of slots) {
     cand[slot.id] = players
       .filter((p) => p.pos.some((pos) => slot.allowed.includes(pos)))
-      .sort((a, b) => (b.value ?? 0) - (a.value ?? 0))
+      .sort((a, b) => b.value - a.value)
       .slice(0, topKPerSlot);
   }
 
@@ -271,10 +265,9 @@ function buildPerfectTeam(
 
     for (const p of options) {
       if (used.has(p.id)) continue;
-
       used.add(p.id);
       team[slot.id] = p.id;
-      dfs(idx + 1, curSum + (p.value ?? 0), team);
+      dfs(idx + 1, curSum + p.value, team);
       team[slot.id] = null;
       used.delete(p.id);
     }
@@ -295,11 +288,9 @@ function makeEmptyPersonalBestMap(): PersonalBestMap {
 
 function mergePersonalBestMap(value: unknown): PersonalBestMap {
   const empty = makeEmptyPersonalBestMap();
-
   if (!value || typeof value !== "object") return empty;
 
   const source = value as Partial<Record<DailyStatKey, PersonalBestEntry | null>>;
-
   return {
     fantasy: source.fantasy ?? null,
     sc: source.sc ?? null,
@@ -308,15 +299,59 @@ function mergePersonalBestMap(value: unknown): PersonalBestMap {
   };
 }
 
+function getBackgroundClasses(mode: BackgroundMode) {
+  if (mode === "white") {
+    return {
+      main: "text-black",
+      overlay: "bg-white/85",
+      panel: "bg-white/95 border-black/10 text-black shadow-[0_10px_30px_rgba(0,0,0,0.08)]",
+      soft: "text-black/60",
+      faint: "text-black/40",
+      chip: "border-black/10 bg-black/[0.04] text-black/70",
+      input: "bg-white border-black/15 text-black",
+      button: "bg-white border-black/15 text-black hover:border-black/30 hover:bg-black/[0.03]",
+      emptyRow: "rgba(255,255,255,0.92)",
+      emptyRowText: "#111111",
+      modal: "bg-white text-black border-black/10",
+    };
+  }
+
+  if (mode === "black") {
+    return {
+      main: "text-white",
+      overlay: "bg-black/72",
+      panel: "bg-[#0D0D0D] border-white/15 text-white shadow-[0_10px_30px_rgba(0,0,0,0.35)]",
+      soft: "text-white/60",
+      faint: "text-white/40",
+      chip: "border-white/10 bg-white/5 text-white/70",
+      input: "bg-[#0D0D0D] border-white/15 text-white",
+      button: "bg-[#0D0D0D] border-white/20 text-white/85 hover:text-white hover:border-white/40",
+      emptyRow: "rgba(13,13,13,0.92)",
+      emptyRowText: "#FFFFFF",
+      modal: "bg-[#0D0D0D] text-white border-white/15",
+    };
+  }
+
+  return {
+    main: "text-white",
+    overlay: "bg-black/35",
+    panel: "bg-[#0D0D0D] border-white/15 text-white shadow-[0_10px_30px_rgba(0,0,0,0.35)]",
+    soft: "text-white/60",
+    faint: "text-white/40",
+    chip: "border-white/10 bg-white/5 text-white/70",
+    input: "bg-[#0D0D0D] border-white/15 text-white",
+    button: "bg-[#0D0D0D] border-white/20 text-white/85 hover:text-white hover:border-white/40",
+    emptyRow: "rgba(0,0,0,0.30)",
+    emptyRowText: "#FFFFFF",
+    modal: "bg-zinc-950 text-white border-white/15",
+  };
+}
+
 export default function DailyPage() {
   const router = useRouter();
 
   const RAW_PLAYERS: RawPlayer[] = useMemo(() => players2026 as RawPlayer[], []);
-  const AVAILABLE_CLUBS = useMemo(
-    () => clampClubsToPlayers(AFL_CLUBS, RAW_PLAYERS),
-    [RAW_PLAYERS]
-  );
-
+  const AVAILABLE_CLUBS = useMemo(() => clampClubsToPlayers(AFL_CLUBS, RAW_PLAYERS), [RAW_PLAYERS]);
   const emptyTeam: Record<string, string | null> = useMemo(
     () => Object.fromEntries(SLOTS.map((s) => [s.id, null])),
     []
@@ -328,6 +363,7 @@ export default function DailyPage() {
   const LS_DAILY_LOCK_PREFIX = "coco_daily_lock_2026:";
   const LS_PERSONAL_BESTS = "coco_daily_personal_bests_2026";
   const LS_GAMES_PLAYED = "coco_daily_games_played_2026";
+  const LS_BG_MODE = "coco_daily_background_mode_2026";
 
   const initialSelectedDate = todayKey < MIN_DATE ? MIN_DATE : todayKey;
 
@@ -339,15 +375,12 @@ export default function DailyPage() {
   const [personalBests, setPersonalBests] = useState<PersonalBestMap>(makeEmptyPersonalBestMap());
   const [showHighScores, setShowHighScores] = useState(false);
   const [gamesPlayed, setGamesPlayed] = useState<number>(0);
-  const [active, setActive] = useState<{
-    slotId: string;
-    allowed: PlayerPos[];
-    slotLabel: Position;
-  } | null>(null);
+  const [backgroundMode, setBackgroundMode] = useState<BackgroundMode>("normal");
+  const [active, setActive] = useState<{ slotId: string; allowed: PlayerPos[]; slotLabel: Position } | null>(null);
   const [search, setSearch] = useState("");
 
+  const theme = getBackgroundClasses(backgroundMode);
   const isLiveToday = selectedDate === todayKey;
-
   const dailyStat = useMemo(() => pickDailyStatForDate(selectedDate), [selectedDate]);
 
   const ALL_PLAYERS: Player[] = useMemo(
@@ -366,7 +399,6 @@ export default function DailyPage() {
   }, [ALL_PLAYERS, dailyClubs]);
 
   const lockKey = useMemo(() => `${LS_DAILY_LOCK_PREFIX}${selectedDate}`, [selectedDate]);
-
   const currentPersonalBest = personalBests[dailyStat.key];
 
   function loadJSON<T>(key: string, fallback: T): T {
@@ -396,6 +428,14 @@ export default function DailyPage() {
   }, [MIN_DATE, todayKey]);
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
+    const stored = window.localStorage.getItem(LS_BG_MODE);
+    if (stored === "normal" || stored === "white" || stored === "black") {
+      setBackgroundMode(stored);
+    }
+  }, []);
+
+  useEffect(() => {
     const locked = loadJSON<{ locked: boolean; team?: Record<string, string | null> }>(lockKey, {
       locked: false,
     });
@@ -404,12 +444,8 @@ export default function DailyPage() {
     if (locked.team) setTeam(locked.team);
     else setTeam(emptyTeam);
 
-    const storedBestMap = loadJSON<unknown>(LS_PERSONAL_BESTS, makeEmptyPersonalBestMap());
-    setPersonalBests(mergePersonalBestMap(storedBestMap));
-
-    const gp = loadJSON<number>(LS_GAMES_PLAYED, 0);
-    setGamesPlayed(gp);
-
+    setPersonalBests(mergePersonalBestMap(loadJSON<unknown>(LS_PERSONAL_BESTS, makeEmptyPersonalBestMap())));
+    setGamesPlayed(loadJSON<number>(LS_GAMES_PLAYED, 0));
     setShowPerfect(false);
     setPerfectTeam(null);
     setShowHighScores(false);
@@ -424,13 +460,8 @@ export default function DailyPage() {
 
   const gameOver = useMemo(() => SLOTS.every((s) => Boolean(team[s.id])), [team]);
   const activeTeam = showPerfect && perfectTeam ? perfectTeam : team;
-
   const totalShown = useMemo(() => sumPoints(activeTeam, getPlayerById), [activeTeam, ALL_PLAYERS]);
-
-  const pickedIds = useMemo(
-    () => new Set(Object.values(team).filter(Boolean) as string[]),
-    [team]
-  );
+  const pickedIds = useMemo(() => new Set(Object.values(team).filter(Boolean) as string[]), [team]);
 
   const eligiblePlayers = useMemo(() => {
     if (!active) return [];
@@ -445,28 +476,20 @@ export default function DailyPage() {
   }, [active, dailyPlayers, pickedIds, search]);
 
   function onOpen(slot: Slot) {
-    if (isLockedToday) return;
-    if (showPerfect) return;
-    if (team[slot.id]) return;
-
+    if (isLockedToday || showPerfect || team[slot.id]) return;
     setSearch("");
     setActive({ slotId: slot.id, allowed: slot.allowed, slotLabel: slot.label });
   }
 
   function onPick(playerId: string) {
-    if (isLockedToday) return;
-    if (showPerfect) return;
-    if (!active) return;
-    if (team[active.slotId]) return;
-
+    if (isLockedToday || showPerfect || !active || team[active.slotId]) return;
     setTeam((prev) => ({ ...prev, [active.slotId]: playerId }));
     setActive(null);
     setSearch("");
   }
 
   useEffect(() => {
-    if (!gameOver) return;
-    if (isLockedToday) return;
+    if (!gameOver || isLockedToday) return;
 
     saveJSON(lockKey, { locked: true, team });
     setIsLockedToday(true);
@@ -483,34 +506,33 @@ export default function DailyPage() {
       setPersonalBests((prev) => {
         const currentBest = prev[dailyStat.key];
         const shouldReplace = !currentBest || score > currentBest.score;
-
         if (!shouldReplace) return prev;
 
         const next: PersonalBestMap = {
           ...prev,
-          [dailyStat.key]: {
-            score,
-            date: todayKey,
-          },
+          [dailyStat.key]: { score, date: todayKey },
         };
 
         saveJSON(LS_PERSONAL_BESTS, next);
         return next;
       });
     }
-  }, [gameOver, isLockedToday, isLiveToday, lockKey, team, todayKey, dailyStat.key, ALL_PLAYERS]);
+  }, [gameOver, isLockedToday, isLiveToday, lockKey, team, dailyStat.key, todayKey]);
 
   function onTogglePerfect() {
-    if (!gameOver) return;
-
-    if (!perfectTeam) {
-      const best = buildPerfectTeam(SLOTS, dailyPlayers, 35);
-      setPerfectTeam(best);
-    }
-
+    if (!gameOver && !showPerfect) return;
+    if (!perfectTeam) setPerfectTeam(buildPerfectTeam(SLOTS, dailyPlayers, 35));
     setShowPerfect((prev) => !prev);
     setActive(null);
     setSearch("");
+  }
+
+  function cycleBackground() {
+    setBackgroundMode((prev) => {
+      const next: BackgroundMode = prev === "normal" ? "white" : prev === "white" ? "black" : "normal";
+      if (typeof window !== "undefined") window.localStorage.setItem(LS_BG_MODE, next);
+      return next;
+    });
   }
 
   function getPerfectGlow(slotId: string) {
@@ -519,19 +541,17 @@ export default function DailyPage() {
     const perfectPick = perfectTeam[slotId];
     const isCorrect = yourPick && perfectPick && yourPick === perfectPick;
 
-    if (isCorrect) {
-      return {
-        borderColor: "rgba(34,197,94,0.95)",
-        boxShadow:
-          "0 0 0 1px rgba(34,197,94,0.95), 0 0 14px rgba(34,197,94,0.85), 0 0 28px rgba(34,197,94,0.45)",
-      };
-    }
-
-    return {
-      borderColor: "rgba(239,68,68,0.95)",
-      boxShadow:
-        "0 0 0 1px rgba(239,68,68,0.95), 0 0 14px rgba(239,68,68,0.85), 0 0 28px rgba(239,68,68,0.45)",
-    };
+    return isCorrect
+      ? {
+          borderColor: "rgba(34,197,94,0.95)",
+          boxShadow:
+            "0 0 0 1px rgba(34,197,94,0.95), 0 0 14px rgba(34,197,94,0.85), 0 0 28px rgba(34,197,94,0.45)",
+        }
+      : {
+          borderColor: "rgba(239,68,68,0.95)",
+          boxShadow:
+            "0 0 0 1px rgba(239,68,68,0.95), 0 0 14px rgba(239,68,68,0.85), 0 0 28px rgba(239,68,68,0.45)",
+        };
   }
 
   const previousBestScore = currentPersonalBest?.score ?? 0;
@@ -540,55 +560,67 @@ export default function DailyPage() {
     isLiveToday &&
     totalShown > 0 &&
     (totalShown > previousBestScore ||
-      (gameOver &&
-        currentPersonalBest?.date === todayKey &&
-        Math.abs(totalShown - previousBestScore) < 0.001));
+      (gameOver && currentPersonalBest?.date === todayKey && Math.abs(totalShown - previousBestScore) < 0.001));
 
-  const totalNumberClass = isNewHighScore
+  const totalNumberClass = showPerfect
+    ? "text-green-400"
+    : isNewHighScore
     ? "bg-gradient-to-r from-[#fff3b0] via-[#ffd54a] to-[#c99200] bg-clip-text text-transparent"
+    : backgroundMode === "white"
+    ? "text-black"
     : "text-white";
 
   const personalBestNumberClass =
     "bg-gradient-to-r from-[#fff3b0] via-[#ffd54a] to-[#c99200] bg-clip-text text-transparent";
 
-  const goHome = () => {
-    router.push("/?season=2026");
-  };
+  const goHome = () => router.push("/?season=2026");
 
   return (
-    <main className="min-h-screen text-white relative overflow-hidden">
-      <div
-        className="absolute inset-0"
-        style={{
-          backgroundImage: "url('/13031df3-8bf5-4818-b2a4-5777164a3db9.png')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-          backgroundAttachment: "fixed",
-        }}
-      />
+    <main className={`min-h-screen relative overflow-hidden ${theme.main}`}>
+      {backgroundMode === "normal" && (
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: "url('/13031df3-8bf5-4818-b2a4-5777164a3db9.png')",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+            backgroundAttachment: "fixed",
+          }}
+        />
+      )}
 
-      <div className="absolute inset-0 bg-black/35" />
+      {backgroundMode === "white" && <div className="absolute inset-0 bg-[#f5f5f5]" />}
+      {backgroundMode === "black" && <div className="absolute inset-0 bg-[#000000]" />}
+      <div className={`absolute inset-0 ${theme.overlay}`} />
 
       <div className="relative mx-auto max-w-6xl px-4 sm:px-6 py-8 sm:py-10">
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
           <div>
-            <h1 className="text-4xl font-extrabold tracking-wide text-white">DAILY GAME</h1>
-            <div className="mt-2 text-white/60 font-semibold">
-              Build one lineup per day from today’s 4 random clubs.
+            <h1 className="text-4xl font-extrabold tracking-wide">DAILY GAME</h1>
+            <div className={`mt-2 font-semibold ${theme.soft}`}>
+              Build one lineup per day from 4 random clubs.
             </div>
 
             <div className="mt-4 flex flex-wrap items-center gap-3">
               <div className="rounded-xl border border-red-400/40 bg-red-500/15 px-4 py-2 font-bold text-red-100">
                 2026
               </div>
+
+              <button
+                type="button"
+                onClick={cycleBackground}
+                className={`rounded-xl border px-3 py-2 text-sm font-bold ${theme.button}`}
+              >
+                Background: {backgroundMode === "normal" ? "Normal" : backgroundMode === "white" ? "White" : "Black"}
+              </button>
             </div>
 
             <div className="mt-4 flex flex-wrap items-center gap-3">
-              <div className="text-white/60 text-sm font-semibold">Play date:</div>
+              <div className={`text-sm font-semibold ${theme.soft}`}>Play date:</div>
 
               <button
-                className="rounded-xl border border-white/20 bg-[#0D0D0D] px-3 py-2 text-white/80 hover:text-white hover:border-white/40 disabled:opacity-40 disabled:cursor-not-allowed"
+                className={`rounded-xl border px-3 py-2 disabled:opacity-40 disabled:cursor-not-allowed ${theme.button}`}
                 onClick={() =>
                   setSelectedDate((d) => {
                     const prev = shiftDateKey(d, -1);
@@ -612,25 +644,16 @@ export default function DailyPage() {
                   else if (val > todayKey) setSelectedDate(todayKey);
                   else setSelectedDate(val);
                 }}
-                className="rounded-xl border border-white/15 px-3 py-2 text-white outline-none focus:border-white/40"
-                style={{ backgroundColor: "#0D0D0D" }}
+                className={`rounded-xl border px-3 py-2 outline-none focus:border-white/40 ${theme.input}`}
               />
 
               <button
-                className="rounded-xl border border-white/20 bg-[#0D0D0D] px-3 py-2 text-white/80 hover:text-white hover:border-white/40 disabled:opacity-40 disabled:cursor-not-allowed"
+                className={`rounded-xl border px-3 py-2 disabled:opacity-40 disabled:cursor-not-allowed ${theme.button}`}
                 onClick={() => setSelectedDate((d) => shiftDateKey(d, +1))}
                 disabled={selectedDate >= todayKey}
                 title="Next day"
               >
                 →
-              </button>
-
-              <button
-                className="rounded-xl border border-white/20 bg-[#0D0D0D] px-3 py-2 text-white/80 hover:text-white hover:border-white/40"
-                onClick={() => setSelectedDate(todayKey < MIN_DATE ? MIN_DATE : todayKey)}
-                title="Jump to today"
-              >
-                Today
               </button>
 
               {!isLiveToday && (
@@ -641,80 +664,13 @@ export default function DailyPage() {
             </div>
           </div>
 
-          <button
-            className="rounded-xl border border-white/20 bg-[#0D0D0D] px-4 py-2 text-white/80 hover:text-white hover:border-white/40"
-            onClick={goHome}
-          >
+          <button className={`rounded-xl border px-4 py-2 ${theme.button}`} onClick={goHome}>
             ← Home
           </button>
         </div>
 
-        <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="rounded-2xl border border-white/15 bg-[#0D0D0D] p-5">
-            <div className="text-white/60 font-semibold tracking-widest text-xs">
-              {isLiveToday ? "TODAY" : "SELECTED DAY"}
-            </div>
-            <div className="mt-2 font-extrabold text-lg">{selectedDate}</div>
-            <div className="mt-1 text-white/60 text-sm">
-              {isLiveToday
-                ? ""
-                : isLockedToday
-                  ? "Locked (played on that date)"
-                  : "Unplayed archive day"}
-            </div>
-          </div>
-
-          <button
-            type="button"
-            onClick={() => setShowHighScores(true)}
-            className="rounded-2xl border border-white/15 bg-[#0D0D0D] p-5 text-left transition hover:border-white/30 hover:bg-[#121212]"
-          >
-            <div className="flex items-start justify-between gap-3">
-              <div className="text-white/60 font-semibold tracking-widest text-xs">
-                PERSONAL HIGH SCORE
-              </div>
-              <div className="text-[10px] font-extrabold uppercase tracking-[0.22em] text-white/35">
-                Click
-              </div>
-            </div>
-
-            {currentPersonalBest ? (
-              <div className="mt-2">
-                <div className={`font-extrabold text-lg ${personalBestNumberClass}`}>
-                  {currentPersonalBest.score.toFixed(1)} {dailyStat.short}
-                </div>
-                <div className="text-white/60 text-sm">Set on {currentPersonalBest.date}</div>
-              </div>
-            ) : (
-              <div className="mt-2 text-white/60 text-sm">No {dailyStat.label} high score yet.</div>
-            )}
-
-            <div className="mt-2 text-white/35 text-xs">
-              Viewing {dailyStat.label} high score. Click to see all stats.
-            </div>
-
-            {!isLiveToday && (
-              <div className="mt-2 text-white/40 text-xs">
-                High score updates only when played live today.
-              </div>
-            )}
-          </button>
-
-          <div className="rounded-2xl border border-white/15 bg-[#0D0D0D] p-5">
-            <div className="text-white/60 font-semibold tracking-widest text-xs">
-              TOTAL GAMES PLAYED
-            </div>
-            <div className="mt-2 font-extrabold text-lg">{gamesPlayed}</div>
-            {!isLiveToday && (
-              <div className="mt-2 text-white/40 text-xs">
-                Only live plays count toward this total.
-              </div>
-            )}
-          </div>
-        </div>
-
         <div className="mt-8">
-          <div className="text-white/60 font-semibold tracking-widest text-sm">
+          <div className={`font-semibold tracking-widest text-sm ${theme.soft}`}>
             {isLiveToday ? "TODAY’S CLUBS" : "CLUBS FOR THIS DAY"}
           </div>
 
@@ -747,58 +703,72 @@ export default function DailyPage() {
         </div>
 
         <div className="mt-10 flex flex-col xl:flex-row xl:items-stretch xl:justify-between gap-4">
-          <div className="grid w-full xl:max-w-3xl grid-cols-1 md:grid-cols-2 gap-3">
-            <div className="min-h-[108px] rounded-2xl border border-white/15 bg-[#0D0D0D] p-5 shadow-[0_0_30px_rgba(0,0,0,0.35)] flex flex-col justify-center">
-              <div className="text-[11px] font-extrabold uppercase tracking-[0.28em] text-white/45">
+          <div className="grid w-full xl:max-w-4xl grid-cols-1 md:grid-cols-3 gap-3">
+            <div className={`min-h-[108px] rounded-2xl border p-5 flex flex-col justify-center ${theme.panel}`}>
+              <div className={`text-[11px] font-extrabold uppercase tracking-[0.28em] ${theme.faint}`}>
                 {showPerfect ? "Perfect Total" : "Your Total"}
               </div>
-
               <div className="mt-2 flex items-center gap-3 flex-wrap">
                 <div className={`text-3xl sm:text-4xl font-black leading-none ${totalNumberClass}`}>
                   {totalShown.toFixed(1)}
                 </div>
-
-                <div className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-extrabold uppercase tracking-[0.22em] text-white/65">
+                <div className={`rounded-full border px-3 py-1 text-[11px] font-extrabold uppercase tracking-[0.22em] ${theme.chip}`}>
                   {dailyStat.short}
                 </div>
-
-                {gameOver && (
-                  <span className="rounded-full border border-green-400/30 bg-green-500/10 px-3 py-1 text-[11px] font-extrabold uppercase tracking-[0.2em] text-green-300">
-                    Complete
-                  </span>
-                )}
-
-                {showPerfect && (
-                  <span className="rounded-full border border-blue-400/30 bg-blue-500/10 px-3 py-1 text-[11px] font-extrabold uppercase tracking-[0.2em] text-blue-300">
-                    Viewing Perfect
-                  </span>
-                )}
+                
+                
               </div>
             </div>
 
-            <div className="min-h-[108px] rounded-2xl border border-white/15 bg-[#0D0D0D] p-5 shadow-[0_0_30px_rgba(0,0,0,0.35)] flex flex-col justify-center">
-              <div className="text-[11px] font-extrabold uppercase tracking-[0.28em] text-white/45">
+            <div className={`min-h-[108px] rounded-2xl border p-5 flex flex-col justify-center ${theme.panel}`}>
+              <div className={`text-[11px] font-extrabold uppercase tracking-[0.28em] ${theme.faint}`}>
                 Scoring Type
               </div>
               <div className="mt-2 flex items-center min-h-[40px]">
-                <div className="text-3xl sm:text-4xl font-black leading-none text-white">
-                  {dailyStat.label}
-                </div>
+                <div className="text-3xl sm:text-4xl font-black leading-none">{dailyStat.label}</div>
               </div>
             </div>
+
+            <button
+              type="button"
+              onClick={() => setShowHighScores(true)}
+              className={`min-h-[108px] rounded-2xl border p-5 text-left transition ${theme.panel}`}
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div className={`text-[11px] font-extrabold uppercase tracking-[0.28em] ${theme.faint}`}>
+                  High Score
+                </div>
+                <div className={`text-[10px] font-extrabold uppercase tracking-[0.22em] ${theme.faint}`}>
+                  Click
+                </div>
+              </div>
+
+              {currentPersonalBest ? (
+                <div className="mt-2">
+                  <div className={`font-extrabold text-lg ${personalBestNumberClass}`}>
+                    {currentPersonalBest.score.toFixed(1)} {dailyStat.short}
+                  </div>
+                  <div className={`text-sm ${theme.soft}`}>Set on {currentPersonalBest.date}</div>
+                </div>
+              ) : (
+                <div className={`mt-2 text-sm ${theme.soft}`}>No {dailyStat.label} high score yet.</div>
+              )}
+            </button>
           </div>
 
           <div className="flex xl:items-center">
             <button
-              className={`rounded-xl border px-4 py-3 transition h-full min-h-[56px] ${
+              className={`relative overflow-hidden rounded-2xl px-5 py-3 h-[56px] w-[220px] flex items-center justify-center font-bold tracking-wide transition-all duration-200 ${
                 gameOver || showPerfect
-                  ? "border-white/20 bg-[#0D0D0D] text-white/80 hover:text-white hover:border-white/40"
-                  : "border-white/10 bg-[#0D0D0D] text-white/30 cursor-not-allowed"
+                  ? showPerfect
+                    ? "bg-[#16a34a] border border-green-400/30 text-white shadow-[0_8px_25px_rgba(22,163,74,0.5)] hover:scale-[1.03] hover:shadow-[0_12px_35px_rgba(22,163,74,0.7)] active:scale-[0.98]"
+                    : "bg-white border border-black/10 text-black shadow-[0_8px_25px_rgba(0,0,0,0.15)] hover:scale-[1.03] hover:shadow-[0_12px_35px_rgba(0,0,0,0.25)] active:scale-[0.98]"
+                  : "bg-[#0D0D0D] border border-white/10 text-white/30 cursor-not-allowed"
               }`}
               onClick={onTogglePerfect}
               disabled={!gameOver && !showPerfect}
             >
-              {showPerfect ? "Show My Team" : "Show Perfect Team"}
+              {showPerfect ? "Perfect Team" : "My Team"}
             </button>
           </div>
         </div>
@@ -822,9 +792,9 @@ export default function DailyPage() {
                     clickable ? "hover:brightness-110" : "cursor-not-allowed"
                   }`}
                   style={{
-                    backgroundColor: p && clubMeta ? clubMeta.primary : "rgba(0,0,0,0.30)",
-                    color: p && clubMeta ? clubMeta.text : "#ffffff",
-                    borderColor: p ? "rgba(255,255,255,0.35)" : "rgba(255,255,255,0.7)",
+                    backgroundColor: p && clubMeta ? clubMeta.primary : theme.emptyRow,
+                    color: p && clubMeta ? clubMeta.text : theme.emptyRowText,
+                    borderColor: p ? "rgba(255,255,255,0.35)" : backgroundMode === "white" ? "rgba(0,0,0,0.18)" : "rgba(255,255,255,0.7)",
                     ...glowStyle,
                   }}
                   onClick={() => onOpen(slot)}
@@ -832,11 +802,7 @@ export default function DailyPage() {
                 >
                   <div className="flex items-center w-full">
                     <div className="min-w-0 w-[220px] sm:w-[260px]">
-                      <span
-                        className={`truncate block ${
-                          p ? "font-extrabold" : "font-extrabold text-white/80"
-                        }`}
-                      >
+                      <span className="truncate block font-extrabold">
                         {p ? p.name : `+ Select ${slot.label}`}
                       </span>
                     </div>
@@ -875,47 +841,79 @@ export default function DailyPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/70" onClick={() => setActive(null)} />
 
-          <div className="relative w-full max-w-xl rounded-2xl border border-white/15 bg-zinc-950 p-4">
-            <div className="flex items-center justify-between gap-3">
-              <div className="font-extrabold tracking-wide">Select {active.slotLabel}</div>
+          <div className={`relative w-full max-w-xl rounded-2xl border p-4 ${theme.modal}`}>
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <div className={`text-xs font-extrabold uppercase tracking-[0.26em] ${theme.faint}`}>
+                  Select Player
+                </div>
+                <div className="mt-1 text-2xl font-black">{active.slotLabel}</div>
+              </div>
+
               <button
-                className="rounded-xl border border-white/20 bg-[#0D0D0D] px-3 py-2 text-white/80 hover:text-white hover:border-white/40"
+                type="button"
+                className={`rounded-xl border px-3 py-2 text-sm font-bold ${theme.button}`}
                 onClick={() => setActive(null)}
               >
-                ✕
+                Close
               </button>
             </div>
 
-            <div className="mt-3">
-              <input
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder={`Search ${active.slotLabel}...`}
-                className="w-full rounded-xl border border-white/15 bg-black/40 px-4 py-3 text-white outline-none focus:border-white/40"
-                autoFocus
-              />
-            </div>
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search players..."
+              className={`mt-4 w-full rounded-xl border px-3 py-3 outline-none ${theme.input}`}
+            />
 
-            <div className="mt-3 max-h-[360px] overflow-y-auto rounded-xl border border-white/10 bg-black/20">
-              {eligiblePlayers.length === 0 ? (
-                <div className="p-4 text-white/60">No eligible players found.</div>
+            <div className="mt-4 max-h-[60vh] overflow-y-auto space-y-2 pr-1">
+              {eligiblePlayers.length > 0 ? (
+                eligiblePlayers.map((player) => {
+                  const clubMeta = clubForPlayer(AFL_CLUBS, player);
+                  return (
+                    <button
+                      key={player.id}
+                      type="button"
+                      onClick={() => onPick(player.id)}
+                      className="w-full rounded-2xl border border-white/10 px-3 py-3 text-left transition hover:brightness-110"
+                      style={{
+                        backgroundColor: clubMeta?.primary ?? "#111111",
+                        color: clubMeta?.text ?? "#FFFFFF",
+                      }}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="h-12 w-12 overflow-hidden rounded-xl bg-black/15 shrink-0">
+                          {clubMeta && (
+                            <Image
+                              src={teamIconUrl(clubMeta.name)}
+                              alt={clubMeta.name}
+                              width={48}
+                              height={48}
+                              className="h-full w-full object-contain"
+                              unoptimized
+                            />
+                          )}
+                        </div>
+
+                        <div className="min-w-0 flex-1">
+                          <div className="truncate font-extrabold">{player.name}</div>
+                          <div className="text-xs opacity-80">
+                            {player.club} • {player.pos.join("/")}
+                          </div>
+                        </div>
+
+                        <div className="shrink-0 rounded-full bg-black/25 px-3 py-1 text-xs font-extrabold uppercase tracking-[0.18em]">
+                          {player.value.toFixed(1)} {dailyStat.short}
+                        </div>
+                      </div>
+                    </button>
+                  );
+                })
               ) : (
-                eligiblePlayers.map((p) => (
-                  <button
-                    key={p.id}
-                    onClick={() => onPick(p.id)}
-                    className="w-full px-4 py-3 text-left hover:bg-white/5 border-b border-white/5 last:border-b-0 flex items-center justify-between gap-3"
-                  >
-                    <div className="min-w-0 flex items-center gap-3">
-                      <div className="font-extrabold truncate">{p.name}</div>
-                      <div className="text-white/55 text-xs">{p.club}</div>
-                    </div>
-
-                    <div className="shrink-0 flex items-center gap-3">
-                      <div className="text-white/60 text-sm font-bold">{p.pos.join("/")}</div>
-                    </div>
-                  </button>
-                ))
+                <div className={`rounded-2xl border p-4 text-sm ${theme.panel}`}>
+                  No eligible players found.
+                </div>
               )}
             </div>
           </div>
@@ -923,64 +921,63 @@ export default function DailyPage() {
       )}
 
       {showHighScores && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/75" onClick={() => setShowHighScores(false)} />
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/70" onClick={() => setShowHighScores(false)} />
 
-          <div className="relative w-full max-w-2xl rounded-2xl border border-white/15 bg-zinc-950 p-5 shadow-[0_0_40px_rgba(0,0,0,0.45)]">
-            <div className="flex items-center justify-between gap-3">
+          <div className={`relative w-full max-w-lg rounded-2xl border p-5 ${theme.modal}`}>
+            <div className="flex items-start justify-between gap-4">
               <div>
-                <div className="text-lg font-extrabold tracking-wide">Personal High Scores</div>
-                <div className="mt-1 text-sm text-white/50">
-                  Best score for each scoring type and the day it was set.
+                <div className={`text-xs font-extrabold uppercase tracking-[0.26em] ${theme.faint}`}>
+                  Personal High Scores
                 </div>
+                <div className="mt-1 text-2xl font-black">All Stats</div>
               </div>
 
               <button
-                className="rounded-xl border border-white/20 bg-[#0D0D0D] px-3 py-2 text-white/80 hover:text-white hover:border-white/40"
+                type="button"
+                className={`rounded-xl border px-3 py-2 text-sm font-bold ${theme.button}`}
                 onClick={() => setShowHighScores(false)}
               >
-                ✕
+                Close
               </button>
             </div>
 
-            <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className={`mt-4 rounded-2xl border p-4 ${theme.panel}`}>
+              <div className={`text-xs font-extrabold uppercase tracking-[0.26em] ${theme.faint}`}>
+                Total Games Played
+              </div>
+              <div className="mt-2 text-3xl font-black">{gamesPlayed}</div>
+              <div className={`mt-1 text-sm ${theme.soft}`}>Only live plays count toward this total.</div>
+            </div>
+
+            <div className="mt-4 space-y-3">
               {DAILY_STATS.map((stat) => {
                 const best = personalBests[stat.key];
-                const isActiveStat = stat.key === dailyStat.key;
-
                 return (
-                  <div
-                    key={stat.key}
-                    className={`rounded-2xl border p-4 ${
-                      isActiveStat
-                        ? "border-yellow-400/30 bg-yellow-500/5"
-                        : "border-white/10 bg-[#0D0D0D]"
-                    }`}
-                  >
-                    <div className="flex items-center justify-between gap-3">
-                      <div className="text-[11px] font-extrabold uppercase tracking-[0.24em] text-white/45">
-                        {stat.label}
+                  <div key={stat.key} className={`rounded-2xl border p-4 ${theme.panel}`}>
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <div className={`text-xs font-extrabold uppercase tracking-[0.24em] ${theme.faint}`}>
+                          {stat.label}
+                        </div>
+                        {best ? (
+                          <>
+                            <div className={`mt-2 text-2xl font-black ${personalBestNumberClass}`}>
+                              {best.score.toFixed(1)} {stat.short}
+                            </div>
+                            <div className={`mt-1 text-sm ${theme.soft}`}>Set on {best.date}</div>
+                          </>
+                        ) : (
+                          <div className={`mt-2 text-sm ${theme.soft}`}>No high score yet.</div>
+                        )}
                       </div>
 
-                      {isActiveStat && (
-                        <span className="rounded-full border border-yellow-400/25 bg-yellow-500/10 px-2 py-1 text-[10px] font-extrabold uppercase tracking-[0.18em] text-yellow-300">
-                          Today’s Stat
-                        </span>
-                      )}
-                    </div>
-
-                    {best ? (
-                      <>
-                        <div
-                          className={`mt-3 text-2xl font-black leading-none ${personalBestNumberClass}`}
-                        >
-                          {best.score.toFixed(1)} {stat.short}
+                      {currentPersonalBest?.date === best?.date && currentPersonalBest?.score === best?.score && stat.key === dailyStat.key ? (
+                        <div className={`text-[10px] font-extrabold uppercase tracking-[0.22em] ${theme.faint}`}>
+                          Current
                         </div>
-                        <div className="mt-2 text-sm text-white/60">Set on {best.date}</div>
-                      </>
-                    ) : (
-                      <div className="mt-3 text-sm text-white/50">No high score yet.</div>
-                    )}
+                      ) : null}
+                    </div>
                   </div>
                 );
               })}
