@@ -22,9 +22,13 @@ export const metadata: Metadata = {
   },
   description: "Play AFL games, live scores, and more on Coco Footy",
   icons: {
-    icon: "/favicon.ico",
-    shortcut: "/favicon.ico",
-    apple: "/favicon.ico",
+    icon: [
+      { url: "/icon.png", type: "image/png", sizes: "512x512" },
+      { url: "/favicon.ico", sizes: "any" },
+    ],
+    apple: [
+      { url: "/icon.png", sizes: "180x180" },
+    ],
   },
 };
 
@@ -40,6 +44,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        {/* extra fallback for browsers + Google */}
+        <link rel="icon" href="/icon.png" type="image/png" />
+      </head>
+
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <Script
           id="adsense-script"
@@ -48,6 +57,7 @@ export default function RootLayout({
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-227605014767400"
           crossOrigin="anonymous"
         />
+
         <TopBar />
         {children}
         <Analytics />
