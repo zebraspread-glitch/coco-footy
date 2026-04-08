@@ -9,6 +9,8 @@ export default function LoginPage() {
         routing="path"
         path="/login"
         signUpUrl="/sign-up"
+        fallbackRedirectUrl="/"
+        forceRedirectUrl="/"
       />
     </main>
   );

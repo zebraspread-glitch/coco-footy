@@ -153,9 +153,16 @@ export default function HigherOrLowerUnlimitedPage() {
         setStreak(newStreak);
 
         if (newStreak > bestStreak) {
-          setBestStreak(newStreak);
-          localStorage.setItem("higher_or_lower_best", String(newStreak));
-        }
+  setBestStreak(newStreak);
+
+  localStorage.setItem("higher_or_lower_best", String(newStreak));
+
+  // My Stats key
+  localStorage.setItem(
+    "coco_hol_unlimited_high_score",
+    String(newStreak)
+  );
+}
 
         startNewRound(nextPlayer);
       } else {

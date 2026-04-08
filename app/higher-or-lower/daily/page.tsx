@@ -199,12 +199,17 @@ export default function HigherOrLowerDailyPage() {
   }, [index, score, finished, completed, loaded, storageKey]);
 
   function updateHighScore(newScore: number) {
-    setHighScore((prev) => {
-      const next = Math.max(prev, newScore);
-      localStorage.setItem(highScoreKey, String(next));
-      return next;
-    });
-  }
+  setHighScore((prev) => {
+    const next = Math.max(prev, newScore);
+
+    localStorage.setItem(highScoreKey, String(next));
+
+    // My Stats key
+    localStorage.setItem("coco_hol_daily_high_score", String(next));
+
+    return next;
+  });
+}
 
   const currentPlayer = dailyPlayers[index] ?? null;
   const nextPlayer = dailyPlayers[index + 1] ?? null;

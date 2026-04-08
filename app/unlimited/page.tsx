@@ -297,6 +297,21 @@ function getHighScoreKey(season: "2025" | "2026", mode: GameMode) {
   return "unlimited_highscore_2026_fantasy";
 }
 
+function getMyStatsUnlimitedKey(season: "2025" | "2026", mode: GameMode) {
+  if (season === "2025") {
+    if (mode === "goals") return "coco_unlimited_2025_goals";
+    if (mode === "disposals") return "coco_unlimited_2025_disposals";
+    if (mode === "bounces") return "coco_unlimited_2025_bounces";
+    return "coco_unlimited_2025_fantasy";
+  }
+
+  if (mode === "sc") return "coco_unlimited_2026_sc";
+  if (mode === "goals") return "coco_unlimited_2026_goals";
+  if (mode === "disposals") return "coco_unlimited_2026_disposals";
+  if (mode === "bounces") return "coco_unlimited_2026_bounces";
+  return "coco_unlimited_2026_fantasy";
+}
+
 function getAllHighScoreEntries(): HighScoreEntry[] {
   const entries: Array<Omit<HighScoreEntry, "value">> = [
     {
@@ -602,13 +617,21 @@ function UnlimitedDraftPageInner() {
   }, [season, mode]);
 
   useEffect(() => {
-    if (currentScore > highScore) {
-      setHighScore(currentScore);
-      try {
-        localStorage.setItem(getHighScoreKey(season, mode), String(currentScore));
-      } catch {}
-    }
-  }, [currentScore, highScore, season, mode]);
+  if (currentScore > highScore) {
+    setHighScore(currentScore);
+
+    try {
+      // existing Unlimited key
+      localStorage.setItem(getHighScoreKey(season, mode), String(currentScore));
+
+      // My Stats key
+      localStorage.setItem(
+        getMyStatsUnlimitedKey(season, mode),
+        String(currentScore)
+      );
+    } catch {}
+  }
+}, [currentScore, highScore, season, mode]);
 
   const refreshAllHighScores = () => {
     setAllHighScores(getAllHighScoreEntries());

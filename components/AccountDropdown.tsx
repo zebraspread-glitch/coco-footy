@@ -2,27 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-
-type User = {
-  email: string;
-  username: string;
-};
-
-const LS_USER = "coco_user";
-
-function loadUser(): User | null {
-  try {
-    const raw = localStorage.getItem(LS_USER);
-    if (!raw) return null;
-
-    const u = JSON.parse(raw) as User;
-    if (!u?.username) return null;
-
-    return u;
-  } catch {
-    return null;
-  }
-}
+import { SignOutButton, useUser } from "@clerk/nextjs";
 
 export default function AccountDropdown({
   statsHref = "/mystats",
@@ -30,16 +10,11 @@ export default function AccountDropdown({
   statsHref?: string;
 }) {
   const router = useRouter();
-  const [user, setUser] = useState<User | null>(null);
+  const { user, isLoaded, isSignedIn } = useUser();
   const [open, setOpen] = useState(false);
   const boxRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    setUser(loadUser());
-
-    const onStorage = () => setUser(loadUser());
-    window.addEventListener("storage", onStorage);
-
     const onClickOutside = (e: MouseEvent) => {
       if (!boxRef.current) return;
       if (!boxRef.current.contains(e.target as Node)) {
@@ -50,17 +25,26 @@ export default function AccountDropdown({
     document.addEventListener("mousedown", onClickOutside);
 
     return () => {
-      window.removeEventListener("storage", onStorage);
       document.removeEventListener("mousedown", onClickOutside);
     };
   }, []);
 
-  if (!user) {
+  if (!isLoaded) {
+    return (
+      <div ref={boxRef} className="relative">
+        <div className="flex items-center gap-2 rounded-xl border border-white/15 bg-black/30 px-4 py-2 text-sm font-extrabold text-white/60">
+          Loading...
+        </div>
+      </div>
+    );
+  }
+
+  if (!isSignedIn) {
     return (
       <div ref={boxRef} className="relative">
         <button
           onClick={() => router.push("/login")}
-          className="flex items-center gap-2 rounded-xl border border-white/15 bg-black/30 px-4 py-2 text-sm font-extrabold text-white/90 transition hover:border-white/30"
+          className="flex items-center gap-2 rounded-xl border border-white/15 bg-black/30 px-4 py-2 text-sm font-extrabold text-white/90 transition hover:border-white/30 hover:bg-black/40"
         >
           Sign in
           <span className="text-white/60">→</span>
@@ -69,31 +53,44 @@ export default function AccountDropdown({
     );
   }
 
+  const displayName =
+    user.username ||
+    user.firstName ||
+    user.primaryEmailAddress?.emailAddress ||
+    "Account";
+
   return (
     <div ref={boxRef} className="relative">
       <button
         onClick={() => setOpen((v) => !v)}
-        className="flex items-center gap-2 rounded-xl border border-white/15 bg-black/30 px-4 py-2 text-sm font-extrabold text-white/90 transition hover:border-white/30"
+        className="flex items-center gap-2 rounded-xl border border-white/15 bg-black/30 px-4 py-2 text-sm font-extrabold text-white/90 transition hover:border-white/30 hover:bg-black/40"
       >
-        <span className="max-w-[180px] truncate">{user.username}</span>
+        <span className="max-w-[180px] truncate">{displayName}</span>
         <span className={`text-white/60 transition ${open ? "rotate-180" : ""}`}>
           ▾
         </span>
       </button>
 
       {open && (
-        <div className="absolute right-0 mt-2 w-44 overflow-hidden rounded-xl border border-white/15 bg-zinc-950 shadow-lg">
+        <div className="absolute right-0 mt-2 w-48 overflow-hidden rounded-xl border border-white/15 bg-zinc-950 shadow-lg">
           <button
             onClick={() => {
-              localStorage.removeItem(LS_USER);
-              setUser(null);
               setOpen(false);
-              router.push("/");
+              router.push(statsHref);
             }}
-            className="w-full px-4 py-3 text-left text-sm text-white/85 hover:bg-white/5"
+            className="w-full px-4 py-3 text-left text-sm text-white/85 transition hover:bg-white/5"
           >
-            Sign Out
+            My Stats
           </button>
+
+          <SignOutButton redirectUrl="/">
+            <button
+              onClick={() => setOpen(false)}
+              className="w-full px-4 py-3 text-left text-sm text-white/85 transition hover:bg-white/5"
+            >
+              Sign Out
+            </button>
+          </SignOutButton>
         </div>
       )}
     </div>

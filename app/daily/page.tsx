@@ -361,9 +361,13 @@ export default function DailyPage() {
   const MIN_DATE = "2026-01-01";
 
   const LS_DAILY_LOCK_PREFIX = "coco_daily_lock_2026:";
-  const LS_PERSONAL_BESTS = "coco_daily_personal_bests_2026";
-  const LS_GAMES_PLAYED = "coco_daily_games_played_2026";
-  const LS_BG_MODE = "coco_daily_background_mode_2026";
+const LS_PERSONAL_BESTS = "coco_daily_personal_bests_2026";
+const LS_GAMES_PLAYED = "coco_daily_games_played_2026";
+const LS_BG_MODE = "coco_daily_background_mode_2026";
+
+// My Stats shared keys
+const LS_MYSTATS_DAILY_GAMES_PLAYED = "coco_daily_games_played";
+const LS_MYSTATS_DAILY_HIGHEST_SCORE = "coco_daily_highest_score";
 
   const initialSelectedDate = todayKey < MIN_DATE ? MIN_DATE : todayKey;
 
@@ -496,26 +500,50 @@ export default function DailyPage() {
 
     if (isLiveToday) {
       setGamesPlayed((prev) => {
-        const next = prev + 1;
-        saveJSON(LS_GAMES_PLAYED, next);
-        return next;
-      });
+  const next = prev + 1;
+  saveJSON(LS_GAMES_PLAYED, next);
+
+  // My Stats
+  if (typeof window !== "undefined") {
+    window.localStorage.setItem(LS_MYSTATS_DAILY_GAMES_PLAYED, String(next));
+  }
+
+  return next;
+});
 
       const score = sumPoints(team, getPlayerById);
 
       setPersonalBests((prev) => {
-        const currentBest = prev[dailyStat.key];
-        const shouldReplace = !currentBest || score > currentBest.score;
-        if (!shouldReplace) return prev;
+  const currentBest = prev[dailyStat.key];
+  const shouldReplace = !currentBest || score > currentBest.score;
 
-        const next: PersonalBestMap = {
-          ...prev,
-          [dailyStat.key]: { score, date: todayKey },
-        };
+  const next: PersonalBestMap = shouldReplace
+    ? {
+        ...prev,
+        [dailyStat.key]: { score, date: todayKey },
+      }
+    : prev;
 
-        saveJSON(LS_PERSONAL_BESTS, next);
-        return next;
-      });
+  if (shouldReplace) {
+    saveJSON(LS_PERSONAL_BESTS, next);
+  }
+
+  // My Stats overall Daily Challenge highest score
+  if (typeof window !== "undefined") {
+    const currentOverall = Number(
+      window.localStorage.getItem(LS_MYSTATS_DAILY_HIGHEST_SCORE) ?? "0"
+    );
+
+    if (score > currentOverall) {
+      window.localStorage.setItem(
+        LS_MYSTATS_DAILY_HIGHEST_SCORE,
+        String(score)
+      );
+    }
+  }
+
+  return next;
+});
     }
   }, [gameOver, isLockedToday, isLiveToday, lockKey, team, dailyStat.key, todayKey]);
 

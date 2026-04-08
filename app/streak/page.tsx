@@ -110,10 +110,18 @@ export default function StreakPage() {
   }, []);
 
   function saveBest(nextBest: number) {
-    const key = `coco_streak_best_${todayKey()}`;
-    localStorage.setItem(key, String(nextBest));
-    setBest(nextBest);
+  const dailyKey = `coco_streak_best_${todayKey()}`;
+  localStorage.setItem(dailyKey, String(nextBest));
+  setBest(nextBest);
+
+  // ✅ NEW: save all-time highest streak
+  const allTimeKey = "coco_streak_highest";
+  const currentAllTime = Number(localStorage.getItem(allTimeKey) ?? "0");
+
+  if (nextBest > currentAllTime) {
+    localStorage.setItem(allTimeKey, String(nextBest));
   }
+}
 
   function normalizeClub(club?: string | null) {
     if (!club) return "";
