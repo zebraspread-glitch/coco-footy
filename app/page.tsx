@@ -449,7 +449,7 @@ export default function Home() {
           backgroundClassName="bg-[linear-gradient(180deg,rgba(12,24,56,0.95)_0%,rgba(8,14,32,0.98)_100%)]"
         />
 
-        <FeatureBanner
+                <FeatureBanner
           href={seasonHref("/higher-or-lower")}
           title="HIGHER OR LOWER"
           desc="Guess if the next player has higher or lower stats."
@@ -459,6 +459,16 @@ export default function Home() {
           badge="NEW"
           backgroundClassName="bg-[linear-gradient(180deg,rgba(12,24,56,0.95)_0%,rgba(8,14,32,0.98)_100%)]"
         />
+
+        <FeatureBanner
+  href={seasonHref("/leaderboard")}
+  title="GLOBAL LEADERBOARD"
+  desc="See the best Coco Footy players in the world and climb the rankings."
+  cta="VIEW LEADERBOARD"
+  icon={<Trophy className="h-6 w-6" />}
+  primaryColor={primaryColor}
+  badge="NEW"
+/>
 
         <div className="mt-6">
           <div className="mb-3 text-left">

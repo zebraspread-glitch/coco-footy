@@ -7,6 +7,8 @@ import goals2025 from "../data/public/afl_goals.json";
 import disposals2025 from "../data/public/afl_disposals.json";
 import bounces2025 from "../data/public/afl_bounces.json";
 import players2026 from "../data/public/afl_players26.json";
+import { createClient } from "@/lib/supabase/client";
+import { useUser } from "@clerk/nextjs";
 
 /** ================= Types ================= */
 type PlayerPos = "FWD" | "MID" | "DEF" | "RUCK";
@@ -606,6 +608,39 @@ function UnlimitedDraftPageInner() {
   /** ===== High score (localStorage) ===== */
   const [highScore, setHighScore] = useState<number>(0);
 
+  const supabase = useMemo(() => createClient(), []);
+const { user } = useUser();
+
+async function saveGlobalScore(score: number) {
+  if (!user) return;
+
+  const username =
+    user.username ||
+    user.firstName ||
+    user.primaryEmailAddress?.emailAddress ||
+    "Anonymous";
+
+  const { error } = await supabase
+    .from("global_scores")
+    .upsert(
+      {
+        user_id: user.id,
+        username,
+        mode: `unlimited_${mode}`, // 🔥 important (dynamic mode)
+        season: Number(season),
+        score,
+        updated_at: new Date().toISOString(),
+      },
+      {
+        onConflict: "user_id,mode,season",
+      }
+    );
+
+  if (error) {
+    console.error("Supabase save error:", error);
+  }
+}
+
   useEffect(() => {
     try {
       const key = getHighScoreKey(season, mode);
@@ -617,21 +652,20 @@ function UnlimitedDraftPageInner() {
   }, [season, mode]);
 
   useEffect(() => {
-  if (currentScore > highScore) {
-    setHighScore(currentScore);
+  if (currentScore <= highScore) return;
 
-    try {
-      // existing Unlimited key
-      localStorage.setItem(getHighScoreKey(season, mode), String(currentScore));
+  setHighScore(currentScore);
 
-      // My Stats key
-      localStorage.setItem(
-        getMyStatsUnlimitedKey(season, mode),
-        String(currentScore)
-      );
-    } catch {}
-  }
-}, [currentScore, highScore, season, mode]);
+  try {
+    localStorage.setItem(getHighScoreKey(season, mode), String(currentScore));
+    localStorage.setItem(
+      getMyStatsUnlimitedKey(season, mode),
+      String(currentScore)
+    );
+  } catch {}
+
+  void saveGlobalScore(currentScore);
+}, [currentScore, highScore, season, mode, user]);
 
   const refreshAllHighScores = () => {
     setAllHighScores(getAllHighScoreEntries());
