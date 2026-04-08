@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { ClerkProvider } from "@clerk/nextjs";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import TopBar from "./components/TopBar";
@@ -22,13 +23,9 @@ export const metadata: Metadata = {
   },
   description: "Play AFL games, live scores, and more on Coco Footy",
   icons: {
-    icon: [
-      { url: "/icon.png", type: "image/png", sizes: "512x512" },
-      { url: "/favicon.ico", sizes: "any" },
-    ],
-    apple: [
-      { url: "/icon.png", sizes: "180x180" },
-    ],
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+    apple: "/icon.png",
   },
 };
 
@@ -43,25 +40,24 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <head>
-        {/* extra fallback for browsers + Google */}
-        <link rel="icon" href="/icon.png" type="image/png" />
-      </head>
+    <ClerkProvider>
+      <html lang="en">
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        >
+          <Script
+            id="adsense-script"
+            async
+            strategy="afterInteractive"
+            src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-227605014767400"
+            crossOrigin="anonymous"
+          />
 
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <Script
-          id="adsense-script"
-          async
-          strategy="afterInteractive"
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-227605014767400"
-          crossOrigin="anonymous"
-        />
-
-        <TopBar />
-        {children}
-        <Analytics />
-      </body>
-    </html>
+          <TopBar />
+          {children}
+          <Analytics />
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }
