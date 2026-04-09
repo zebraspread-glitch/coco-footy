@@ -188,6 +188,19 @@ function getAvailableModes(season: "2025" | "2026"): GameMode[] {
   return ["fantasy", "goals", "disposals", "bounces"];
 }
 
+function getSlotsForMode(mode: GameMode): Slot[] {
+  if (mode === "bounces") {
+    return SLOTS.filter((slot) => slot.id !== "ruck");
+  }
+  return SLOTS;
+}
+
+function createEmptyTeamForMode(mode: GameMode): Record<string, string | null> {
+  return Object.fromEntries(
+    getSlotsForMode(mode).map((slot) => [slot.id, null])
+  ) as Record<string, string | null>;
+}
+
 function isModeAllowedForSeason(
   season: "2025" | "2026",
   mode: string | null
@@ -526,12 +539,7 @@ function UnlimitedDraftPageInner() {
   return (players2025 as Player[]).filter((p) => p.points > 0);
 }, [season, mode]);
 
-    const slots = useMemo(() => {
-    if (mode === "bounces") {
-      return SLOTS.filter((slot) => slot.id !== "ruck");
-    }
-    return SLOTS;
-  }, [mode]);
+  const slots = useMemo(() => getSlotsForMode(mode), [mode]);
 
   const SPIN_CLUBS = useMemo(() => {
   const clubs = clampClubsToPlayers(AFL_CLUBS, ALL_PLAYERS);
@@ -550,8 +558,8 @@ function UnlimitedDraftPageInner() {
 
   const [search, setSearch] = useState("");
 
-    const [team, setTeam] = useState<Record<string, string | null>>(
-    Object.fromEntries(SLOTS.map((s) => [s.id, null]))
+  const [team, setTeam] = useState<Record<string, string | null>>(
+    () => createEmptyTeamForMode(mode)
   );
 
   useEffect(() => {
@@ -560,7 +568,7 @@ function UnlimitedDraftPageInner() {
     const firstClub = SPIN_CLUBS[0] ?? AFL_CLUBS[0];
     setClub(firstClub);
     setDisplayClub(firstClub);
-        setTeam(Object.fromEntries(SLOTS.map((s) => [s.id, null])));
+        setTeam(createEmptyTeamForMode(mode));
     setActive(null);
     setSearch("");
     setSpinning(false);
@@ -624,9 +632,22 @@ function UnlimitedDraftPageInner() {
   const [highScore, setHighScore] = useState<number>(0);
 
   const supabase = useMemo(() => {
-  if (typeof window === "undefined") return null;
-  return createClient();
-}, []);
+    if (typeof window === "undefined") return null;
+
+    try {
+      if (
+        !process.env.NEXT_PUBLIC_SUPABASE_URL ||
+        !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+      ) {
+        return null;
+      }
+
+      return createClient();
+    } catch (error) {
+      console.error("Supabase client init error:", error);
+      return null;
+    }
+  }, []);
 
 const { user } = useUser();
 
@@ -639,23 +660,27 @@ async function saveGlobalScore(score: number) {
     user.primaryEmailAddress?.emailAddress ||
     "Anonymous";
 
-  const { error } = await supabase
-    .from("global_scores")
-    .upsert(
-      {
-        user_id: user.id,
-        username,
-        mode: `unlimited_${mode}`, // 🔥 important (dynamic mode)
-        season: Number(season),
-        score,
-        updated_at: new Date().toISOString(),
-      },
-      {
-        onConflict: "user_id,mode,season",
-      }
-    );
+  try {
+    const { error } = await supabase
+      .from("global_scores")
+      .upsert(
+        {
+          user_id: user.id,
+          username,
+          mode: `unlimited_${mode}`,
+          season: Number(season),
+          score,
+          updated_at: new Date().toISOString(),
+        },
+        {
+          onConflict: "user_id,mode,season",
+        }
+      );
 
-  if (error) {
+    if (error) {
+      console.error("Supabase save error:", error);
+    }
+  } catch (error) {
     console.error("Supabase save error:", error);
   }
 }
@@ -843,7 +868,7 @@ async function saveGlobalScore(score: number) {
     setSpinning(false);
     setActive(null);
     setSearch("");
-        setTeam(Object.fromEntries(SLOTS.map((s) => [s.id, null])));
+        setTeam(createEmptyTeamForMode(mode));
 
     const firstClub = SPIN_CLUBS[0] ?? AFL_CLUBS[0];
     setClub(firstClub);
