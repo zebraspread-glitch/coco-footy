@@ -507,18 +507,24 @@ function UnlimitedDraftPageInner() {
   };
 
   const ALL_PLAYERS: Player[] = useMemo(() => {
-    if (season === "2026") {
-      return normalize2026Players(players2026, mode);
+  if (season === "2026") {
+    const players = normalize2026Players(players2026, mode);
+
+    // 🔥 CRITICAL FIX: fallback if empty
+    if (players.length === 0) {
+      console.warn("⚠️ 2026 players empty, using fallback");
+      return normalize2026Players(players2026, "fantasy");
     }
 
-    if (mode === "goals") return (goals2025 as Player[]).filter((p) => p.points > 0);
-    if (mode === "disposals") {
-      return (disposals2025 as Player[]).filter((p) => p.points > 0);
-    }
-    if (mode === "bounces") return (bounces2025 as Player[]).filter((p) => p.points > 0);
+    return players;
+  }
 
-    return (players2025 as Player[]).filter((p) => p.points > 0);
-  }, [season, mode]);
+  if (mode === "goals") return (goals2025 as Player[]).filter((p) => p.points > 0);
+  if (mode === "disposals") return (disposals2025 as Player[]).filter((p) => p.points > 0);
+  if (mode === "bounces") return (bounces2025 as Player[]).filter((p) => p.points > 0);
+
+  return (players2025 as Player[]).filter((p) => p.points > 0);
+}, [season, mode]);
 
     const slots = useMemo(() => {
     if (mode === "bounces") {
@@ -527,10 +533,10 @@ function UnlimitedDraftPageInner() {
     return SLOTS;
   }, [mode]);
 
-  const SPIN_CLUBS = useMemo(
-    () => clampClubsToPlayers(AFL_CLUBS, ALL_PLAYERS),
-    [ALL_PLAYERS]
-  );
+  const SPIN_CLUBS = useMemo(() => {
+  const clubs = clampClubsToPlayers(AFL_CLUBS, ALL_PLAYERS);
+  return clubs.length > 0 ? clubs : AFL_CLUBS;
+}, [ALL_PLAYERS]);
 
   const [club, setClub] = useState<ClubMeta>(AFL_CLUBS[0]);
   const [displayClub, setDisplayClub] = useState<ClubMeta>(AFL_CLUBS[0]);
@@ -700,38 +706,45 @@ async function saveGlobalScore(score: number) {
   }
 
   function spinToRandomClub() {
-    if (gameOver) return;
-    if (spinning || SPIN_CLUBS.length === 0) return;
+  if (gameOver) return;
 
-    setSpinning(true);
-    setActive(null);
-    setSearch("");
+  // 🔥 HARD SAFETY
+  if (spinning || SPIN_CLUBS.length <= 1) {
+    const fallback = SPIN_CLUBS[0] ?? AFL_CLUBS[0];
+    setClub(fallback);
+    setDisplayClub(fallback);
+    setSpinning(false);
+    return;
+  }
 
-    let i = 0;
+  setSpinning(true);
+  setActive(null);
+  setSearch("");
+
+  let i = 0;
+  cleanupSpinTimers();
+
+  spinTimer.current = window.setInterval(() => {
+    i = (i + 1) % SPIN_CLUBS.length;
+    setDisplayClub(SPIN_CLUBS[i]);
+  }, 60);
+
+  spinTimeout.current = window.setTimeout(() => {
     cleanupSpinTimers();
 
-    spinTimer.current = window.setInterval(() => {
-      i = (i + 1) % SPIN_CLUBS.length;
-      setDisplayClub(SPIN_CLUBS[i]);
-    }, 60);
+    let final = SPIN_CLUBS[0];
 
-    spinTimeout.current = window.setTimeout(() => {
-      cleanupSpinTimers();
+    // 🔥 SAFE RANDOM (no infinite loop risk)
+    const available = SPIN_CLUBS.filter((c) => c.name !== club.name);
+    if (available.length > 0) {
+      final = available[Math.floor(Math.random() * available.length)];
+    }
 
-      let final = club;
-      if (SPIN_CLUBS.length > 1) {
-        do {
-          final = SPIN_CLUBS[Math.floor(Math.random() * SPIN_CLUBS.length)];
-        } while (final.name === club.name);
-      } else {
-        final = SPIN_CLUBS[0];
-      }
-
-      setClub(final);
-      setDisplayClub(final);
-      setSpinning(false);
-    }, 1200);
-  }
+    setClub(final);
+    setDisplayClub(final);
+    setSpinning(false);
+  }, 1200);
+}
 
   useEffect(() => {
     if (!seasonReady) return;
