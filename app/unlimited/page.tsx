@@ -397,104 +397,9 @@ function getAllHighScoreEntries(): HighScoreEntry[] {
   });
 }
 
-function makeEmptyTeam(slots: Slot[]) {
-  return Object.fromEntries(slots.map((s) => [s.id, null])) as Record<
-    string,
-    string | null
-  >;
-}
-
-function TeamSlots({
-  slots,
-  team,
-  getPlayerById,
-  clubs,
-  statLabel,
-  enabled,
-  onOpen,
-}: {
-  slots: Slot[];
-  team: Record<string, string | null>;
-  getPlayerById: (id: string | null) => Player | null;
-  clubs: ClubMeta[];
-  statLabel: string;
-  enabled: boolean;
-  onOpen: (slot: Slot) => void;
-}) {
-  return (
-    <div className="space-y-3">
-      {slots.map((slot) => {
-        const p = getPlayerById(team[slot.id]);
-        const clubMeta = clubForPlayer(clubs, p);
-
-        const isFilled = Boolean(p);
-        const clickable = enabled && !isFilled;
-
-        let badgeClass =
-          "bg-white/10 text-white border border-white/15 backdrop-blur-md";
-
-        if (isFilled && clubMeta) {
-          badgeClass = "border border-white/20";
-        }
-
-        return (
-          <div key={slot.id} className="flex items-stretch gap-2 sm:gap-3">
-            <div
-              className={`w-14 sm:w-20 shrink-0 rounded-lg font-extrabold text-center text-xs sm:text-sm py-2.5 px-1 shadow-[0_8px_22px_rgba(0,0,0,0.2)] ${badgeClass}`}
-              style={
-                isFilled && clubMeta
-                  ? { backgroundColor: clubMeta.primary, color: clubMeta.text }
-                  : undefined
-              }
-            >
-              {slot.label}
-            </div>
-
-            <button
-              className={`flex-1 border border-white/60 rounded-xl px-3 sm:px-4 text-left transition flex min-h-[56px] items-center justify-between gap-2 ${
-                clickable ? "hover:brightness-110" : "cursor-not-allowed"
-              }`}
-              style={
-                p && clubMeta
-                  ? {
-                      backgroundImage: `url(${patternUrlForClub(clubMeta.name)})`,
-                      backgroundSize: "cover",
-                      backgroundPosition: "center",
-                      backgroundRepeat: "no-repeat",
-                      color: clubMeta.text,
-                      borderColor: "rgba(255,255,255,0.30)",
-                    }
-                  : { backgroundColor: "rgba(0,0,0,0.30)" }
-              }
-              onClick={() => onOpen(slot)}
-              disabled={!clickable}
-              title={isFilled ? "Locked (cannot be replaced)" : undefined}
-            >
-              <span
-                className={`block min-w-0 truncate text-sm sm:text-base ${
-                  p ? "font-extrabold" : "font-extrabold text-white/80"
-                }`}
-              >
-                {p ? p.name : `+ Select ${slot.label}`}
-              </span>
-
-              {p?.points != null && (
-                <span className="ml-2 shrink-0 whitespace-nowrap font-extrabold px-2.5 py-1 rounded-lg bg-black/45 text-[11px] sm:text-sm text-white backdrop-blur-md border border-white/15">
-                  {formatStatValue(p.points, statLabel)} {statLabel}
-                </span>
-              )}
-            </button>
-          </div>
-        );
-      })}
-    </div>
-  );
-}
-
 function UnlimitedDraftPageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { user } = useUser();
 
   const [season, setSeason] = useState<"2025" | "2026">("2025");
   const [seasonReady, setSeasonReady] = useState(false);
@@ -606,7 +511,7 @@ function UnlimitedDraftPageInner() {
     return (players2025 as Player[]).filter((p) => p.points > 0);
   }, [season, mode]);
 
-  const slots = useMemo(() => {
+    const slots = useMemo(() => {
     if (mode === "bounces") {
       return SLOTS.filter((slot) => slot.id !== "ruck");
     }
@@ -630,8 +535,8 @@ function UnlimitedDraftPageInner() {
 
   const [search, setSearch] = useState("");
 
-  const [team, setTeam] = useState<Record<string, string | null>>(
-    makeEmptyTeam(SLOTS)
+    const [team, setTeam] = useState<Record<string, string | null>>(
+    Object.fromEntries(SLOTS.map((s) => [s.id, null]))
   );
 
   useEffect(() => {
@@ -640,11 +545,11 @@ function UnlimitedDraftPageInner() {
     const firstClub = SPIN_CLUBS[0] ?? AFL_CLUBS[0];
     setClub(firstClub);
     setDisplayClub(firstClub);
-    setTeam(makeEmptyTeam(slots));
+        setTeam(Object.fromEntries(SLOTS.map((s) => [s.id, null])));
     setActive(null);
     setSearch("");
     setSpinning(false);
-  }, [season, mode, SPIN_CLUBS, seasonReady, slots]);
+  }, [season, mode, SPIN_CLUBS, seasonReady]);
 
   const getPlayerById = (pid: string | null) => {
     if (!pid) return null;
@@ -676,7 +581,7 @@ function UnlimitedDraftPageInner() {
       .sort((a, b) => a.name.localeCompare(b.name));
   }, [active, clubPlayers, pickedIds, search]);
 
-  const emptySlots = useMemo(
+      const emptySlots = useMemo(
     () => slots.filter((slot) => !team[slot.id]),
     [team, slots]
   );
@@ -697,49 +602,44 @@ function UnlimitedDraftPageInner() {
 
   const currentScore = useMemo(() => sumPoints(team, getPlayerById), [team, ALL_PLAYERS]);
 
-  const allFilled = useMemo(() => slots.every((s) => Boolean(team[s.id])), [team, slots]);
+    const allFilled = useMemo(() => slots.every((s) => Boolean(team[s.id])), [team, slots]);
   const gameOver = allFilled;
 
   /** ===== High score (localStorage) ===== */
   const [highScore, setHighScore] = useState<number>(0);
 
-  const supabase = useMemo(() => {
-    try {
-      return createClient();
-    } catch {
-      return null;
-    }
-  }, []);
+  const supabase = useMemo(() => createClient(), []);
+const { user } = useUser();
 
-  async function saveGlobalScore(score: number) {
-    if (!user || !supabase) return;
+async function saveGlobalScore(score: number) {
+  if (!user) return;
 
-    const username =
-      user.username ||
-      user.firstName ||
-      user.primaryEmailAddress?.emailAddress ||
-      "Anonymous";
+  const username =
+    user.username ||
+    user.firstName ||
+    user.primaryEmailAddress?.emailAddress ||
+    "Anonymous";
 
-    const { error } = await supabase
-      .from("global_scores")
-      .upsert(
-        {
-          user_id: user.id,
-          username,
-          mode: `unlimited_${mode}`,
-          season: Number(season),
-          score,
-          updated_at: new Date().toISOString(),
-        },
-        {
-          onConflict: "user_id,mode,season",
-        }
-      );
+  const { error } = await supabase
+    .from("global_scores")
+    .upsert(
+      {
+        user_id: user.id,
+        username,
+        mode: `unlimited_${mode}`, // 🔥 important (dynamic mode)
+        season: Number(season),
+        score,
+        updated_at: new Date().toISOString(),
+      },
+      {
+        onConflict: "user_id,mode,season",
+      }
+    );
 
-    if (error) {
-      console.error("Supabase save error:", error);
-    }
+  if (error) {
+    console.error("Supabase save error:", error);
   }
+}
 
   useEffect(() => {
     try {
@@ -752,20 +652,20 @@ function UnlimitedDraftPageInner() {
   }, [season, mode]);
 
   useEffect(() => {
-    if (currentScore <= highScore) return;
+  if (currentScore <= highScore) return;
 
-    setHighScore(currentScore);
+  setHighScore(currentScore);
 
-    try {
-      localStorage.setItem(getHighScoreKey(season, mode), String(currentScore));
-      localStorage.setItem(
-        getMyStatsUnlimitedKey(season, mode),
-        String(currentScore)
-      );
-    } catch {}
+  try {
+    localStorage.setItem(getHighScoreKey(season, mode), String(currentScore));
+    localStorage.setItem(
+      getMyStatsUnlimitedKey(season, mode),
+      String(currentScore)
+    );
+  } catch {}
 
-    void saveGlobalScore(currentScore);
-  }, [currentScore, highScore, season, mode, user, supabase]);
+  void saveGlobalScore(currentScore);
+}, [currentScore, highScore, season, mode, user]);
 
   const refreshAllHighScores = () => {
     setAllHighScores(getAllHighScoreEntries());
@@ -829,6 +729,7 @@ function UnlimitedDraftPageInner() {
     spinToRandomClub();
 
     return () => cleanupSpinTimers();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [SPIN_CLUBS, seasonReady]);
 
   useEffect(() => {
@@ -843,6 +744,7 @@ function UnlimitedDraftPageInner() {
     }, 50);
 
     return () => window.clearTimeout(timeout);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [season, mode, seasonReady]);
 
   useEffect(() => {
@@ -853,7 +755,7 @@ function UnlimitedDraftPageInner() {
     setSearch("");
   }, [gameOver]);
 
-  useEffect(() => {
+    useEffect(() => {
     if (!active) return;
     if (spinning) return;
     if (gameOver) return;
@@ -871,15 +773,11 @@ function UnlimitedDraftPageInner() {
     }
   }, [active, spinning, gameOver, eligiblePlayers, clubHasAnyValidPick]);
 
-  useEffect(() => {
-    return () => cleanupSpinTimers();
-  }, []);
-
   function slotIsFilled(slotId: string) {
     return Boolean(team[slotId]);
   }
 
-  function onOpen(slot: Slot) {
+    function onOpen(slot: Slot) {
     if (gameOver) return;
     if (spinning) return;
     if (slotIsFilled(slot.id)) return;
@@ -919,7 +817,7 @@ function UnlimitedDraftPageInner() {
     setSpinning(false);
     setActive(null);
     setSearch("");
-    setTeam(makeEmptyTeam(slots));
+        setTeam(Object.fromEntries(SLOTS.map((s) => [s.id, null])));
 
     const firstClub = SPIN_CLUBS[0] ?? AFL_CLUBS[0];
     setClub(firstClub);
@@ -1068,211 +966,295 @@ function UnlimitedDraftPageInner() {
                     <span className="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-none text-white">
                       {formatStatValue(currentScore, unit)}
                     </span>
-                    <span className="pb-2 text-sm font-bold tracking-[0.24em] text-white/55">
+                    <span className="pb-2 text-sm font-bold tracking-[0.16em] text-white/40">
                       {unit}
                     </span>
-                  </div>
-
-                  <div className="mt-3 text-sm text-white/60">
-                    {modeTitle(mode)}
                   </div>
                 </div>
               </div>
 
-              <div className="relative border-t md:border-t-0 md:border-l border-white/10 px-4 py-5 sm:px-7 sm:py-7 md:py-8">
-                <div className="absolute inset-0 bg-gradient-to-bl from-white/[0.04] via-transparent to-transparent pointer-events-none" />
+              <div className="relative border-t border-white/10 md:border-t-0 md:border-l md:border-white/10 px-4 py-5 sm:px-7 sm:py-7 md:py-8">
+                <div className="absolute inset-0 bg-gradient-to-br from-white/[0.06] via-transparent to-transparent pointer-events-none" />
                 <div className="relative">
                   <div className="text-[11px] font-extrabold tracking-[0.28em] text-white/45">
                     HIGH SCORE
                   </div>
 
                   <div className="mt-4 flex items-end gap-2 flex-wrap">
-                    <span className="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-none text-white">
+                    <span className="bg-gradient-to-b from-[#fff7c2] via-[#f2cf63] to-[#c78a18] bg-clip-text text-4xl sm:text-5xl md:text-6xl font-extrabold leading-none text-transparent drop-shadow-[0_2px_14px_rgba(242,207,99,0.18)]">
                       {formatStatValue(highScore, unit)}
                     </span>
-                    <span className="pb-2 text-sm font-bold tracking-[0.24em] text-white/55">
+                    <span className="pb-2 text-sm font-bold tracking-[0.16em] text-[#d7bb67]">
                       {unit}
                     </span>
                   </div>
 
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    <button
-                      onClick={resetGame}
-                      className="rounded-xl border border-white/15 bg-white/8 px-4 py-2 text-sm font-extrabold text-white/90 hover:bg-white/12"
-                    >
-                      Restart
-                    </button>
-
-                    <button
-                      onClick={() => {
-                        setShowHighScores((prev) => {
-                          const next = !prev;
-                          if (!prev) refreshAllHighScores();
-                          return next;
-                        });
-                      }}
-                      className="rounded-xl border border-white/15 bg-white/8 px-4 py-2 text-sm font-extrabold text-white/90 hover:bg-white/12"
-                    >
-                      {showHighScores ? "Hide High Scores" : "High Scores"}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {showHighScores && (
-          <div className="mt-6 rounded-[24px] border border-white/12 bg-[linear-gradient(135deg,rgba(255,255,255,0.09),rgba(255,255,255,0.03))] shadow-[0_20px_80px_rgba(0,0,0,0.35)] backdrop-blur-2xl p-4 sm:p-5">
-            <div className="text-sm sm:text-base font-extrabold tracking-[0.16em] text-white/70 mb-4">
-              ALL HIGH SCORES
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              {allHighScores.map((entry) => (
-                <div
-                  key={entry.key}
-                  className="rounded-2xl border border-white/10 bg-black/20 px-4 py-3"
-                >
-                  <div className="text-xs font-bold tracking-[0.16em] text-white/55">
-                    {entry.label.toUpperCase()}
-                  </div>
-                  <div className="mt-2 text-2xl font-extrabold text-white">
-                    {formatStatValue(entry.value, entry.unit)}
-                    <span className="ml-2 text-sm text-white/55">{entry.unit}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        <div className="mt-8 grid gap-6 lg:grid-cols-[1.08fr_0.92fr]">
-          <div className="rounded-[24px] sm:rounded-[30px] border border-white/12 bg-[linear-gradient(135deg,rgba(255,255,255,0.10),rgba(255,255,255,0.03))] shadow-[0_20px_80px_rgba(0,0,0,0.5)] backdrop-blur-2xl p-4 sm:p-5">
-            <div className="flex items-center justify-between gap-3">
-              <div>
-                <div className="text-[11px] font-extrabold tracking-[0.28em] text-white/45">
-                  YOUR TEAM
-                </div>
-                <div className="mt-2 text-xl sm:text-2xl font-extrabold text-white">
-                  Fill every slot
-                </div>
-              </div>
-
-              {gameOver && (
-                <div className="rounded-xl border border-emerald-400/30 bg-emerald-500/10 px-3 py-2 text-sm font-extrabold text-emerald-200">
-                  COMPLETE
-                </div>
-              )}
-            </div>
-
-            <div className="mt-5">
-              <TeamSlots
-                slots={slots}
-                team={team}
-                getPlayerById={getPlayerById}
-                clubs={AFL_CLUBS}
-                statLabel={unit}
-                enabled={!spinning && !gameOver}
-                onOpen={onOpen}
-              />
-            </div>
-          </div>
-
-          <div className="space-y-6">
-            <div className="rounded-[24px] sm:rounded-[30px] border border-white/12 bg-[linear-gradient(135deg,rgba(255,255,255,0.10),rgba(255,255,255,0.03))] shadow-[0_20px_80px_rgba(0,0,0,0.5)] backdrop-blur-2xl p-4 sm:p-5">
-              <div className="text-[11px] font-extrabold tracking-[0.28em] text-white/45">
-                CLUB
-              </div>
-
-              <div className="mt-5 flex justify-center">
-                <div
-                  className="w-full max-w-[260px] rounded-[28px] border border-white/12 p-5 text-center shadow-[0_20px_60px_rgba(0,0,0,0.35)]"
-                  style={{
-                    background:
-                      displayClub?.primary
-                        ? `linear-gradient(180deg, ${displayClub.primary}, rgba(0,0,0,0.75))`
-                        : "rgba(255,255,255,0.06)",
-                    color: displayClub?.text ?? "#fff",
-                  }}
-                >
-                  <div className="text-[11px] font-extrabold tracking-[0.28em] opacity-75">
-                    NOW DRAFTING FROM
-                  </div>
-                  <div className="mt-3 text-2xl sm:text-3xl font-extrabold leading-tight">
-                    {displayClub?.name ?? "Club"}
-                  </div>
-
                   <button
-                    onClick={spinToRandomClub}
-                    disabled={spinning || gameOver}
-                    className={`mt-5 w-full rounded-2xl px-4 py-3 text-sm font-extrabold transition ${
-                      spinning || gameOver
-                        ? "bg-black/30 text-white/50 border border-white/15 cursor-not-allowed"
-                        : "bg-black/25 text-white border border-white/20 hover:bg-black/35"
-                    }`}
+                    onClick={() => {
+                      refreshAllHighScores();
+                      setShowHighScores(true);
+                    }}
+                    className="mt-4 w-full sm:w-auto rounded-xl border border-white/15 bg-white/8 px-3 py-3 sm:py-2 text-sm font-bold text-white/85 transition hover:bg-white/12 hover:text-white hover:border-white/30"
                   >
-                    {spinning ? "Spinning..." : "Spin"}
+                    Show All High Scores
                   </button>
                 </div>
               </div>
             </div>
+          </div>
+        </div>
 
-            <div className="rounded-[24px] sm:rounded-[30px] border border-white/12 bg-[linear-gradient(135deg,rgba(255,255,255,0.10),rgba(255,255,255,0.03))] shadow-[0_20px_80px_rgba(0,0,0,0.5)] backdrop-blur-2xl p-4 sm:p-5">
-              <div className="text-[11px] font-extrabold tracking-[0.28em] text-white/45">
-                {active ? `${active.slotLabel} OPTIONS` : "PLAYER OPTIONS"}
-              </div>
+        {gameOver && (
+          <div className="mt-6 text-center px-2">
+            <div className="text-2xl sm:text-3xl font-extrabold tracking-[0.12em] sm:tracking-[0.14em] text-white">
+              RUN COMPLETE
+            </div>
+            <div className="mt-2 text-white/70 font-bold">
+              Final Score: {formatStatValue(currentScore, unit)} {unit}
+            </div>
 
-              {active ? (
-                <>
-                  <input
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    placeholder="Search players..."
-                    className="mt-4 w-full rounded-2xl border border-white/12 bg-black/20 px-4 py-3 text-white placeholder:text-white/40 outline-none"
-                  />
+            <button
+              className="mt-5 w-full sm:w-auto rounded-2xl border border-white/15 bg-white/10 px-5 py-3 text-white/90 backdrop-blur-md hover:bg-white/14 hover:border-white/30"
+              onClick={resetGame}
+            >
+              Play Again
+            </button>
+          </div>
+        )}
 
-                  <div className="mt-4 max-h-[420px] overflow-y-auto space-y-2 pr-1">
-                    {eligiblePlayers.length > 0 ? (
-                      eligiblePlayers.map((player) => (
-                        <button
-                          key={player.id}
-                          onClick={() => onPick(player.id)}
-                          className="w-full rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-left hover:bg-black/30 transition"
-                        >
-                          <div className="flex items-center justify-between gap-3">
-                            <div className="min-w-0">
-                              <div className="truncate text-sm sm:text-base font-extrabold text-white">
-                                {player.name}
-                              </div>
-                              <div className="mt-1 text-xs sm:text-sm text-white/55">
-                                {player.club} · {player.pos.join("/")}
-                              </div>
-                            </div>
+        <div className="mt-8">
+                    <SingleTeamColumn
+            clubs={AFL_CLUBS}
+            slots={slots}
+            selection={team}
+            getPlayer={getPlayerById}
+            onOpen={onOpen}
+            enabled={!gameOver && !spinning}
+            badgeClass={season === "2026" ? "bg-red-500 text-white" : "bg-blue-600 text-white"}
+            statLabel={unit}
+          />
+        </div>
 
-                            <div className="shrink-0 rounded-lg bg-black/45 border border-white/15 px-2.5 py-1 text-[11px] sm:text-sm font-extrabold text-white">
-                              {formatStatValue(player.points, unit)} {unit}
-                            </div>
-                          </div>
-                        </button>
-                      ))
-                    ) : (
-                      <div className="rounded-2xl border border-white/10 bg-black/20 px-4 py-6 text-sm text-white/55 text-center">
-                        No eligible players for this slot from {club.name}.
-                      </div>
-                    )}
-                  </div>
-                </>
-              ) : (
-                <div className="mt-4 rounded-2xl border border-white/10 bg-black/20 px-4 py-8 text-center text-white/55 text-sm">
-                  Select a slot on the left to see player options.
-                </div>
-              )}
+        <div className="mt-10 sm:mt-12 text-center">
+          <div className="text-xs sm:text-sm text-white/55 font-semibold tracking-[0.22em] sm:tracking-[0.28em]">DRAFTING FROM</div>
+
+          <div className="mt-4 sm:mt-5 flex items-center justify-center">
+            <div
+              className={`inline-flex w-full max-w-[320px] sm:w-auto items-center justify-center rounded-[22px] px-5 sm:px-10 py-4 font-extrabold text-base sm:text-xl select-none border border-white/10 shadow-[0_16px_50px_rgba(0,0,0,0.38)] ${
+                spinning ? "opacity-90 scale-[1.01]" : ""
+              }`}
+              style={{ backgroundColor: displayClub.primary, color: displayClub.text }}
+              title="Auto-spins after every pick"
+            >
+              {displayClub.name.toUpperCase()}
             </div>
           </div>
         </div>
       </div>
+
+      {active && (
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-3 sm:p-4">
+          <div className="absolute inset-0 bg-black/70" onClick={() => setActive(null)} />
+
+          <div className="relative w-full max-w-xl max-h-[85vh] overflow-hidden rounded-[24px] sm:rounded-3xl border border-white/15 bg-zinc-950/95 backdrop-blur-xl p-3 sm:p-4 shadow-[0_25px_80px_rgba(0,0,0,0.6)]">
+            <div className="flex items-start sm:items-center justify-between gap-3">
+              <div className="font-extrabold tracking-wide text-base sm:text-lg">Select {active.slotLabel}</div>
+
+              <button
+                className="min-h-[44px] rounded-2xl border border-white/20 px-3 py-2 text-white/80 hover:text-white hover:border-white/40"
+                onClick={() => setActive(null)}
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="mt-3">
+              <input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder={`Search ${active.slotLabel}...`}
+                className="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-3.5 text-base text-white outline-none focus:border-white/40"
+                autoFocus
+              />
+            </div>
+
+            <div className="mt-3 max-h-[58vh] overflow-y-auto rounded-2xl border border-white/10 bg-black/20">
+              {eligiblePlayers.length === 0 ? (
+                <div className="p-4 text-white/60">No eligible players found.</div>
+              ) : (
+                eligiblePlayers.map((p) => (
+                  <button
+                    key={p.id}
+                    onClick={() => onPick(p.id)}
+                    className="w-full px-4 py-3 text-left hover:bg-white/5 border-b border-white/5 last:border-b-0 flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3"
+                  >
+                    <div className="min-w-0 flex w-full flex-col gap-1 sm:w-auto sm:flex-row sm:items-center sm:gap-3">
+                      <div className="font-extrabold truncate">{p.name}</div>
+                      <div className="text-white/55 text-xs">{p.club}</div>
+                    </div>
+
+                    <div className="shrink-0 flex w-full items-center justify-between gap-3 sm:w-auto sm:justify-end">
+                      <div className="text-white/60 text-sm font-bold">{p.pos.join("/")}</div>
+                    </div>
+                  </button>
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showHighScores && (
+        <div className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center p-3 sm:p-4">
+          <div
+            className="absolute inset-0 bg-black/75"
+            onClick={() => setShowHighScores(false)}
+          />
+
+          <div className="relative w-full max-w-2xl max-h-[88vh] overflow-y-auto rounded-[24px] sm:rounded-3xl border border-white/15 bg-zinc-950/95 p-4 sm:p-5 backdrop-blur-xl shadow-[0_25px_80px_rgba(0,0,0,0.65)]">
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <div className="text-xl sm:text-2xl font-extrabold tracking-[0.06em] sm:tracking-[0.08em] text-white">
+                  ALL HIGH SCORES
+                </div>
+                <div className="mt-1 text-sm text-white/55">
+                  Your best score for every season and mode
+                </div>
+              </div>
+
+              <button
+                className="min-h-[44px] rounded-2xl border border-white/20 px-3 py-2 text-white/80 hover:text-white hover:border-white/40"
+                onClick={() => setShowHighScores(false)}
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {allHighScores.map((entry) => {
+                const seasonCardClass =
+                  entry.season === "2025"
+                    ? "border-blue-400/20 bg-[linear-gradient(135deg,rgba(37,99,235,0.22),rgba(15,23,42,0.92))]"
+                    : "border-red-400/20 bg-[linear-gradient(135deg,rgba(239,68,68,0.22),rgba(15,23,42,0.92))]";
+
+                return (
+                  <div
+                    key={entry.key}
+                    className={`rounded-2xl border px-4 py-4 shadow-[0_10px_30px_rgba(0,0,0,0.22)] ${seasonCardClass}`}
+                  >
+                    <div className="text-sm font-bold uppercase tracking-[0.16em] text-white/60">
+                      {entry.season}
+                    </div>
+
+                    <div className="mt-1 text-lg font-extrabold text-white">
+                      {modeTitle(entry.mode)}
+                    </div>
+
+                    <div className="mt-3 flex items-end gap-2">
+                      <span className="bg-gradient-to-b from-[#fff7c2] via-[#f2cf63] to-[#c78a18] bg-clip-text text-3xl font-extrabold text-transparent drop-shadow-[0_2px_14px_rgba(242,207,99,0.18)]">
+                        {formatStatValue(entry.value, entry.unit)}
+                      </span>
+                      <span className="pb-1 text-xs font-bold tracking-[0.16em] text-[#d7bb67]">
+                        {entry.unit}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="mt-5 flex justify-stretch sm:justify-end">
+              <button
+                onClick={() => {
+                  refreshAllHighScores();
+                }}
+                className="w-full sm:w-auto rounded-2xl border border-white/15 bg-white/8 px-4 py-3 sm:py-2 font-bold text-white/85 transition hover:bg-white/12 hover:text-white hover:border-white/30"
+              >
+                Refresh
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
+  );
+}
+
+/** ================= Column UI ================= */
+function SingleTeamColumn({
+  clubs,
+  slots,
+  selection,
+  getPlayer,
+  onOpen,
+  enabled,
+  badgeClass,
+  statLabel,
+}: {
+  clubs: ClubMeta[];
+  slots: Slot[];
+  selection: Record<string, string | null>;
+  getPlayer: (pid: string | null) => Player | null;
+  onOpen: (slot: Slot) => void;
+  enabled: boolean;
+  badgeClass: string;
+  statLabel: string;
+}) {
+  return (
+    <div className="space-y-3">
+      {slots.map((slot) => {
+        const p = getPlayer(selection[slot.id]);
+        const clubMeta = clubForPlayer(clubs, p);
+
+        const isFilled = Boolean(p);
+        const clickable = enabled && !isFilled;
+
+        return (
+          <div key={slot.id} className="flex items-stretch gap-2 sm:gap-3">
+            <div
+              className={`w-14 sm:w-20 shrink-0 rounded-lg font-extrabold text-center text-xs sm:text-sm py-2.5 px-1 shadow-[0_8px_22px_rgba(0,0,0,0.2)] ${badgeClass}`}
+            >
+              {slot.label}
+            </div>
+
+            <button
+              className={`flex-1 border border-white/60 rounded-xl px-3 sm:px-4 text-left transition flex min-h-[56px] items-center justify-between gap-2 ${
+                clickable ? "hover:brightness-110" : "cursor-not-allowed"
+              }`}
+              style={
+                p && clubMeta
+                  ? {
+                      backgroundImage: `url(${patternUrlForClub(clubMeta.name)})`,
+                      backgroundSize: "cover",
+                      backgroundPosition: "center",
+                      backgroundRepeat: "no-repeat",
+                      color: clubMeta.text,
+                      borderColor: "rgba(255,255,255,0.30)",
+                    }
+                  : { backgroundColor: "rgba(0,0,0,0.30)" }
+              }
+              onClick={() => onOpen(slot)}
+              disabled={!clickable}
+              title={isFilled ? "Locked (cannot be replaced)" : undefined}
+            >
+              <span
+                className={`block min-w-0 truncate text-sm sm:text-base ${
+                  p ? "font-extrabold" : "font-extrabold text-white/80"
+                }`}
+              >
+                {p ? p.name : `+ Select ${slot.label}`}
+              </span>
+
+              {p?.points != null && (
+                <span className="ml-2 shrink-0 whitespace-nowrap font-extrabold px-2.5 py-1 rounded-lg bg-black/45 text-[11px] sm:text-sm text-white backdrop-blur-md border border-white/15">
+                  {formatStatValue(p.points, statLabel)} {statLabel}
+                </span>
+              )}
+            </button>
+          </div>
+        );
+      })}
+    </div>
   );
 }
 
