@@ -608,11 +608,15 @@ function UnlimitedDraftPageInner() {
   /** ===== High score (localStorage) ===== */
   const [highScore, setHighScore] = useState<number>(0);
 
-  const supabase = useMemo(() => createClient(), []);
+  const supabase = useMemo(() => {
+  if (typeof window === "undefined") return null;
+  return createClient();
+}, []);
+
 const { user } = useUser();
 
 async function saveGlobalScore(score: number) {
-  if (!user) return;
+  if (!user || !supabase) return;
 
   const username =
     user.username ||
