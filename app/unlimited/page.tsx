@@ -508,7 +508,7 @@ function UnlimitedDraftPageInner() {
 
   const ALL_PLAYERS: Player[] = useMemo(() => {
     if (season === "2026") {
-      return normalize2026Players(players2026 as RawPlayer2026[], mode);
+      return normalize2026Players(players2026, mode);
     }
 
     if (mode === "goals") return (goals2025 as Player[]).filter((p) => p.points > 0);
