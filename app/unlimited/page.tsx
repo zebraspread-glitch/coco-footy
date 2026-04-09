@@ -250,8 +250,14 @@ function get2026StatValue(player: RawPlayer2026, mode: GameMode): number {
   return 0;
 }
 
-function normalize2026Players(data: RawPlayer2026[], mode: GameMode): Player[] {
-  return data
+function normalize2026Players(data: unknown, mode: GameMode): Player[] {
+  const list = Array.isArray(data)
+    ? data
+    : Array.isArray((data as { players?: unknown[] })?.players)
+    ? (data as { players: unknown[] }).players
+    : [];
+
+  return (list as RawPlayer2026[])
     .map((p, index) => {
       const name =
         (typeof p.name === "string" && p.name) ||
@@ -383,11 +389,14 @@ function getAllHighScoreEntries(): HighScoreEntry[] {
 
   return entries.map((entry) => {
     let value = 0;
-    try {
-      value = Number(localStorage.getItem(entry.key) ?? 0);
-      if (!Number.isFinite(value)) value = 0;
-    } catch {
-      value = 0;
+
+    if (typeof window !== "undefined") {
+      try {
+        value = Number(localStorage.getItem(entry.key) ?? 0);
+        if (!Number.isFinite(value)) value = 0;
+      } catch {
+        value = 0;
+      }
     }
 
     return {
