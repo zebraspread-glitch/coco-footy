@@ -628,6 +628,13 @@ function UnlimitedDraftPageInner() {
     const allFilled = useMemo(() => slots.every((s) => Boolean(team[s.id])), [team, slots]);
   const gameOver = allFilled;
 
+  useEffect(() => {
+  if (!gameOver) return;
+
+  void saveGlobalScore(currentScore);
+
+}, [gameOver]);
+
   /** ===== High score (localStorage) ===== */
   const [highScore, setHighScore] = useState<number>(0);
 
@@ -663,19 +670,14 @@ async function saveGlobalScore(score: number) {
   try {
     const { error } = await supabase
       .from("global_scores")
-      .upsert(
-        {
-          user_id: user.id,
-          username,
-          mode: `unlimited_${mode}`,
-          season: Number(season),
-          score,
-          updated_at: new Date().toISOString(),
-        },
-        {
-          onConflict: "user_id,mode,season",
-        }
-      );
+      .insert({
+  user_id: user.id,
+  username,
+  mode: `unlimited_${mode}`,
+  season: Number(season),
+  score,
+  created_at: new Date().toISOString(),
+});
 
     if (error) {
       console.error("Supabase save error:", error);
@@ -708,7 +710,7 @@ async function saveGlobalScore(score: number) {
     );
   } catch {}
 
-  void saveGlobalScore(currentScore);
+  
 }, [currentScore, highScore, season, mode, user]);
 
   const refreshAllHighScores = () => {

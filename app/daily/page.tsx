@@ -931,9 +931,7 @@ const LS_MYSTATS_DAILY_HIGHEST_SCORE = "coco_daily_highest_score";
                           </div>
                         </div>
 
-                        <div className="shrink-0 rounded-full bg-black/25 px-3 py-1 text-xs font-extrabold uppercase tracking-[0.18em]">
-                          {player.value.toFixed(1)} {dailyStat.short}
-                        </div>
+                        
                       </div>
                     </button>
                   );
