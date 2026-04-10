@@ -623,43 +623,39 @@ function UnlimitedDraftPageInner() {
     return emptySlots.some((slot) => hasEligiblePlayersForSlot(slot, club.name));
   }, [emptySlots, club.name, pickedIds, ALL_PLAYERS]);
 
-  const currentScore = useMemo(() => sumPoints(team, getPlayerById), [team, ALL_PLAYERS]);
+const currentScore = useMemo(() => sumPoints(team, getPlayerById), [team, ALL_PLAYERS]);
 
-    const allFilled = useMemo(() => slots.every((s) => Boolean(team[s.id])), [team, slots]);
-  const gameOver = allFilled;
+const allFilled = useMemo(() => slots.every((s) => Boolean(team[s.id])), [team, slots]);
+const gameOver = allFilled;
 
-  useEffect(() => {
-  if (!gameOver) return;
+/** ===== High score (localStorage) ===== */
+const [highScore, setHighScore] = useState<number>(0);
 
-  void saveGlobalScore(currentScore);
+const supabase = useMemo(() => {
+  if (typeof window === "undefined") return null;
 
-}, [gameOver]);
-
-  /** ===== High score (localStorage) ===== */
-  const [highScore, setHighScore] = useState<number>(0);
-
-  const supabase = useMemo(() => {
-    if (typeof window === "undefined") return null;
-
-    try {
-      if (
-        !process.env.NEXT_PUBLIC_SUPABASE_URL ||
-        !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-      ) {
-        return null;
-      }
-
-      return createClient();
-    } catch (error) {
-      console.error("Supabase client init error:", error);
+  try {
+    if (
+      !process.env.NEXT_PUBLIC_SUPABASE_URL ||
+      !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    ) {
       return null;
     }
-  }, []);
+
+    return createClient();
+  } catch (error) {
+    console.error("Supabase client init error:", error);
+    return null;
+  }
+}, []);
 
 const { user } = useUser();
 
 async function saveGlobalScore(score: number) {
-  if (!user || !supabase) return;
+  if (!user || !supabase) {
+    console.log("❌ No user or supabase");
+    return;
+  }
 
   const username =
     user.username ||
@@ -667,37 +663,48 @@ async function saveGlobalScore(score: number) {
     user.primaryEmailAddress?.emailAddress ||
     "Anonymous";
 
-  try {
-    const { error } = await supabase
-      .from("global_scores")
-      .insert({
-  user_id: user.id,
-  username,
-  mode: `unlimited_${mode}`,
-  season: Number(season),
-  score,
-  created_at: new Date().toISOString(),
-});
+  console.log("🚀 Attempting save:", {
+    user_id: user.id,
+    username,
+    mode: `unlimited_${mode}`,
+    season: Number(season),
+    score,
+  });
 
-    if (error) {
-      console.error("Supabase save error:", error);
-    }
-  } catch (error) {
-    console.error("Supabase save error:", error);
+  const { data, error } = await supabase
+    .from("global_scores")
+    .upsert(
+      {
+        user_id: user.id,
+        username,
+        mode: `unlimited_${mode}`,
+        season: Number(season),
+        score,
+        updated_at: new Date().toISOString(),
+      },
+      {
+        onConflict: "user_id,mode,season",
+      }
+    );
+
+  if (error) {
+    console.error("❌ Supabase save error:", error);
+  } else {
+    console.log("✅ Saved successfully:", data);
   }
 }
 
-  useEffect(() => {
-    try {
-      const key = getHighScoreKey(season, mode);
-      const saved = Number(localStorage.getItem(key) ?? 0);
-      setHighScore(Number.isFinite(saved) ? saved : 0);
-    } catch {
-      setHighScore(0);
-    }
-  }, [season, mode]);
+useEffect(() => {
+  try {
+    const key = getHighScoreKey(season, mode);
+    const saved = Number(localStorage.getItem(key) ?? 0);
+    setHighScore(Number.isFinite(saved) ? saved : 0);
+  } catch {
+    setHighScore(0);
+  }
+}, [season, mode]);
 
-  useEffect(() => {
+useEffect(() => {
   if (currentScore <= highScore) return;
 
   setHighScore(currentScore);
@@ -709,9 +716,15 @@ async function saveGlobalScore(score: number) {
       String(currentScore)
     );
   } catch {}
-
-  
 }, [currentScore, highScore, season, mode, user]);
+
+useEffect(() => {
+  if (!gameOver) return;
+  if (!user || !supabase) return;
+
+  console.log("🔥 Saving finished score:", currentScore);
+  void saveGlobalScore(currentScore);
+}, [gameOver, user, supabase, currentScore, mode, season]);
 
   const refreshAllHighScores = () => {
     setAllHighScores(getAllHighScoreEntries());
