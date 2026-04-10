@@ -174,7 +174,7 @@ export default function LeaderboardPage() {
         </div>
 
         {/* HEADER */}
-        <div className="mt-8 rounded-2xl border border-white/10 bg-black/60">
+        <div className="mt-8 rounded-2xl border border-white/10 bg-black">
           <div className="p-6 border-b border-white/10">
             <div className="flex justify-between">
               <div>
@@ -213,15 +213,8 @@ export default function LeaderboardPage() {
               </div>
 
               {selectedRow && (
-  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
-    <div
-      className="w-full max-w-6xl rounded-2xl border border-white/10 p-4 sm:p-6 shadow-2xl"
-      style={{
-        backgroundImage: "url('/coco-footy-bg.png')",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-      }}
-    >
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4">
+    <div className="w-full max-w-6xl rounded-2xl border border-white/10 bg-black p-4 sm:p-6 shadow-2xl">
       <div className="rounded-2xl bg-black/70 p-4 sm:p-6">
         <div className="mb-4 flex items-start justify-between gap-4">
           <div>
