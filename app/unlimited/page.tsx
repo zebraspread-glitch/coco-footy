@@ -671,21 +671,41 @@ async function saveGlobalScore(score: number) {
     score,
   });
 
-  const { data, error } = await supabase
-    .from("global_scores")
-    .upsert(
-      {
-        user_id: user.id,
-        username,
-        mode: `unlimited_${mode}`,
-        season: Number(season),
-        score,
-        updated_at: new Date().toISOString(),
-      },
-      {
-        onConflict: "user_id,mode,season",
-      }
-    );
+  const fullTeam = Object.fromEntries(
+  Object.entries(team).map(([slotId, playerId]) => {
+    const player = getPlayerById(playerId);
+
+    return [
+      slotId,
+      player
+        ? {
+            id: player.id,
+            name: player.name,
+            club: player.club,
+            points: player.points,
+            pos: player.pos,
+          }
+        : null,
+    ];
+  })
+);
+
+ const { data, error } = await supabase
+  .from("global_scores")
+  .upsert(
+    {
+      user_id: user.id,
+      username,
+      mode: `unlimited_${mode}`,
+      season: Number(season),
+      score,
+      team_json: fullTeam,
+      updated_at: new Date().toISOString(),
+    },
+    {
+      onConflict: "user_id,mode,season",
+    }
+  );
 
   if (error) {
     console.error("❌ Supabase save error:", error);

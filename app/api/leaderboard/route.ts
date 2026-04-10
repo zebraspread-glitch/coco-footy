@@ -20,7 +20,7 @@ export async function GET(req: NextRequest) {
 
     const { data, error } = await supabase
       .from("global_scores")
-      .select("id, user_id, username, score, season, mode")
+      .select("id, user_id, username, score, season, mode, team_json")
       .eq("season", season)
       .eq("mode", mode)
       .order("score", { ascending: false })

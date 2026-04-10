@@ -20,6 +20,16 @@ type LeaderboardRow = {
   score: number | null;
   season: number;
   mode: string;
+  team_json?: Record<
+  string,
+  {
+    id: string;
+    name: string;
+    club: string;
+    points: number;
+    pos: string[];
+  } | null
+>;
 };
 
 const STAT_OPTIONS: Array<{ key: StatMode; label: string }> = [
@@ -65,6 +75,7 @@ export default function LeaderboardPage() {
   const [rows, setRows] = useState<LeaderboardRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedRow, setSelectedRow] = useState<LeaderboardRow | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -201,6 +212,52 @@ export default function LeaderboardPage() {
                 <div className="text-right">TEAM</div>
               </div>
 
+              {selectedRow && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
+    <div className="w-full max-w-2xl rounded-2xl border border-white/10 bg-[#0b1220] p-6 text-white shadow-2xl">
+      <div className="flex items-center justify-between">
+        <div>
+          <div className="text-sm text-white/60">TEAM VIEW</div>
+          <h2 className="text-2xl font-black">{selectedRow.username}</h2>
+          <div className="text-white/60 text-sm mt-1">
+            {STAT_OPTIONS.find((s) => s.key === stat)?.label} • {formatScore(selectedRow.score, stat)}
+          </div>
+        </div>
+
+        <button
+          onClick={() => setSelectedRow(null)}
+          className="rounded-xl border border-white/10 px-3 py-2 text-sm text-white/70 hover:text-white"
+        >
+          Close
+        </button>
+      </div>
+
+      <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+        {Object.entries(selectedRow.team_json ?? {}).map(([slot, player]) => (
+  <div
+    key={slot}
+    className="rounded-xl border border-white/10 bg-white/5 p-3"
+  >
+    <div className="text-xs uppercase text-white/50">{slot}</div>
+
+    <div className="mt-1 font-bold">
+      {player?.name ?? "-"}
+    </div>
+
+    <div className="text-xs text-white/60">
+      {player?.club ?? ""}
+    </div>
+
+    <div className="text-sm text-purple-300 font-black">
+      {player ? formatScore(player.points, stat) : "-"} PTS
+    </div>
+  </div>
+))}
+      </div>
+    </div>
+  </div>
+)}
+
               {filteredRows.map((row, i) => {
                 const rank = i + 1;
 
@@ -222,9 +279,12 @@ export default function LeaderboardPage() {
                       {formatScore(row.score, stat)}
                     </div>
 
-                    <div className="text-right text-white/50 flex justify-end items-center gap-1">
-                      View <ChevronRight className="h-4 w-4" />
-                    </div>
+                    <button
+  onClick={() => setSelectedRow(row)}
+  className="text-right text-white/50 flex justify-end items-center gap-1 hover:text-white transition"
+>
+  View <ChevronRight className="h-4 w-4" />
+</button>
                   </div>
                 );
               })}
