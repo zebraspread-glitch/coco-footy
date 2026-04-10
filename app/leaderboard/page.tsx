@@ -214,45 +214,114 @@ export default function LeaderboardPage() {
 
               {selectedRow && (
   <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
-    <div className="w-full max-w-2xl rounded-2xl border border-white/10 bg-[#0b1220] p-6 text-white shadow-2xl">
-      <div className="flex items-center justify-between">
-        <div>
-          <div className="text-sm text-white/60">TEAM VIEW</div>
-          <h2 className="text-2xl font-black">{selectedRow.username}</h2>
-          <div className="text-white/60 text-sm mt-1">
-            {STAT_OPTIONS.find((s) => s.key === stat)?.label} • {formatScore(selectedRow.score, stat)}
+    <div
+      className="w-full max-w-6xl rounded-2xl border border-white/10 p-4 sm:p-6 shadow-2xl"
+      style={{
+        backgroundImage: "url('/coco-footy-bg.png')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
+    >
+      <div className="rounded-2xl bg-black/70 p-4 sm:p-6">
+        <div className="mb-4 flex items-start justify-between gap-4">
+          <div>
+            <div className="text-sm font-bold tracking-wide text-white/70">
+              TEAM VIEW
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-black text-white">
+              {selectedRow.username}
+            </h2>
+            <div className="mt-1 text-white/70">
+              {STAT_OPTIONS.find((s) => s.key === stat)?.label} •{" "}
+              {formatScore(selectedRow.score, stat)}{" "}
+              {stat === "goals"
+                ? "GOALS"
+                : stat === "bounces"
+                ? "BOUNCES"
+                : "PTS"}
+            </div>
           </div>
+
+          <button
+            onClick={() => setSelectedRow(null)}
+            className="rounded-xl border border-white/15 bg-black/30 px-4 py-2 text-sm font-bold text-white/80 hover:text-white"
+          >
+            Close
+          </button>
         </div>
 
-        <button
-          onClick={() => setSelectedRow(null)}
-          className="rounded-xl border border-white/10 px-3 py-2 text-sm text-white/70 hover:text-white"
-        >
-          Close
-        </button>
-      </div>
+        <div className="space-y-3">
+          {["fwd1", "fwd2", "mid1", "mid2", "def1", "def2", "ruck", "flex1"].map((slotKey) => {
+            const player = selectedRow.team_json?.[slotKey];
 
-      <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
-        {Object.entries(selectedRow.team_json ?? {}).map(([slot, player]) => (
-  <div
-    key={slot}
-    className="rounded-xl border border-white/10 bg-white/5 p-3"
-  >
-    <div className="text-xs uppercase text-white/50">{slot}</div>
+            const slotLabel =
+              slotKey === "fwd1" || slotKey === "fwd2"
+                ? "FWD"
+                : slotKey === "mid1" || slotKey === "mid2"
+                ? "MID"
+                : slotKey === "def1" || slotKey === "def2"
+                ? "DEF"
+                : slotKey === "ruck"
+                ? "RUCK"
+                : "FLEX";
 
-    <div className="mt-1 font-bold">
-      {player?.name ?? "-"}
-    </div>
+            const clubColors: Record<string, { bg: string; text: string }> = {
+              Adelaide: { bg: "#002B5C", text: "#E41E2B" },
+              Brisbane: { bg: "#7C003E", text: "#FFD200" },
+              Carlton: { bg: "#001B4D", text: "#FFFFFF" },
+              Collingwood: { bg: "#000000", text: "#FFFFFF" },
+              Essendon: { bg: "#C8102E", text: "#FFFFFF" },
+              Fremantle: { bg: "#2B0A3D", text: "#FFFFFF" },
+              Geelong: { bg: "#0F2A4A", text: "#FFFFFF" },
+              "Gold Coast": { bg: "#B30000", text: "#FFD200" },
+              GWS: { bg: "#F15A22", text: "#111111" },
+              Hawthorn: { bg: "#4B2E1E", text: "#FFFFFF" },
+              Melbourne: { bg: "#0A2A5E", text: "#FFFFFF" },
+              "North Melbourne": { bg: "#003A70", text: "#FFFFFF" },
+              "Port Adelaide": { bg: "#00A1DE", text: "#111111" },
+              Richmond: { bg: "#F7B500", text: "#111111" },
+              "St Kilda": { bg: "#C8102E", text: "#000000" },
+              Sydney: { bg: "#E41E2B", text: "#FFFFFF" },
+              "West Coast": { bg: "#002B5C", text: "#FFD200" },
+              "Western Bulldogs": { bg: "#0047AB", text: "#FFFFFF" },
+            };
 
-    <div className="text-xs text-white/60">
-      {player?.club ?? ""}
-    </div>
+            const colors = player?.club
+              ? clubColors[player.club] ?? { bg: "#111111", text: "#FFFFFF" }
+              : { bg: "#111111", text: "#FFFFFF" };
 
-    <div className="text-sm text-purple-300 font-black">
-      {player ? formatScore(player.points, stat) : "-"} PTS
-    </div>
-  </div>
-))}
+            return (
+              <div key={slotKey} className="flex items-stretch gap-3">
+                <div className="flex min-w-[72px] items-center justify-center rounded-xl bg-red-500 px-3 text-base font-black text-white sm:min-w-[84px]">
+                  {slotLabel}
+                </div>
+
+                <div
+                  className="flex flex-1 items-center justify-between rounded-xl border border-white/10 px-4 py-4"
+                  style={{ backgroundColor: colors.bg, color: colors.text }}
+                >
+                  <div className="min-w-0">
+                    <div className="truncate text-xl font-black">
+                      {player?.name ?? "-"}
+                    </div>
+                  </div>
+
+                  <div className="ml-4 rounded-xl bg-black/35 px-4 py-2 text-sm font-black text-white whitespace-nowrap">
+                    {player
+                      ? `${formatScore(player.points, stat)} ${
+                          stat === "goals"
+                            ? "GOALS"
+                            : stat === "bounces"
+                            ? "BOUNCES"
+                            : "PTS"
+                        }`
+                      : "-"}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   </div>
