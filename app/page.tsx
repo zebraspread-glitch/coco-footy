@@ -413,7 +413,7 @@ export default function Home() {
           />
           <Card
             icon={<Flame className="h-6 w-6" />}
-            title="UNLIMITED"
+            title="RANKED"
             desc="Draft endlessly and try to beat your personal high score."
             cta="PLAY NOW"
             href={seasonHref("/unlimited")}

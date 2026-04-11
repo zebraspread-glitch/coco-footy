@@ -965,7 +965,7 @@ useEffect(() => {
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <h1 className="text-3xl sm:text-4xl font-extrabold tracking-[0.06em] sm:tracking-[0.08em] text-white drop-shadow-[0_4px_18px_rgba(0,0,0,0.45)]">
-              UNLIMITED MODE
+              RANKED MODE
             </h1>
 
             <div className="mt-4 flex flex-wrap items-center gap-2 sm:gap-3">
@@ -976,6 +976,7 @@ useEffect(() => {
                     ? "bg-blue-600 border-blue-400 text-white shadow-[0_10px_30px_rgba(37,99,235,0.35)]"
                     : "border-white/20 bg-black/20 text-white/80 hover:text-white hover:border-white/40"
                 }`}
+                
               >
                 2025
               </button>
@@ -990,6 +991,14 @@ useEffect(() => {
               >
                 2026
               </button>
+
+              <button
+  onClick={() => router.push("/leaderboard")}
+  className="min-h-[44px] rounded-2xl border border-yellow-400 bg-yellow-500/10 px-4 py-2 font-bold text-yellow-300 hover:bg-yellow-500/20 transition"
+>
+  Global Leaderboard
+</button>
+
             </div>
 
             <div className="mt-4 grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center sm:gap-3">
