@@ -567,11 +567,11 @@
       "MID",
       "FWD"
     ],
-    "points": 72.2,
-    "supercoachPoints": 78,
+    "points": 66.2,
+    "supercoachPoints": 72.6,
     "goals": 3,
     "bounces": 0,
-    "disposals": 16.5
+    "disposals": 15.6
   },
   {
     "id": "bris_rayner",
@@ -581,11 +581,11 @@
       "MID",
       "FWD"
     ],
-    "points": 61.8,
-    "supercoachPoints": 63.8,
-    "goals": 4,
+    "points": 64.2,
+    "supercoachPoints": 66.6,
+    "goals": 5,
     "bounces": 0,
-    "disposals": 15.3
+    "disposals": 15.6
   },
   {
     "id": "bris_cameron",
@@ -594,11 +594,11 @@
     "pos": [
       "FWD"
     ],
-    "points": 73.2,
-    "supercoachPoints": 68.5,
-    "goals": 8,
+    "points": 67.8,
+    "supercoachPoints": 62.8,
+    "goals": 9,
     "bounces": 0,
-    "disposals": 12.5
+    "disposals": 11.8
   },
   {
     "id": "bris_curtin",
@@ -647,11 +647,11 @@
       "RUCK",
       "FWD"
     ],
-    "points": 66,
-    "supercoachPoints": 75.5,
+    "points": 62.8,
+    "supercoachPoints": 68,
     "goals": 1,
     "bounces": 0,
-    "disposals": 13.8
+    "disposals": 11.8
   },
   {
     "id": "bris_gardiner",
@@ -673,11 +673,11 @@
     "pos": [
       "DEF"
     ],
-    "points": 84.5,
-    "supercoachPoints": 79,
+    "points": 77.4,
+    "supercoachPoints": 77,
     "goals": 0,
-    "bounces": 0,
-    "disposals": 20.8
+    "bounces": 1,
+    "disposals": 19.4
   },
   {
     "id": "bris_joyce",
@@ -699,11 +699,11 @@
     "pos": [
       "DEF"
     ],
-    "points": 118.5,
-    "supercoachPoints": 110,
+    "points": 100.6,
+    "supercoachPoints": 95.2,
     "goals": 2,
     "bounces": 2,
-    "disposals": 29.3
+    "disposals": 25
   },
   {
     "id": "bris_hipwood",
@@ -725,11 +725,11 @@
     "pos": [
       "DEF"
     ],
-    "points": 64,
-    "supercoachPoints": 89,
+    "points": 60.5,
+    "supercoachPoints": 84,
     "goals": 0,
     "bounces": 0,
-    "disposals": 18
+    "disposals": 16.5
   },
   {
     "id": "bris_smith_henry",
@@ -752,11 +752,11 @@
     "pos": [
       "MID"
     ],
-    "points": 20,
-    "supercoachPoints": 13,
+    "points": 55.5,
+    "supercoachPoints": 51,
     "goals": 0,
     "bounces": 0,
-    "disposals": 4
+    "disposals": 12
   },
   {
     "id": "bris_payne",
@@ -791,11 +791,11 @@
     "pos": [
       "MID"
     ],
-    "points": 89.8,
-    "supercoachPoints": 89.5,
+    "points": 87.4,
+    "supercoachPoints": 85.8,
     "goals": 1,
     "bounces": 0,
-    "disposals": 21.3
+    "disposals": 20.6
   },
   {
     "id": "bris_fletcher",
@@ -804,11 +804,11 @@
     "pos": [
       "MID"
     ],
-    "points": 79.2,
-    "supercoachPoints": 87.5,
+    "points": 76.6,
+    "supercoachPoints": 83.8,
     "goals": 1,
     "bounces": 4,
-    "disposals": 20.8
+    "disposals": 19
   },
   {
     "id": "bris_dunkley",
@@ -817,11 +817,11 @@
     "pos": [
       "MID"
     ],
-    "points": 87.8,
-    "supercoachPoints": 90,
+    "points": 82,
+    "supercoachPoints": 85.6,
     "goals": 0,
     "bounces": 0,
-    "disposals": 22
+    "disposals": 20.2
   },
   {
     "id": "bris_lohmann",
@@ -830,11 +830,11 @@
     "pos": [
       "FWD"
     ],
-    "points": 64,
-    "supercoachPoints": 69,
-    "goals": 9,
-    "bounces": 1,
-    "disposals": 11.8
+    "points": 61.8,
+    "supercoachPoints": 65.4,
+    "goals": 10,
+    "bounces": 2,
+    "disposals": 11.6
   },
   {
     "id": "bris_coleman",
@@ -843,11 +843,11 @@
     "pos": [
       "DEF"
     ],
-    "points": 81.2,
-    "supercoachPoints": 81,
-    "goals": 1,
-    "bounces": 0,
-    "disposals": 19.3
+    "points": 76.8,
+    "supercoachPoints": 78.4,
+    "goals": 2,
+    "bounces": 1,
+    "disposals": 18
   },
   {
     "id": "bris_evans",
@@ -869,11 +869,11 @@
     "pos": [
       "MID"
     ],
-    "points": 95,
-    "supercoachPoints": 100.8,
+    "points": 95.8,
+    "supercoachPoints": 107,
     "goals": 0,
-    "bounces": 1,
-    "disposals": 28.8
+    "bounces": 2,
+    "disposals": 29
   },
   {
     "id": "bris_ashcroft_levi",
@@ -882,11 +882,11 @@
     "pos": [
       "MID"
     ],
-    "points": 80.8,
-    "supercoachPoints": 80.5,
+    "points": 78.2,
+    "supercoachPoints": 81.8,
     "goals": 1,
     "bounces": 0,
-    "disposals": 21.5
+    "disposals": 20.4
   },
   {
     "id": "bris_mccarthy",
@@ -895,11 +895,11 @@
     "pos": [
       "FWD"
     ],
-    "points": 50.3,
-    "supercoachPoints": 58,
-    "goals": 3,
+    "points": 52.2,
+    "supercoachPoints": 60.8,
+    "goals": 5,
     "bounces": 0,
-    "disposals": 12.7
+    "disposals": 12.5
   },
   {
     "id": "bris_morris",
@@ -908,11 +908,11 @@
     "pos": [
       "FWD"
     ],
-    "points": 86.7,
-    "supercoachPoints": 82.7,
+    "points": 75.5,
+    "supercoachPoints": 69.5,
     "goals": 8,
     "bounces": 0,
-    "disposals": 17
+    "disposals": 14.5
   },
   {
     "id": "bris_beecken",
@@ -960,11 +960,11 @@
     "pos": [
       "FWD"
     ],
-    "points": 54,
-    "supercoachPoints": 56,
-    "goals": 7,
+    "points": 56.4,
+    "supercoachPoints": 60,
+    "goals": 10,
     "bounces": 1,
-    "disposals": 9
+    "disposals": 8.8
   },
   {
     "id": "bris_torrent",
@@ -986,11 +986,11 @@
     "pos": [
       "DEF"
     ],
-    "points": 76.2,
-    "supercoachPoints": 80,
+    "points": 72,
+    "supercoachPoints": 76.8,
     "goals": 0,
     "bounces": 0,
-    "disposals": 18.5
+    "disposals": 17.2
   },
   {
     "id": "bris_draper",
@@ -999,11 +999,11 @@
     "pos": [
       "RUCK"
     ],
-    "points": 50.7,
-    "supercoachPoints": 55.7,
-    "goals": 0,
+    "points": 56.8,
+    "supercoachPoints": 71,
+    "goals": 2,
     "bounces": 0,
-    "disposals": 11.3
+    "disposals": 11.5
   },
   {
     "id": "bris_marshall",
@@ -1064,11 +1064,11 @@
     "pos": [
       "FWD"
     ],
-    "points": 37.5,
-    "supercoachPoints": 38,
+    "points": 37.2,
+    "supercoachPoints": 39.4,
     "goals": 0,
     "bounces": 0,
-    "disposals": 7
+    "disposals": 6.8
   },
   {
     "id": "bris_ashcroft_will",
@@ -1077,11 +1077,11 @@
     "pos": [
       "MID"
     ],
-    "points": 105.8,
-    "supercoachPoints": 98.2,
+    "points": 98.2,
+    "supercoachPoints": 88.8,
     "goals": 1,
     "bounces": 2,
-    "disposals": 29.5
+    "disposals": 27.4
   },
   {
     "id": "bris_mclachlan",
@@ -1104,11 +1104,11 @@
       "MID",
       "FWD"
     ],
-    "points": 88,
-    "supercoachPoints": 99.3,
-    "goals": 5,
-    "bounces": 0,
-    "disposals": 20
+    "points": 91,
+    "supercoachPoints": 107,
+    "goals": 7,
+    "bounces": 1,
+    "disposals": 20.3
   },
   {
     "id": "bris_zakostelsky",
@@ -2308,11 +2308,11 @@
       "DEF",
       "MID"
     ],
-    "points": 78,
-    "supercoachPoints": 83.5,
+    "points": 71.2,
+    "supercoachPoints": 77.4,
     "goals": 0,
     "bounces": 3,
-    "disposals": 21.8
+    "disposals": 20
   },
   {
     "id": "ess_clarke",
@@ -2336,11 +2336,11 @@
       "MID",
       "FWD"
     ],
-    "points": 55,
-    "supercoachPoints": 39,
-    "goals": 0,
+    "points": 57.3,
+    "supercoachPoints": 45.7,
+    "goals": 1,
     "bounces": 0,
-    "disposals": 12.5
+    "disposals": 13.3
   },
   {
     "id": "ess_may",
@@ -2362,11 +2362,11 @@
     "pos": [
       "MID"
     ],
-    "points": 37,
-    "supercoachPoints": 42.7,
-    "goals": 2,
+    "points": 37.5,
+    "supercoachPoints": 41,
+    "goals": 4,
     "bounces": 0,
-    "disposals": 5.3
+    "disposals": 5
   },
   {
     "id": "ess_perkins",
@@ -2388,11 +2388,11 @@
     "pos": [
       "DEF"
     ],
-    "points": 90.8,
-    "supercoachPoints": 97.8,
-    "goals": 0,
-    "bounces": 2,
-    "disposals": 27
+    "points": 105.4,
+    "supercoachPoints": 107.2,
+    "goals": 1,
+    "bounces": 3,
+    "disposals": 30
   },
   {
     "id": "ess_mckay",
@@ -2401,11 +2401,11 @@
     "pos": [
       "DEF"
     ],
-    "points": 30.2,
-    "supercoachPoints": 43.2,
+    "points": 43.8,
+    "supercoachPoints": 52,
     "goals": 0,
     "bounces": 1,
-    "disposals": 6.8
+    "disposals": 10
   },
   {
     "id": "ess_parish",
@@ -2414,11 +2414,11 @@
     "pos": [
       "MID"
     ],
-    "points": 68,
-    "supercoachPoints": 75,
+    "points": 75.6,
+    "supercoachPoints": 87.4,
     "goals": 0,
     "bounces": 0,
-    "disposals": 20.8
+    "disposals": 23.4
   },
   {
     "id": "ess_sharp",
@@ -2440,11 +2440,11 @@
     "pos": [
       "MID"
     ],
-    "points": 0,
-    "supercoachPoints": 0,
-    "goals": 0,
+    "points": 85,
+    "supercoachPoints": 82,
+    "goals": 1,
     "bounces": 0,
-    "disposals": 0
+    "disposals": 29
   },
   {
     "id": "ess_jones",
@@ -2479,11 +2479,11 @@
     "pos": [
       "FWD"
     ],
-    "points": 38,
-    "supercoachPoints": 38.7,
-    "goals": 2,
-    "bounces": 1,
-    "disposals": 10
+    "points": 47,
+    "supercoachPoints": 57.2,
+    "goals": 4,
+    "bounces": 4,
+    "disposals": 12.3
   },
   {
     "id": "ess_farrow",
@@ -2492,11 +2492,11 @@
     "pos": [
       "MID"
     ],
-    "points": 83.5,
-    "supercoachPoints": 69.5,
+    "points": 89.7,
+    "supercoachPoints": 80.3,
     "goals": 0,
-    "bounces": 3,
-    "disposals": 17
+    "bounces": 4,
+    "disposals": 18.7
   },
   {
     "id": "ess_gresham",
@@ -2506,11 +2506,11 @@
       "MID",
       "FWD"
     ],
-    "points": 51.5,
-    "supercoachPoints": 56,
-    "goals": 4,
+    "points": 53.7,
+    "supercoachPoints": 57,
+    "goals": 5,
     "bounces": 0,
-    "disposals": 11
+    "disposals": 11.7
   },
   {
     "id": "ess_demicoli",
@@ -2532,11 +2532,11 @@
     "pos": [
       "MID"
     ],
-    "points": 70.2,
-    "supercoachPoints": 80.5,
+    "points": 74,
+    "supercoachPoints": 80.6,
     "goals": 0,
     "bounces": 3,
-    "disposals": 17.5
+    "disposals": 17.4
   },
   {
     "id": "ess_nguyen",
@@ -2558,11 +2558,11 @@
     "pos": [
       "DEF"
     ],
-    "points": 0,
-    "supercoachPoints": 0,
+    "points": 106,
+    "supercoachPoints": 101,
     "goals": 0,
     "bounces": 0,
-    "disposals": 0
+    "disposals": 26
   },
   {
     "id": "ess_caldwell",
@@ -2571,11 +2571,11 @@
     "pos": [
       "MID"
     ],
-    "points": 88.5,
-    "supercoachPoints": 87.8,
+    "points": 82.2,
+    "supercoachPoints": 82.2,
     "goals": 4,
     "bounces": 2,
-    "disposals": 21.5
+    "disposals": 20.4
   },
   {
     "id": "ess_gerreyn",
@@ -2598,11 +2598,11 @@
       "MID",
       "FWD"
     ],
-    "points": 51.5,
-    "supercoachPoints": 51.5,
+    "points": 61.8,
+    "supercoachPoints": 59.4,
     "goals": 1,
     "bounces": 1,
-    "disposals": 12.5
+    "disposals": 15.4
   },
   {
     "id": "ess_blakiston",
@@ -2624,11 +2624,11 @@
     "pos": [
       "MID"
     ],
-    "points": 48.5,
-    "supercoachPoints": 55,
+    "points": 47,
+    "supercoachPoints": 53.4,
     "goals": 1,
     "bounces": 0,
-    "disposals": 9
+    "disposals": 8.8
   },
   {
     "id": "ess_hayes",
@@ -2702,11 +2702,11 @@
     "pos": [
       "FWD"
     ],
-    "points": 59,
-    "supercoachPoints": 50.7,
-    "goals": 6,
+    "points": 59.8,
+    "supercoachPoints": 52.5,
+    "goals": 8,
     "bounces": 1,
-    "disposals": 10.7
+    "disposals": 11
   },
   {
     "id": "ess_martin",
@@ -2755,11 +2755,11 @@
     "pos": [
       "FWD"
     ],
-    "points": 59,
-    "supercoachPoints": 82.8,
-    "goals": 4,
+    "points": 68.8,
+    "supercoachPoints": 90.2,
+    "goals": 5,
     "bounces": 0,
-    "disposals": 10.8
+    "disposals": 12.2
   },
   {
     "id": "ess_unwin",
@@ -2795,11 +2795,11 @@
     "pos": [
       "MID"
     ],
-    "points": 67,
-    "supercoachPoints": 73.2,
-    "goals": 3,
-    "bounces": 3,
-    "disposals": 18.8
+    "points": 67.2,
+    "supercoachPoints": 74.2,
+    "goals": 4,
+    "bounces": 4,
+    "disposals": 18.2
   },
   {
     "id": "ess_robey",
@@ -2808,11 +2808,11 @@
     "pos": [
       "MID"
     ],
-    "points": 0,
-    "supercoachPoints": 0,
+    "points": 36,
+    "supercoachPoints": 28,
     "goals": 0,
     "bounces": 0,
-    "disposals": 0
+    "disposals": 9
   },
   {
     "id": "ess_edwards",
@@ -2834,11 +2834,11 @@
     "pos": [
       "MID"
     ],
-    "points": 52,
-    "supercoachPoints": 58,
-    "goals": 2,
+    "points": 56.5,
+    "supercoachPoints": 55,
+    "goals": 4,
     "bounces": 0,
-    "disposals": 10
+    "disposals": 9
   },
   {
     "id": "ess_visentini",
@@ -2873,11 +2873,11 @@
     "pos": [
       "MID"
     ],
-    "points": 56.5,
-    "supercoachPoints": 53.2,
-    "goals": 2,
+    "points": 64.2,
+    "supercoachPoints": 64,
+    "goals": 4,
     "bounces": 3,
-    "disposals": 14.8
+    "disposals": 16
   },
   {
     "id": "ess_merrett",
@@ -2899,11 +2899,11 @@
     "pos": [
       "DEF"
     ],
-    "points": 57,
-    "supercoachPoints": 58.5,
+    "points": 62.6,
+    "supercoachPoints": 59.2,
     "goals": 0,
     "bounces": 0,
-    "disposals": 13.5
+    "disposals": 14.4
   },
   {
     "id": "ess_zachary_merrett",
@@ -2912,11 +2912,11 @@
     "pos": [
       "MID"
     ],
-    "points": 101.2,
-    "supercoachPoints": 112.2,
-    "goals": 2,
-    "bounces": 2,
-    "disposals": 24.3
+    "points": 102.8,
+    "supercoachPoints": 115.2,
+    "goals": 3,
+    "bounces": 4,
+    "disposals": 25.6
   },
   {
     "id": "ess_johnson",
@@ -5897,11 +5897,11 @@
     "pos": [
       "FWD"
     ],
-    "points": 67.3,
-    "supercoachPoints": 84,
-    "goals": 7,
+    "points": 63.8,
+    "supercoachPoints": 77.8,
+    "goals": 8,
     "bounces": 2,
-    "disposals": 12
+    "disposals": 12.3
   },
   {
     "id": "mel_howes",
@@ -5910,11 +5910,11 @@
     "pos": [
       "DEF"
     ],
-    "points": 47,
-    "supercoachPoints": 54.8,
+    "points": 49.2,
+    "supercoachPoints": 56.6,
     "goals": 0,
     "bounces": 0,
-    "disposals": 12.8
+    "disposals": 13
   },
   {
     "id": "mel_mihocek",
@@ -5923,11 +5923,11 @@
     "pos": [
       "FWD"
     ],
-    "points": 57.5,
-    "supercoachPoints": 47.8,
-    "goals": 7,
+    "points": 52,
+    "supercoachPoints": 45,
+    "goals": 8,
     "bounces": 0,
-    "disposals": 9.8
+    "disposals": 9
   },
   {
     "id": "mel_windsor",
@@ -5936,11 +5936,11 @@
     "pos": [
       "MID"
     ],
-    "points": 70.2,
-    "supercoachPoints": 62.2,
+    "points": 65.2,
+    "supercoachPoints": 55.8,
     "goals": 1,
-    "bounces": 0,
-    "disposals": 18.8
+    "bounces": 1,
+    "disposals": 16.4
   },
   {
     "id": "mel_jiath",
@@ -5962,11 +5962,11 @@
     "pos": [
       "DEF"
     ],
-    "points": 78,
-    "supercoachPoints": 82.2,
+    "points": 71.6,
+    "supercoachPoints": 76.8,
     "goals": 1,
     "bounces": 1,
-    "disposals": 22.8
+    "disposals": 20.6
   },
   {
     "id": "mel_turner",
@@ -5975,11 +5975,11 @@
     "pos": [
       "DEF"
     ],
-    "points": 47,
-    "supercoachPoints": 57.7,
+    "points": 53.8,
+    "supercoachPoints": 66.5,
     "goals": 0,
     "bounces": 1,
-    "disposals": 10
+    "disposals": 11.8
   },
   {
     "id": "mel_langdon",
@@ -5988,11 +5988,11 @@
     "pos": [
       "MID"
     ],
-    "points": 69.8,
-    "supercoachPoints": 67.2,
+    "points": 66.2,
+    "supercoachPoints": 66.6,
     "goals": 4,
     "bounces": 0,
-    "disposals": 15
+    "disposals": 14.6
   },
   {
     "id": "mel_petty",
@@ -6001,11 +6001,11 @@
     "pos": [
       "DEF"
     ],
-    "points": 34.5,
-    "supercoachPoints": 38,
+    "points": 35.8,
+    "supercoachPoints": 37.6,
     "goals": 0,
     "bounces": 0,
-    "disposals": 7.8
+    "disposals": 7.6
   },
   {
     "id": "mel_sharp",
@@ -6014,11 +6014,11 @@
     "pos": [
       "MID"
     ],
-    "points": 63.2,
-    "supercoachPoints": 66.5,
-    "goals": 5,
+    "points": 63,
+    "supercoachPoints": 69.8,
+    "goals": 6,
     "bounces": 6,
-    "disposals": 13.5
+    "disposals": 13.6
   },
   {
     "id": "mel_langford",
@@ -6027,11 +6027,11 @@
     "pos": [
       "MID"
     ],
-    "points": 49,
-    "supercoachPoints": 51.2,
-    "goals": 4,
-    "bounces": 0,
-    "disposals": 12.3
+    "points": 53.2,
+    "supercoachPoints": 53.6,
+    "goals": 5,
+    "bounces": 3,
+    "disposals": 13.2
   },
   {
     "id": "mel_henderson",
@@ -6053,11 +6053,11 @@
     "pos": [
       "MID"
     ],
-    "points": 117.5,
-    "supercoachPoints": 114.5,
+    "points": 114.4,
+    "supercoachPoints": 111.6,
     "goals": 1,
     "bounces": 1,
-    "disposals": 25.3
+    "disposals": 25.8
   },
   {
     "id": "mel_viney",
@@ -6079,11 +6079,11 @@
     "pos": [
       "FWD"
     ],
-    "points": 63.2,
-    "supercoachPoints": 63.5,
+    "points": 56.4,
+    "supercoachPoints": 57.2,
     "goals": 7,
     "bounces": 0,
-    "disposals": 10.8
+    "disposals": 10.4
   },
   {
     "id": "mel_culley",
@@ -6092,11 +6092,11 @@
     "pos": [
       "FWD"
     ],
-    "points": 51.8,
-    "supercoachPoints": 64,
+    "points": 48.2,
+    "supercoachPoints": 57.8,
     "goals": 1,
     "bounces": 0,
-    "disposals": 12.5
+    "disposals": 12
   },
   {
     "id": "mel_bowey",
@@ -6118,11 +6118,11 @@
     "pos": [
       "DEF"
     ],
-    "points": 75.8,
-    "supercoachPoints": 75,
+    "points": 77.4,
+    "supercoachPoints": 73.2,
     "goals": 0,
     "bounces": 0,
-    "disposals": 16
+    "disposals": 16.4
   },
   {
     "id": "mel_melksham",
@@ -6131,11 +6131,11 @@
     "pos": [
       "FWD"
     ],
-    "points": 62,
-    "supercoachPoints": 80,
+    "points": 39,
+    "supercoachPoints": 44.5,
     "goals": 4,
     "bounces": 2,
-    "disposals": 11
+    "disposals": 8
   },
   {
     "id": "mel_adams",
@@ -6157,11 +6157,11 @@
     "pos": [
       "FWD"
     ],
-    "points": 71.8,
-    "supercoachPoints": 78.2,
-    "goals": 4,
+    "points": 67.6,
+    "supercoachPoints": 75.6,
+    "goals": 5,
     "bounces": 0,
-    "disposals": 15.5
+    "disposals": 15.2
   },
   {
     "id": "mel_tholstrup",
@@ -6170,11 +6170,11 @@
     "pos": [
       "FWD"
     ],
-    "points": 57.5,
-    "supercoachPoints": 55.2,
+    "points": 59.2,
+    "supercoachPoints": 55.8,
     "goals": 1,
     "bounces": 1,
-    "disposals": 14.5
+    "disposals": 16
   },
   {
     "id": "mel_pickett_k",
@@ -6183,11 +6183,11 @@
     "pos": [
       "FWD"
     ],
-    "points": 100.2,
-    "supercoachPoints": 105.2,
-    "goals": 4,
+    "points": 105,
+    "supercoachPoints": 103,
+    "goals": 6,
     "bounces": 14,
-    "disposals": 23.3
+    "disposals": 24.2
   },
   {
     "id": "mel_pickett_l",
@@ -6196,11 +6196,11 @@
     "pos": [
       "MID"
     ],
-    "points": 34,
-    "supercoachPoints": 37.5,
-    "goals": 2,
-    "bounces": 9,
-    "disposals": 9
+    "points": 34.2,
+    "supercoachPoints": 36.2,
+    "goals": 3,
+    "bounces": 11,
+    "disposals": 8.6
   },
   {
     "id": "mel_kentfield",
@@ -6235,11 +6235,11 @@
     "pos": [
       "RUCK"
     ],
-    "points": 124.5,
-    "supercoachPoints": 142.2,
-    "goals": 2,
+    "points": 121.2,
+    "supercoachPoints": 140,
+    "goals": 3,
     "bounces": 0,
-    "disposals": 22.5
+    "disposals": 22.4
   },
   {
     "id": "melb_paddy_cross",
@@ -6315,11 +6315,11 @@
     "pos": [
       "FWD"
     ],
-    "points": 52.5,
-    "supercoachPoints": 63.5,
+    "points": 59.7,
+    "supercoachPoints": 62.3,
     "goals": 0,
-    "bounces": 0,
-    "disposals": 14.5
+    "bounces": 1,
+    "disposals": 14.7
   },
   {
     "id": "mel_sparrow",
@@ -6329,11 +6329,11 @@
       "MID",
       "FWD"
     ],
-    "points": 80.8,
-    "supercoachPoints": 75.5,
-    "goals": 2,
+    "points": 80.2,
+    "supercoachPoints": 76,
+    "goals": 3,
     "bounces": 0,
-    "disposals": 17.3
+    "disposals": 17.4
   },
   {
     "id": "mel_rivers",
@@ -6355,11 +6355,11 @@
     "pos": [
       "MID"
     ],
-    "points": 62.5,
-    "supercoachPoints": 68.8,
+    "points": 60.8,
+    "supercoachPoints": 70.6,
     "goals": 1,
     "bounces": 0,
-    "disposals": 16.5
+    "disposals": 16.4
   },
   {
     "id": "mel_taylor",
@@ -6381,11 +6381,11 @@
     "pos": [
       "DEF"
     ],
-    "points": 33.5,
-    "supercoachPoints": 23.5,
+    "points": 37.7,
+    "supercoachPoints": 30.7,
     "goals": 0,
     "bounces": 0,
-    "disposals": 6.5
+    "disposals": 8
   },
   {
     "id": "nm_scott",
@@ -6434,11 +6434,11 @@
     "pos": [
       "DEF"
     ],
-    "points": 100.5,
-    "supercoachPoints": 103.2,
+    "points": 91.6,
+    "supercoachPoints": 95.8,
     "goals": 0,
-    "bounces": 4,
-    "disposals": 24.5
+    "bounces": 6,
+    "disposals": 23.2
   },
   {
     "id": "nm_colemanjones",
@@ -6448,11 +6448,11 @@
       "RUCK",
       "FWD"
     ],
-    "points": 26,
-    "supercoachPoints": 26,
+    "points": 31.3,
+    "supercoachPoints": 32.3,
     "goals": 0,
     "bounces": 0,
-    "disposals": 8
+    "disposals": 7.7
   },
   {
     "id": "nm_zurhaar",
@@ -6461,11 +6461,11 @@
     "pos": [
       "FWD"
     ],
-    "points": 47.2,
-    "supercoachPoints": 52.2,
+    "points": 45.4,
+    "supercoachPoints": 53,
     "goals": 6,
     "bounces": 0,
-    "disposals": 9.8
+    "disposals": 10
   },
   {
     "id": "nm_comben",
@@ -6474,11 +6474,11 @@
     "pos": [
       "FWD"
     ],
-    "points": 64.8,
-    "supercoachPoints": 76.5,
+    "points": 59.6,
+    "supercoachPoints": 72.6,
     "goals": 1,
     "bounces": 0,
-    "disposals": 12.5
+    "disposals": 11.8
   },
   {
     "id": "nm_spargo",
@@ -6487,11 +6487,11 @@
     "pos": [
       "FWD"
     ],
-    "points": 0,
-    "supercoachPoints": 0,
+    "points": 22,
+    "supercoachPoints": 24,
     "goals": 0,
     "bounces": 0,
-    "disposals": 0
+    "disposals": 7
   },
   {
     "id": "nm_mckercher",
@@ -6502,10 +6502,10 @@
       "DEF"
     ],
     "points": 76.2,
-    "supercoachPoints": 90.8,
+    "supercoachPoints": 87,
     "goals": 1,
-    "bounces": 14,
-    "disposals": 22.5
+    "bounces": 17,
+    "disposals": 22.4
   },
   {
     "id": "nm_harvey",
@@ -6528,11 +6528,11 @@
     "pos": [
       "DEF"
     ],
-    "points": 65,
-    "supercoachPoints": 71.5,
-    "goals": 8,
+    "points": 68.8,
+    "supercoachPoints": 76.2,
+    "goals": 10,
     "bounces": 0,
-    "disposals": 9
+    "disposals": 9.6
   },
   {
     "id": "nm_stephens",
@@ -6541,11 +6541,11 @@
     "pos": [
       "MID"
     ],
-    "points": 96.5,
-    "supercoachPoints": 94.8,
+    "points": 87.4,
+    "supercoachPoints": 85.6,
     "goals": 1,
-    "bounces": 3,
-    "disposals": 23.8
+    "bounces": 4,
+    "disposals": 21.6
   },
   {
     "id": "nm_osullivan",
@@ -6567,11 +6567,11 @@
     "pos": [
       "MID"
     ],
-    "points": 70.5,
-    "supercoachPoints": 83.5,
+    "points": 70.7,
+    "supercoachPoints": 82.3,
     "goals": 0,
     "bounces": 0,
-    "disposals": 16
+    "disposals": 16.3
   },
   {
     "id": "nm_logue",
@@ -6581,11 +6581,11 @@
       "DEF",
       "FWD"
     ],
-    "points": 28.5,
-    "supercoachPoints": 33,
+    "points": 43.3,
+    "supercoachPoints": 51,
     "goals": 0,
     "bounces": 0,
-    "disposals": 7.5
+    "disposals": 11
   },
   {
     "id": "nm_sheezel",
@@ -6594,11 +6594,11 @@
     "pos": [
       "MID"
     ],
-    "points": 115.8,
-    "supercoachPoints": 125,
+    "points": 113.6,
+    "supercoachPoints": 125.4,
     "goals": 1,
     "bounces": 2,
-    "disposals": 32
+    "disposals": 31.6
   },
   {
     "id": "nm_mikunda",
@@ -6620,11 +6620,11 @@
     "pos": [
       "FWD"
     ],
-    "points": 55.3,
-    "supercoachPoints": 68,
-    "goals": 2,
+    "points": 57.5,
+    "supercoachPoints": 69.2,
+    "goals": 3,
     "bounces": 0,
-    "disposals": 9
+    "disposals": 9.8
   },
   {
     "id": "nm_archer_jackson",
@@ -6686,11 +6686,11 @@
     "pos": [
       "MID"
     ],
-    "points": 73.2,
-    "supercoachPoints": 81,
+    "points": 78.2,
+    "supercoachPoints": 89.8,
     "goals": 2,
-    "bounces": 2,
-    "disposals": 19.8
+    "bounces": 3,
+    "disposals": 21.2
   },
   {
     "id": "nm_dovaston",
@@ -6712,11 +6712,11 @@
     "pos": [
       "MID"
     ],
-    "points": 99,
-    "supercoachPoints": 115.2,
-    "goals": 0,
-    "bounces": 5,
-    "disposals": 27.3
+    "points": 101.4,
+    "supercoachPoints": 117.2,
+    "goals": 1,
+    "bounces": 6,
+    "disposals": 27.2
   },
   {
     "id": "nm_mcdonald_luke",
@@ -6725,11 +6725,11 @@
     "pos": [
       "DEF"
     ],
-    "points": 74.5,
-    "supercoachPoints": 69.5,
+    "points": 73,
+    "supercoachPoints": 73.4,
     "goals": 1,
     "bounces": 1,
-    "disposals": 17
+    "disposals": 16.6
   },
   {
     "id": "nm_parker",
@@ -6738,8 +6738,8 @@
     "pos": [
       "MID"
     ],
-    "points": 94.8,
-    "supercoachPoints": 114.2,
+    "points": 93.8,
+    "supercoachPoints": 117.2,
     "goals": 1,
     "bounces": 4,
     "disposals": 24.8
@@ -6779,8 +6779,8 @@
       "FWD"
     ],
     "points": 61.8,
-    "supercoachPoints": 81.8,
-    "goals": 14,
+    "supercoachPoints": 80,
+    "goals": 15,
     "bounces": 0,
     "disposals": 10
   },
@@ -6791,11 +6791,11 @@
     "pos": [
       "FWD"
     ],
-    "points": 50.8,
-    "supercoachPoints": 57.2,
-    "goals": 6,
+    "points": 56.8,
+    "supercoachPoints": 66,
+    "goals": 7,
     "bounces": 0,
-    "disposals": 9.5
+    "disposals": 11.2
   },
   {
     "id": "nm_hardeman",
@@ -6870,11 +6870,11 @@
     "pos": [
       "MID"
     ],
-    "points": 66.8,
-    "supercoachPoints": 72.5,
-    "goals": 1,
+    "points": 67.2,
+    "supercoachPoints": 73.8,
+    "goals": 2,
     "bounces": 1,
-    "disposals": 17.8
+    "disposals": 18.2
   },
   {
     "id": "nm_powell",
@@ -6884,11 +6884,11 @@
       "MID",
       "FWD"
     ],
-    "points": 83.5,
-    "supercoachPoints": 76.2,
-    "goals": 1,
+    "points": 77.2,
+    "supercoachPoints": 70,
+    "goals": 2,
     "bounces": 0,
-    "disposals": 21
+    "disposals": 19.2
   },
   {
     "id": "nm_xerri",
@@ -6923,11 +6923,11 @@
     "pos": [
       "FWD"
     ],
-    "points": 47,
-    "supercoachPoints": 41,
-    "goals": 0,
+    "points": 34,
+    "supercoachPoints": 36,
+    "goals": 1,
     "bounces": 0,
-    "disposals": 10
+    "disposals": 7.5
   },
   {
     "id": "nm_fisher",
@@ -6949,11 +6949,11 @@
     "pos": [
       "FWD"
     ],
-    "points": 44.2,
-    "supercoachPoints": 51,
+    "points": 39,
+    "supercoachPoints": 45.2,
     "goals": 7,
     "bounces": 0,
-    "disposals": 7.5
+    "disposals": 6.8
   },
   {
     "id": "player_change_password",
