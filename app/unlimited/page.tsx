@@ -690,10 +690,21 @@ async function saveGlobalScore(score: number) {
   })
 );
 
- const { data, error } = await supabase
-  .from("global_scores")
-  .upsert(
-    {
+  const { data: existingRow, error: fetchError } = await supabase
+    .from("global_scores")
+    .select("id, score")
+    .eq("user_id", user.id)
+    .eq("mode", `unlimited_${mode}`)
+    .eq("season", Number(season))
+    .maybeSingle();
+
+  if (fetchError) {
+    console.error("❌ Supabase fetch error:", fetchError);
+    return;
+  }
+
+  if (!existingRow) {
+    const { error: insertError } = await supabase.from("global_scores").insert({
       user_id: user.id,
       username,
       mode: `unlimited_${mode}`,
@@ -701,16 +712,35 @@ async function saveGlobalScore(score: number) {
       score,
       team_json: fullTeam,
       updated_at: new Date().toISOString(),
-    },
-    {
-      onConflict: "user_id,mode,season",
-    }
-  );
+    });
 
-  if (error) {
-    console.error("❌ Supabase save error:", error);
+    if (insertError) {
+      console.error("❌ Supabase insert error:", insertError);
+    } else {
+      console.log("✅ Inserted new high score");
+    }
+
+    return;
+  }
+
+  if (Number(score) > Number(existingRow.score ?? 0)) {
+    const { error: updateError } = await supabase
+      .from("global_scores")
+      .update({
+        username,
+        score,
+        team_json: fullTeam,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", existingRow.id);
+
+    if (updateError) {
+      console.error("❌ Supabase update error:", updateError);
+    } else {
+      console.log("✅ Updated to new high score");
+    }
   } else {
-    console.log("✅ Saved successfully:", data);
+    console.log("⏭️ Score was not higher, keeping existing high score");
   }
 }
 
