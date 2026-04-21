@@ -11,8 +11,10 @@ import {
   TrendingUp,
   Users,
   Award,
+  X,
 } from "lucide-react";
 import React, { useEffect, useMemo, useState } from "react";
+import Image from "next/image";
 
 type PrimaryColor =
   | "blue"
@@ -320,6 +322,7 @@ export default function Home() {
   const [season, setSeason] = useState<"2025" | "2026">("2025");
   const [showVersion, setShowVersion] = useState(false);
   const [primaryColor, setPrimaryColor] = useState<PrimaryColor>("red");
+  const [showAnnouncement, setShowAnnouncement] = useState(true);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -375,6 +378,98 @@ export default function Home() {
         <div className="absolute inset-0 opacity-[0.10] [background-image:radial-gradient(rgba(255,255,255,0.35)_1px,transparent_1px)] [background-size:16px_16px]" />
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/60" />
       </div>
+
+      {showAnnouncement && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/75 px-4 backdrop-blur-sm">
+          <div className="relative w-full max-w-2xl overflow-hidden rounded-[28px] border border-white/15 bg-[linear-gradient(180deg,rgba(18,18,22,0.98)_0%,rgba(8,8,10,0.99)_100%)] p-6 shadow-[0_25px_80px_rgba(0,0,0,0.65)] sm:p-8">
+            <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-400/80 to-transparent" />
+            <div className="pointer-events-none absolute -right-12 -top-12 h-36 w-36 rounded-full bg-cyan-500/20 blur-3xl" />
+
+            <button
+              onClick={() => setShowAnnouncement(false)}
+              className="absolute right-4 top-4 rounded-full border border-white/10 bg-white/5 p-2 text-white/70 transition hover:bg-white/10 hover:text-white"
+              aria-label="Close popup"
+            >
+              <X className="h-4 w-4" />
+            </button>
+
+            <div className="relative">
+              <div className="mb-3 inline-flex rounded-full border border-cyan-400/25 bg-cyan-500/10 px-3 py-1 text-[11px] font-bold tracking-[0.2em] text-cyan-300 uppercase">
+                Important Update
+              </div>
+
+<div className="mb-5 overflow-hidden rounded-2xl border border-white/10 bg-black/20">
+  <Image
+    src="/dalton.jpg"
+    alt="Important update"
+    width={1200}
+    height={700}
+    className="h-48 w-full object-cover sm:h-56"
+    priority
+  />
+</div>
+
+              <h2 className="text-2xl font-black leading-tight text-white sm:text-3xl">
+                Important Update for CocoFooty Users
+              </h2>
+
+              <div className="mt-5 space-y-4 text-sm leading-7 text-white/80 sm:text-base">
+                <p>Hey everyone,</p>
+
+                <p>Quick update on what’s been going on.</p>
+
+                <p>
+                  Due to a formal complaint, I’m currently unable to keep
+                  updating stats on CocoFooty, so some modes may be outdated for
+                  now.
+                </p>
+
+                <p>
+                  But I’ve set up an alternative so you can keep playing with
+                  fully updated stats 👇
+                </p>
+
+                <p className="text-lg font-extrabold text-cyan-300 sm:text-xl">
+                  👉 footyclash.com
+                </p>
+
+                <p>
+                  That’s where I’ll be continuing updates and keeping everything
+                  running smoothly.
+                </p>
+
+                <p>
+                  CocoFooty will still be around, but for the best experience
+                  (especially with current stats), head over to{" "}
+                  <span className="font-bold text-white">footyclash.com</span>.
+                </p>
+
+                <p>
+                  Really appreciate everyone who’s been playing and supporting.
+                </p>
+              </div>
+
+              <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+                <a
+                  href="https://footyclash.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex min-h-[48px] flex-1 items-center justify-center rounded-full border border-cyan-400/30 bg-cyan-500/15 px-5 py-3 text-sm font-bold tracking-wide text-cyan-300 transition hover:border-cyan-300/50 hover:bg-cyan-500/20"
+                >
+                  Go to FootyClash →
+                </a>
+
+                <button
+                  onClick={() => setShowAnnouncement(false)}
+                  className="inline-flex min-h-[48px] flex-1 items-center justify-center rounded-full border border-white/15 bg-white/5 px-5 py-3 text-sm font-bold tracking-wide text-white/85 transition hover:bg-white/10"
+                >
+                  Continue to CocoFooty
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10 lg:px-6 lg:py-14">
         <div className="text-center">
@@ -449,7 +544,7 @@ export default function Home() {
           backgroundClassName="bg-[linear-gradient(180deg,rgba(12,24,56,0.95)_0%,rgba(8,14,32,0.98)_100%)]"
         />
 
-                <FeatureBanner
+        <FeatureBanner
           href={seasonHref("/higher-or-lower")}
           title="HIGHER OR LOWER"
           desc="Guess if the next player has higher or lower stats."
@@ -461,14 +556,14 @@ export default function Home() {
         />
 
         <FeatureBanner
-  href={seasonHref("/leaderboard")}
-  title="GLOBAL LEADERBOARD"
-  desc="See the best Coco Footy players in the world and climb the rankings."
-  cta="VIEW LEADERBOARD"
-  icon={<Trophy className="h-6 w-6" />}
-  primaryColor={primaryColor}
-  badge="NEW"
-/>
+          href={seasonHref("/leaderboard")}
+          title="GLOBAL LEADERBOARD"
+          desc="See the best Coco Footy players in the world and climb the rankings."
+          cta="VIEW LEADERBOARD"
+          icon={<Trophy className="h-6 w-6" />}
+          primaryColor={primaryColor}
+          badge="NEW"
+        />
 
         <div className="mt-6">
           <div className="mb-3 text-left">
