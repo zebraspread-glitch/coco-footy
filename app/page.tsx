@@ -419,7 +419,7 @@ export default function Home() {
                 <p>Quick update on what’s been going on.</p>
 
                 <p>
-                  Due to a formal complaint, I’m currently unable to keep
+                  Due to a formal complaint made by Lucas Dalton, I’m currently unable to keep
                   updating stats on CocoFooty, so some modes may be outdated for
                   now.
                 </p>
